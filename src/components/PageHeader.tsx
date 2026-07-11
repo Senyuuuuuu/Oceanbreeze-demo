@@ -7,13 +7,15 @@ interface PageHeaderProps {
   subtitle: string;
   category?: string;
   backgroundImageUrl?: string;
+  onHomeClick?: () => void;
 }
 
 export default function PageHeader({
   title,
   subtitle,
   category = 'Resort',
-  backgroundImageUrl = 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1920&q=80'
+  backgroundImageUrl = 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1920&q=80',
+  onHomeClick
 }: PageHeaderProps) {
   return (
     <div className="relative h-[250px] sm:h-[320px] md:h-[400px] flex items-center justify-center overflow-hidden bg-charcoal">
@@ -61,7 +63,12 @@ export default function PageHeader({
 
           {/* Breadcrumbs */}
           <div className="flex items-center justify-center gap-2 text-[10px] sm:text-xs font-sans text-gray-400 font-medium pt-2">
-            <span className="hover:text-sand transition-colors cursor-pointer">Home</span>
+            <span
+              onClick={onHomeClick}
+              className="hover:text-sand transition-colors cursor-pointer"
+            >
+              Home
+            </span>
             <ChevronRight className="w-3 h-3 text-gray-600" />
             <span className="text-sand font-semibold">{title}</span>
           </div>

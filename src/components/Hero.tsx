@@ -4,6 +4,7 @@ import { Calendar, Users, ArrowRight, Sparkles, Star } from 'lucide-react';
 
 interface HeroProps {
   onOpenBooking: (roomType?: string) => void;
+  onChangePage?: (page: string) => void;
 }
 
 const HERO_SLIDES = [
@@ -24,7 +25,7 @@ const HERO_SLIDES = [
   }
 ];
 
-export default function Hero({ onOpenBooking }: HeroProps) {
+export default function Hero({ onOpenBooking, onChangePage }: HeroProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
@@ -45,6 +46,10 @@ export default function Hero({ onOpenBooking }: HeroProps) {
   };
 
   const scrollToRooms = () => {
+    if (onChangePage) {
+      onChangePage('rooms');
+      return;
+    }
     const roomsSection = document.querySelector('#rooms');
     if (roomsSection) {
       const topOffset = (roomsSection as HTMLElement).offsetTop - 80;

@@ -75,11 +75,20 @@ export default function BookingInquiryModal({
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      if ((window as any).lenis) {
+        (window as any).lenis.stop();
+      }
     } else {
       document.body.style.overflow = 'unset';
+      if ((window as any).lenis) {
+        (window as any).lenis.start();
+      }
     }
     return () => {
       document.body.style.overflow = 'unset';
+      if ((window as any).lenis) {
+        (window as any).lenis.start();
+      }
     };
   }, [isOpen]);
 
@@ -103,6 +112,7 @@ export default function BookingInquiryModal({
           animate={isLargeScreen ? { x: 0, opacity: 1 } : { opacity: 1, y: 0 }}
           exit={isLargeScreen ? { x: '-100%', opacity: 1 } : { opacity: 0, y: 30 }}
           transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+          data-lenis-prevent
           className="relative z-10 w-full max-w-2xl lg:max-w-lg lg:w-[500px] h-[85vh] sm:h-auto lg:h-full max-h-[88vh] lg:max-h-full overflow-y-auto rounded-3xl lg:rounded-none lg:rounded-r-3xl bg-white shadow-2xl border border-white/40 flex flex-col"
         >
           {/* Top Decorative Sunset Accent */}

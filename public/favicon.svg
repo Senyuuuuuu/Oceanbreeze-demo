@@ -1,0 +1,38 @@
+<svg viewBox="0 0 300 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="skyGrad" x1="150" y1="50" x2="150" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#FFA866" />
+      <stop offset="100%" stopColor="#F57C00" />
+    </linearGradient>
+    <linearGradient id="waveGrad" x1="150" y1="200" x2="150" y2="320" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#21C3E8" />
+      <stop offset="100%" stopColor="#0B80A5" />
+    </linearGradient>
+    <clipPath id="archClip">
+      <path d="M 50,150 A 100,100 0 0,1 250,150 L 250,300 L 50,300 Z" fill="white" />
+    </clipPath>
+  </defs>
+  <g>
+    <path d="M 50,150 A 100,100 0 0,1 250,150 L 250,300 L 50,300 Z" fill="url(#skyGrad)" stroke="#2E2E35" strokeWidth="8" strokeLinejoin="round" />
+    <g clip-path="url(#archClip)">
+      <line x1="150" y1="150" x2="50" y2="100" stroke="#2E2E35" strokeWidth="4" />
+      <line x1="150" y1="150" x2="110" y2="40" stroke="#2E2E35" strokeWidth="4" />
+      <line x1="150" y1="150" x2="190" y2="40" stroke="#2E2E35" strokeWidth="4" />
+      <line x1="150" y1="150" x2="250" y2="100" stroke="#2E2E35" strokeWidth="4" />
+      <line x1="150" y1="150" x2="250" y2="200" stroke="#2E2E35" strokeWidth="4" />
+      <line x1="150" y1="150" x2="50" y2="200" stroke="#2E2E35" strokeWidth="4" />
+      <circle cx="160" cy="150" r="45" fill="#F57C00" stroke="#2E2E35" strokeWidth="6" />
+      <rect x="85" y="130" width="60" height="115" fill="#FFFFFF" stroke="#2E2E35" strokeWidth="6" rx="4" strokeLinejoin="round" />
+      <rect x="98" y="145" width="10" height="20" fill="#F7E3A3" stroke="#2E2E35" strokeWidth="4" rx="1" />
+      <rect x="98" y="175" width="10" height="20" fill="#F7E3A3" stroke="#2E2E35" strokeWidth="4" rx="1" />
+      <rect x="98" y="205" width="10" height="20" fill="#F7E3A3" stroke="#2E2E35" strokeWidth="4" rx="1" />
+      <rect x="122" y="145" width="10" height="20" fill="#F7E3A3" stroke="#2E2E35" strokeWidth="4" rx="1" />
+      <rect x="122" y="175" width="10" height="20" fill="#F7E3A3" stroke="#2E2E35" strokeWidth="4" rx="1" />
+      <rect x="122" y="205" width="10" height="20" fill="#F7E3A3" stroke="#2E2E35" strokeWidth="4" rx="1" />
+      <path d="M 40,245 Q 90,225 140,245 T 240,245 Q 260,250 280,245 L 280,310 L 40,310 Z" fill="#0B80A5" opacity="0.7" />
+      <path d="M 40,255 Q 85,240 130,255 T 220,255 Q 250,260 270,255 L 270,310 L 40,310 Z" fill="url(#waveGrad)" stroke="#2E2E35" strokeWidth="5" />
+      <path d="M 40,275 Q 95,255 150,275 T 260,275 L 260,310 L 40,310 Z" fill="#21C3E8" stroke="#2E2E35" strokeWidth="5" />
+    </g>
+    <path d="M 50,150 A 100,100 0 0,1 250,150 L 250,300 L 50,300 Z" fill="none" stroke="#2E2E35" strokeWidth="8" strokeLinejoin="round" />
+  </g>
+</svg>
