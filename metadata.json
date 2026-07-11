@@ -1,0 +1,6 @@
+{
+  "name": "Ocean Breeze Resort",
+  "description": "A premium, beachfront resort website in La Union, Philippines, offering luxurious rooms, stunning sunset views, and tropical relaxation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
