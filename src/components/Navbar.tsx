@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { name: 'Home', id: 'home' },
   { name: 'About', id: 'about' },
   { name: 'Rooms', id: 'rooms' },
+  { name: 'Restaurant', id: 'restaurant' },
   { name: 'Amenities', id: 'amenities' },
   { name: 'Gallery', id: 'gallery' },
   { name: 'Contact', id: 'location' }
@@ -241,18 +242,7 @@ export default function Navbar({ onOpenBooking, activePage, onChangePage }: Navb
         )}
       </AnimatePresence>
 
-      {/* Sticky Book Now Button (Mobile Only, Bottom Center) */}
-      <div className="fixed bottom-6 inset-x-0 z-30 flex justify-center pointer-events-none lg:hidden">
-        <motion.button
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 1, type: 'spring' }}
-          onClick={() => onOpenBooking()}
-          className="pointer-events-auto px-6 py-3 rounded-full bg-sunset text-white font-sans text-xs font-bold uppercase tracking-wider shadow-xl shadow-sunset/35 flex items-center gap-2 border border-white/20 active:scale-95 transition-transform"
-        >
-          <Calendar className="w-4 h-4" /> Book Now
-        </motion.button>
-      </div>
+
     </>
   );
 }

@@ -97,7 +97,11 @@ const AMENITIES_DATA: AmenityItem[] = [
   }
 ];
 
-export default function Amenities() {
+interface AmenitiesProps {
+  onChangePage?: (page: string) => void;
+}
+
+export default function Amenities({ onChangePage }: AmenitiesProps) {
   // Stagger animation container
   const containerVariants = {
     hidden: {},
@@ -171,9 +175,19 @@ export default function Amenities() {
                   {amenity.name}
                 </h4>
 
-                <p className="text-gray-400 font-sans text-xs sm:text-sm leading-relaxed font-light flex-grow">
+                <p className="text-gray-400 font-sans text-xs sm:text-sm leading-relaxed font-light flex-grow mb-4">
                   {amenity.description}
                 </p>
+
+                {amenity.id === 'restaurant' && onChangePage && (
+                  <button
+                    onClick={() => onChangePage('restaurant')}
+                    className="self-start mt-2 text-xs font-bold text-sunset hover:text-coral transition-colors flex items-center gap-1 cursor-pointer group/btn"
+                  >
+                    View Menu & Reservations
+                    <span className="transform transition-transform group-hover/btn:translate-x-1">→</span>
+                  </button>
+                )}
               </motion.div>
             );
           })}

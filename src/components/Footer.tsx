@@ -5,9 +5,10 @@ import { Facebook, Instagram, Mail, Phone, MapPin, Heart, ArrowUp } from 'lucide
 interface FooterProps {
   onOpenBooking: () => void;
   onChangePage: (page: string) => void;
+  onOpenBackendSetup?: () => void;
 }
 
-export default function Footer({ onOpenBooking, onChangePage }: FooterProps) {
+export default function Footer({ onOpenBooking, onChangePage, onOpenBackendSetup }: FooterProps) {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -147,9 +148,19 @@ export default function Footer({ onOpenBooking, onChangePage }: FooterProps) {
 
         {/* Bottom copyright line */}
         <div className="border-t border-white/5 pt-8 text-center flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-gray-500 font-sans text-[11px] font-light">
-            © {new Date().getFullYear()} Ocean Breeze Resort, La Union. All Rights Reserved.
-          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+            <p className="text-gray-500 font-sans text-[11px] font-light">
+              © {new Date().getFullYear()} Ocean Breeze Resort, La Union. All Rights Reserved.
+            </p>
+            {onOpenBackendSetup && (
+              <button
+                onClick={onOpenBackendSetup}
+                className="text-gray-600 hover:text-sunset font-sans text-[10px] underline transition-colors cursor-pointer"
+              >
+                Backend Sheets Setup
+              </button>
+            )}
+          </div>
           <p className="text-gray-500 font-sans text-[10px] flex items-center gap-1 justify-center font-light">
             Made with <Heart className="w-3 h-3 text-red-500 fill-red-500" /> on the shores of San Juan, La Union.
           </p>

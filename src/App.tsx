@@ -13,9 +13,12 @@ import Gallery from './components/Gallery';
 import WhyChooseUs from './components/WhyChooseUs';
 import Location from './components/Location';
 import Footer from './components/Footer';
+import Restaurant from './components/Restaurant';
 import BookingInquiryModal from './components/BookingInquiryModal';
 import PageHeader from './components/PageHeader';
 import IntroLoader from './components/IntroLoader';
+import BackendSetupModal from './components/BackendSetupModal';
+import ChatBot from './components/ChatBot';
 import { motion, AnimatePresence } from 'motion/react';
 import Lenis from 'lenis';
 
@@ -23,6 +26,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [activePage, setActivePage] = useState<string>('home');
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isBackendSetupOpen, setIsBackendSetupOpen] = useState(false);
   const [preSelectedRoom, setPreSelectedRoom] = useState<string>('');
 
   const handleOpenBooking = (roomType?: string) => {
@@ -140,7 +144,7 @@ export default function App() {
               backgroundImageUrl="https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=1920&q=80"
               onHomeClick={() => handlePageChange('home')}
             />
-            <Amenities />
+            <Amenities onChangePage={handlePageChange} />
           </motion.div>
         );
       case 'gallery':
@@ -162,6 +166,18 @@ export default function App() {
             <Gallery />
           </motion.div>
         );
+      case 'restaurant':
+        return (
+          <motion.div
+            key="restaurant"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+          >
+            <Restaurant />
+          </motion.div>
+        );
       case 'location':
         return (
           <motion.div
@@ -178,7 +194,7 @@ export default function App() {
               backgroundImageUrl="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1920&q=80"
               onHomeClick={() => handlePageChange('home')}
             />
-            <Location onOpenBooking={handleOpenBooking} />
+             <Location onOpenBooking={handleOpenBooking} />
           </motion.div>
         );
       case 'home':
@@ -236,7 +252,11 @@ export default function App() {
         </main>
 
         {/* Footer */}
-        <Footer onOpenBooking={handleOpenBooking} onChangePage={handlePageChange} />
+        <Footer 
+          onOpenBooking={handleOpenBooking} 
+          onChangePage={handlePageChange} 
+          onOpenBackendSetup={() => setIsBackendSetupOpen(true)} 
+        />
 
         {/* Global Booking Reservation Modal */}
         <BookingInquiryModal
@@ -244,6 +264,15 @@ export default function App() {
           onClose={handleCloseBooking}
           preSelectedRoom={preSelectedRoom}
         />
+
+        {/* Secure Backend Setup Panel */}
+        <BackendSetupModal 
+          isOpen={isBackendSetupOpen} 
+          onClose={() => setIsBackendSetupOpen(false)} 
+        />
+
+        {/* Floating Beachfront Concierge Chat Bot */}
+        <ChatBot onOpenBooking={handleOpenBooking} />
       </div>
     </>
   );
