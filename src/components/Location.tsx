@@ -54,7 +54,7 @@ export default function Location({ onOpenBooking }: LocationProps) {
             Find Us in San Juan, La Union
           </h3>
           <p className="mt-4 text-gray-400 font-sans text-sm leading-relaxed font-light">
-            Located along the National Highway of Urbiztondo—the heart of the surfing capital of the North. Reach out to us or drop by for a sunset surf!
+            Located along the National Highway of Urbiztondo—the heart of the beautiful coastline of the North. Reach out to us or drop by for a sunset stroll!
           </p>
         </motion.div>
 
@@ -176,7 +176,7 @@ export default function Location({ onOpenBooking }: LocationProps) {
               <div>
                 <h4 className="font-serif text-2xl font-bold text-charcoal mb-2">Send an Instant Message</h4>
                 <p className="text-gray-400 font-sans text-xs font-light leading-relaxed mb-6">
-                  Have special event hosting inquiries, surf package questions, or custom accommodation requests? Write to us and receive answers in your inbox.
+                  Have special event hosting inquiries, wellness package questions, or custom accommodation requests? Write to us and receive answers in your inbox.
                 </p>
 
                 <AnimatePresence mode="wait">

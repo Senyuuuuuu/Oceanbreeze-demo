@@ -15,8 +15,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
     id: 'beach-1',
     url: 'https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=800&q=80',
     category: 'beach',
-    title: 'Surfing the Swell',
-    description: 'La Union\'s legendary surfing waves right outside our door.'
+    title: 'Serene Coastal Horizon',
+    description: 'La Union\'s beautiful and calm coastal tides right outside our door.'
   },
   {
     id: 'pool-1',
@@ -79,8 +79,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
 const CATEGORIES = [
   { value: 'all', label: 'All Sights' },
   { value: 'rooms', label: 'Suites & Villas' },
-  { value: 'beach', label: 'Beach & Surf' },
-  { value: 'pool', label: 'Infinity Pool' },
+  { value: 'beach', label: 'Beachside Sights' },
+  { value: 'pool', label: 'Resort Amenities' },
   { value: 'events', label: 'Curated Events' },
   { value: 'sunset', label: 'Sunsets' }
 ];
@@ -142,7 +142,7 @@ export default function Gallery() {
             Glimpses of Beachfront Paradise
           </h3>
           <p className="mt-4 text-gray-400 font-sans text-sm leading-relaxed font-light">
-            Flip through real captures of our stunning suites, poolside cabanas, surf lessons, beachside dining setups, and legendary La Union sunsets.
+            Flip through real captures of our stunning suites, cozy cabanas, wellness sessions, beachside dining setups, and legendary La Union sunsets.
           </p>
         </motion.div>
 

@@ -9,19 +9,34 @@ interface HeroProps {
 
 const HERO_SLIDES = [
   {
-    url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/500016309_122160869408567801_3523801660810124387_n.jpg',
     title: 'Pristine Beachfront Escape',
-    accent: 'La Union Surf & Sun'
+    accent: 'La Union Coast & Sun'
   },
   {
-    url: 'https://images.unsplash.com/photo-1515238152791-8216bfdf89a7?auto=format&fit=crop&w=1920&q=80',
-    title: 'Breathtaking Sunsets',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/499882580_122160869432567801_4746683546836728535_n.jpg',
+    title: 'Breathtaking Coastal View',
     accent: 'Golden Hour Splendor'
   },
   {
-    url: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1920&q=80',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/499548270_122160869378567801_3422192562523644746_n.jpg',
     title: 'Luxurious Tropical Lounge',
     accent: 'Ocean Breeze Serenity'
+  },
+  {
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/476117653_122136096512567801_2787783767455324059_n.jpg',
+    title: 'Peaceful Sanctuary',
+    accent: 'Mindful Retreat'
+  },
+  {
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/476183028_122136399722567801_208159314301597754_n.jpg',
+    title: 'Eco-Luxury Pavilions',
+    accent: 'Sustainable Design'
+  },
+  {
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/480743406_122140595966567801_8029553201407761439_n.jpg',
+    title: 'Aura of Serenity',
+    accent: 'Tropical Paradise'
   }
 ];
 

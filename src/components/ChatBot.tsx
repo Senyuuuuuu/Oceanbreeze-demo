@@ -19,7 +19,7 @@ export default function ChatBot({ onOpenBooking }: ChatBotProps) {
     {
       id: 'welcome',
       sender: 'bot',
-      text: "Hi! I'm Breeze Butler, your digital concierge at Ocean Breeze Resort. 🏄‍♀️ How can I help you enjoy your tropical getaway today?",
+      text: "Hi! I'm Breeze Butler, your digital concierge at Ocean Breeze Resort. 🌺 How can I help you enjoy your tropical getaway today?",
       timestamp: new Date()
     }
   ]);
@@ -45,16 +45,16 @@ export default function ChatBot({ onOpenBooking }: ChatBotProps) {
   const getBotResponse = (userInput: string): { text: string; action?: 'booking' | 'location' | 'surf' } => {
     const input = userInput.toLowerCase().trim();
 
-    if (input.includes('room') || input.includes('rate') || input.includes('price') || input.includes('suite') || input.includes('villa') || input.includes('stay') || input.includes('accommodation') || input.includes('how much')) {
+    if (input.includes('room') || input.includes('rate') || input.includes('price') || input.includes('suite') || input.includes('villa') || input.includes('stay') || input.includes('accommodation') || input.includes('how much') || input.includes('cabin')) {
       return {
-        text: "We offer three premium, sea-facing sanctuaries styled with tropical details:\n\n🌴 **Beachfront Deluxe Room** (₱5,500/night): King bed, stunning beachfront views, perfect for couples.\n🌅 **Family Sunset Suite** (₱8,500/night): Two queen beds, private sunset balcony, perfect for families/groups.\n🏄‍♂️ **Ocean View Surf Villa** (₱12,000/night): Premium private plunge pool, direct surf beach access, luxury lounge.\n\nWould you like me to open the reservation panel to check real-time availability for you?",
+        text: "We offer beautiful, sea-facing sanctuaries styled with tropical details:\n\n🌴 **Deluxe Beachfront Suite** (₱7,500/night): King bed, panoramic ocean views, private balcony.\n🌅 **Sunset Panoramic Villa** (₱12,000/night): Super King bed, private plunge pool deck, premium amenities.\n🏘️ **Spacious Family Loft** (₱9,800/night): 1 King + 2 Doubles, split-level loft, garden terrace.\n🏡 **Beachside Eco Cabin** (₱4,200/night): Queen bed, rustic-chic coastal bamboo style steps from beach.\n\nWould you like me to open the reservation panel to check real-time availability for you?",
         action: 'booking'
       };
     }
 
     if (input.includes('location') || input.includes('where') || input.includes('address') || input.includes('find') || input.includes('direction') || input.includes('get here') || input.includes('map') || input.includes('la union')) {
       return {
-        text: "Ocean Breeze Resort is situated right on the sandy shores of San Juan:\n\n📍 **National Highway, Urbiztondo, San Juan, La Union, 2514, Philippines.**\n\nWe are in the absolute heart of the surfing capital of the Northern Philippines, surrounded by legendary surf spots, cozy beach cafes, and legendary sunset viewpoints.",
+        text: "Ocean Breeze Resort is situated right on the sandy shores of San Juan:\n\n📍 **National Highway, Urbiztondo, San Juan, La Union, 2514, Philippines.**\n\nWe are in the absolute heart of the beautiful coastline of San Juan, surrounded by gentle tides, cozy beach cafes, and legendary sunset viewpoints.",
         action: 'location'
       };
     }
@@ -66,16 +66,16 @@ export default function ChatBot({ onOpenBooking }: ChatBotProps) {
       };
     }
 
-    if (input.includes('surf') || input.includes('wave') || input.includes('lesson') || input.includes('instructor') || input.includes('board') || input.includes('rent')) {
+    if (input.includes('wellness') || input.includes('yoga') || input.includes('spa') || input.includes('massage') || input.includes('relax') || input.includes('therapy') || input.includes('lessons') || input.includes('surf')) {
       return {
-        text: "Urbiztondo Beach is a world-renowned surf spot! We have an in-house Surf School with certified, friendly local instructors:\n\n🏄‍♀️ **Surf Lessons**: ₱600/hour (includes board rental and private 1-on-1 instructor).\n🛹 **Board Rental**: ₱250/hour or ₱800/full day.\n\nOur coaches are fantastic with both absolute beginners and intermediate surfers!",
-        action: 'surf'
+        text: "We host relaxing and revitalizing wellness experiences in partnership with certified local practitioners:\n\n🧘‍♀️ **Guided Sunset Yoga**: ₱500/session (includes standard yoga mat and certified guide on our beachfront deck).\n💆‍♂️ **Traditional Seaside Massage**: ₱900/hour (authentic warm coconut oil in open-air seaside massage cabanas).\n\nLet us know if you want to request these custom packages during your check-in!",
+        action: 'booking'
       };
     }
 
-    if (input.includes('pool') || input.includes('amenit') || input.includes('spa') || input.includes('massage') || input.includes('bar') || input.includes('facility')) {
+    if (input.includes('amenit') || input.includes('bar') || input.includes('facility') || input.includes('pool')) {
       return {
-        text: "We host an array of coastal facilities to soothe and energize you:\n\n🏊‍♂️ **Beachfront Infinity Pool**: Stretches right over the surf line.\n🍹 **Sunset Bar & Grill**: Handcrafted cocktails and ice-cold craft beers during sunset golden hours.\n💆‍♀️ **Seaside Spa**: Open-air seaside massage cabanas utilizing authentic warm coconut oils.\n🏄‍♂️ **Certified Surf Lessons**: Professional board rentals and coaches."
+        text: "We host an array of coastal facilities to soothe and energize you:\n\n🧘‍♀️ **Beachfront Yoga Deck**: Restorative meditation and guided yoga overlooking the sea.\n🍹 **Sunset Bar & Grill**: Handcrafted cocktails and ice-cold craft beers during golden hours.\n💆‍♀️ **Seaside Spa**: Open-air seaside massage cabanas utilizing authentic warm coconut oils.\n🌿 **Eco-Friendly Living spaces**: Sustainable garden areas and rustic design elements."
       };
     }
 
@@ -104,7 +104,7 @@ export default function ChatBot({ onOpenBooking }: ChatBotProps) {
     }
 
     return {
-      text: "I want to make sure you get the perfect response! I can tell you about our **Rooms & Rates**, **Surf Lessons**, **Resort Location**, **Maranna Dining Menu**, or help you open the **Booking Panel**! What would you like to explore? 😊"
+      text: "I want to make sure you get the perfect response! I can tell you about our **Rooms & Rates**, **Wellness Experiences**, **Resort Location**, **Maranna Dining Menu**, or help you open the **Booking Panel**! What would you like to explore? 😊"
     };
   };
 
@@ -164,7 +164,7 @@ export default function ChatBot({ onOpenBooking }: ChatBotProps) {
 
   const quickReplies = [
     { label: '🏨 Rooms & Rates', query: 'Tell me about the rooms and rates' },
-    { label: '🏄‍♀️ Surf Lessons', query: 'What are the surf packages?' },
+    { label: '🌿 Wellness & Spa', query: 'What are the wellness packages?' },
     { label: '📍 Location', query: 'Where is the resort located?' },
     { label: '📅 Book Now', query: 'How do I book a stay?' }
   ];
@@ -240,6 +240,8 @@ export default function ChatBot({ onOpenBooking }: ChatBotProps) {
           <motion.div
             id="chatbot-window-panel"
             data-lenis-prevent
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
             initial={{ opacity: 0, y: 30, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -322,7 +324,7 @@ export default function ChatBot({ onOpenBooking }: ChatBotProps) {
               {isTyping && (
                 <div className="flex items-start gap-2 justify-start">
                   <div className="w-7 h-7 rounded-full bg-coral/10 border border-coral/15 flex items-center justify-center text-xs shrink-0">
-                    🏄‍♀️
+                    🌺
                   </div>
                   <div className="bg-white border border-slate-100 py-2.5 px-4 rounded-xl rounded-tl-sm shadow-sm flex items-center gap-1">
                     <span className="w-1.2 h-1.2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />

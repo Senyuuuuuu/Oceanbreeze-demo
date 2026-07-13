@@ -14,22 +14,22 @@ interface FeatureCard {
 const FEATURE_CARDS: FeatureCard[] = [
   {
     id: 'location',
-    title: 'Direct Beachfront Surf Spot',
-    description: 'Situated on the legendary shores of San Juan, La Union. Steps from local surf lessons, hip cafes, and vibrant beach bars.',
+    title: 'Direct Beachfront Location',
+    description: 'Situated on the legendary shores of San Juan, La Union. Steps from premium beachside dining, hip cafes, and relaxing beach lounges.',
     icon: Compass,
     color: 'text-sunset'
   },
   {
     id: 'pricing',
     title: 'Affordable Luxury Stays',
-    description: 'Bask in premium high-thread linens, private ocean balcony features, and plunge pool options at incredibly competitive rates.',
+    description: 'Bask in premium high-thread linens, private ocean balcony features, and private villa options at incredibly competitive rates.',
     icon: DollarSign,
     color: 'text-ocean'
   },
   {
     id: 'family',
     title: 'Family-Friendly Oasis',
-    description: 'We prioritize multi-guest safety with secure shallow swimming boundaries, expansive lawns, and private split-level lofts.',
+    description: 'We prioritize multi-guest safety with secure shallow beach wading spaces, expansive lawns, and private split-level lofts.',
     icon: Heart,
     color: 'text-coral'
   },
@@ -71,7 +71,7 @@ const TESTIMONIALS_DATA: Testimonial[] = [
     name: 'David Chen',
     location: 'Digital Nomad',
     rating: 5,
-    comment: 'Perfect spot for remote working and early morning surf sessions. The fiber Wi-Fi was blazing fast throughout the resort property, rooms are modern with cold A/C, and you literally step onto the sand. Loved the Surfer\'s Cabin!',
+    comment: 'Perfect spot for remote working and early morning beachfront walks. The fiber Wi-Fi was blazing fast throughout the resort property, rooms are modern with cold A/C, and you literally step onto the sand. Loved the Beachside Eco Cabin!',
     date: 'May 2026',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80'
   },
@@ -80,7 +80,7 @@ const TESTIMONIALS_DATA: Testimonial[] = [
     name: 'Maria Santos',
     location: 'Quezon City, Philippines',
     rating: 5,
-    comment: 'Our family had the absolute best summer vacation here. The Family Loft was extremely spacious, and the pool is perfectly clean and safe. The resort team went above and beyond to organize board rentals and surf coaches for our kids.',
+    comment: 'Our family had the absolute best summer vacation here. The Family Loft was extremely spacious, and the beachfront is perfectly clean and safe. The resort team went above and beyond to organize wellness sessions and sunset tours for our kids.',
     date: 'April 2026',
     avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80'
   }

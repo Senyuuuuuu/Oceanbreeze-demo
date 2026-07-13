@@ -24,10 +24,10 @@ interface AmenityItem {
 
 const AMENITIES_DATA: AmenityItem[] = [
   {
-    id: 'pool',
-    name: 'Infinity Swimming Pool',
-    description: 'A gorgeous, freshwater swimming pool looking directly onto La Union\'s coastal horizon.',
-    icon: Waves,
+    id: 'wellness',
+    name: 'Beachfront Yoga & Wellness Deck',
+    description: 'An open-air, elevated wooden platform right on the sand for daily sunrise yoga, restorative meditation, and sound healing.',
+    icon: Sparkles,
     colorClass: 'bg-ocean/10',
     iconColor: 'text-ocean'
   },
@@ -74,7 +74,7 @@ const AMENITIES_DATA: AmenityItem[] = [
   {
     id: 'family',
     name: 'Family Friendly Zones',
-    description: 'Safe play areas, shallow pool sections, and fun activities suitable for children.',
+    description: 'Safe play areas, shallow wading beach zones, and fun coastal activities suitable for children.',
     icon: Heart,
     colorClass: 'bg-coral/10',
     iconColor: 'text-coral'
@@ -207,13 +207,13 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
           <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div className="max-w-2xl">
               <span className="text-[10px] uppercase font-bold text-sand tracking-widest block mb-2">
-                🏄‍♂️ La Union Surfing Capital
+                🌿 Coastal Wellness Retreat
               </span>
               <h4 className="font-serif text-2xl md:text-3xl font-bold leading-tight">
-                Want to catch the legendary Urbiztondo swell?
+                Want to experience complete beachfront tranquility?
               </h4>
               <p className="text-white/70 text-xs sm:text-sm mt-2 leading-relaxed">
-                Ocean Breeze Resort partners with professional local surf instructors. Book surfboards and personal coaches directly at the front desk upon check-in! Suitable for absolute beginners up to expert wave-riders.
+                Ocean Breeze Resort hosts daily seaside meditation, guided sunrise yoga sessions, and sound healing led by certified practitioners. Reconnect with nature and nourish your soul steps away from the rhythmic ocean waves.
               </p>
             </div>
             <div className="shrink-0">
@@ -221,7 +221,7 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
                 href="#contact"
                 className="inline-block px-6 py-3.5 rounded-full bg-sunset hover:bg-sunset/90 text-white font-sans text-xs font-bold uppercase tracking-wider shadow-lg shadow-sunset/15 text-center active:scale-95 transition-transform"
               >
-                Inquire Surf Packages
+                Explore Wellness Stay
               </a>
             </div>
           </div>

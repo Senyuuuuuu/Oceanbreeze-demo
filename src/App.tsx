@@ -17,7 +17,6 @@ import Restaurant from './components/Restaurant';
 import BookingInquiryModal from './components/BookingInquiryModal';
 import PageHeader from './components/PageHeader';
 import IntroLoader from './components/IntroLoader';
-import BackendSetupModal from './components/BackendSetupModal';
 import ChatBot from './components/ChatBot';
 import { motion, AnimatePresence } from 'motion/react';
 import Lenis from 'lenis';
@@ -26,7 +25,6 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [activePage, setActivePage] = useState<string>('home');
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [isBackendSetupOpen, setIsBackendSetupOpen] = useState(false);
   const [preSelectedRoom, setPreSelectedRoom] = useState<string>('');
 
   const handleOpenBooking = (roomType?: string) => {
@@ -139,7 +137,7 @@ export default function App() {
           >
             <PageHeader
               title="Resort Experiences"
-              subtitle="Indulge in beachfront pool lounging, surf packages, sunset bars, and revitalizing seaside dining."
+              subtitle="Indulge in beachfront wellness, yoga packages, sunset lounges, and revitalizing seaside dining."
               category="Facilities & Amenities"
               backgroundImageUrl="https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=1920&q=80"
               onHomeClick={() => handlePageChange('home')}
@@ -158,7 +156,7 @@ export default function App() {
           >
             <PageHeader
               title="Visual Showcase"
-              subtitle="Capture the essence of Ocean Breeze: high-energy surf moments, deep sunset glow, and premium architectural spaces."
+              subtitle="Capture the essence of Ocean Breeze: gentle ocean waves, deep sunset glow, and premium architectural spaces."
               category="Media Gallery"
               backgroundImageUrl="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1920&q=80"
               onHomeClick={() => handlePageChange('home')}
@@ -189,7 +187,7 @@ export default function App() {
           >
             <PageHeader
               title="Find Us & Reach Out"
-              subtitle="Plan your journey to Urbiztondo's premier surf resort. Reach out to our team for custom events, surf sessions, and bookings."
+              subtitle="Plan your journey to Urbiztondo's premier beachfront resort. Reach out to our team for custom events, wellness retreats, and bookings."
               category="Contact Us"
               backgroundImageUrl="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1920&q=80"
               onHomeClick={() => handlePageChange('home')}
@@ -255,7 +253,6 @@ export default function App() {
         <Footer 
           onOpenBooking={handleOpenBooking} 
           onChangePage={handlePageChange} 
-          onOpenBackendSetup={() => setIsBackendSetupOpen(true)} 
         />
 
         {/* Global Booking Reservation Modal */}
@@ -263,12 +260,6 @@ export default function App() {
           isOpen={isBookingOpen}
           onClose={handleCloseBooking}
           preSelectedRoom={preSelectedRoom}
-        />
-
-        {/* Secure Backend Setup Panel */}
-        <BackendSetupModal 
-          isOpen={isBackendSetupOpen} 
-          onClose={() => setIsBackendSetupOpen(false)} 
         />
 
         {/* Floating Beachfront Concierge Chat Bot */}

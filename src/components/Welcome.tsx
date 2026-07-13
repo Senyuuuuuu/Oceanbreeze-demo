@@ -47,12 +47,13 @@ export default function Welcome({ onOpenBooking, onChangePage }: WelcomeProps) {
             {/* Main Picture Frame */}
             <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white relative group">
               <motion.img
-                src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=80"
+                src="https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/480742956_122140595558567801_6324144565661516274_n.jpg"
                 alt="Ocean Breeze Beachfront Boutique Experience"
                 referrerPolicy="no-referrer"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full h-[350px] sm:h-[450px] object-cover"
+                className="w-full max-w-[555px] h-[350px] sm:h-[500px] object-cover"
+                style={{ width: '100%', maxWidth: '555px', height: '500px' }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
             </div>
@@ -69,8 +70,8 @@ export default function Welcome({ onOpenBooking, onChangePage }: WelcomeProps) {
                 <Sunrise className="w-6 h-6 text-sunset" />
               </div>
               <div>
-                <h4 className="font-serif text-sm font-bold text-charcoal leading-tight">Urbiztondo Surf Side</h4>
-                <p className="text-[11px] text-gray-400 mt-0.5">Direct beach access, prime surfing & golden hours</p>
+                <h4 className="font-serif text-sm font-bold text-charcoal leading-tight">Sunset Shoreline</h4>
+                <p className="text-[11px] text-gray-400 mt-0.5">Direct beach access, gentle tides & golden hours</p>
               </div>
             </motion.div>
           </motion.div>
@@ -89,16 +90,16 @@ export default function Welcome({ onOpenBooking, onChangePage }: WelcomeProps) {
             <h3 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-charcoal tracking-tight leading-tight">
               Where Elegant Luxury Meets{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-sunset to-coral">
-                La Union's Surf Vibes
+                La Union's Ocean Breezes
               </span>
             </h3>
  
             <p className="mt-6 text-gray-500 font-sans text-sm sm:text-base leading-relaxed font-light">
-              Nestled along the pristine sandy shores of San Juan, La Union, Ocean Breeze Resort offers an intimate escape that marries boutique luxury with the warm, relaxed hospitality of the Philippines. Whether you are here to ride the legendary Urbiztondo waves, soak in the dramatic golden sunsets, or simply unwind to the rhythmic chorus of the ocean, our paradise is your home away from home.
+              Nestled along the pristine sandy shores of San Juan, La Union, Ocean Breeze Resort offers an intimate escape that marries boutique luxury with the warm, relaxed hospitality of the Philippines. Whether you are here to relax by the pristine sandy shores, soak in the dramatic golden sunsets, or simply unwind to the rhythmic chorus of the ocean, our paradise is your home away from home.
             </p>
  
             <p className="mt-4 text-gray-500 font-sans text-sm sm:text-base leading-relaxed font-light">
-              Every detail of our resort is thoughtfully designed to immerse you in tranquility. From light-filled luxury suites overlooking the coast to personalized surf instruction and poolside dining, we curate a vacation that nourishes the soul.
+              Every detail of our resort is thoughtfully designed to immerse you in tranquility. From light-filled luxury suites overlooking the coast to personalized wellness services and seaside dining, we curate a vacation that nourishes the soul.
             </p>
  
             {/* Small dynamic highlights */}

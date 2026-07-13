@@ -13,7 +13,7 @@ const ROOM_OPTIONS = [
   { id: 'deluxe', name: 'Deluxe Beachfront Suite' },
   { id: 'sunset', name: 'Sunset Panoramic Villa' },
   { id: 'family', name: 'Spacious Family Loft' },
-  { id: 'surfer', name: 'Surfer\'s Eco Cabin' }
+  { id: 'surfer', name: 'Beachside Eco Cabin' }
 ];
 
 export default function BookingInquiryModal({
@@ -696,12 +696,12 @@ export default function BookingInquiryModal({
                   {/* Message / Requests */}
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-charcoal/70 mb-1.5 flex items-center gap-1.5">
-                      <MessageSquare className="w-3.5 h-3.5 text-sunset" /> Special Requests / Surf Lessons Booking
+                      <MessageSquare className="w-3.5 h-3.5 text-sunset" /> Special Requests & Wellness Booking
                     </label>
                     <textarea
                       name="message"
                       rows={2}
-                      placeholder="Let us know if you need airport shuttle service, early check-in, or surf packages in La Union!"
+                      placeholder="Let us know if you need airport shuttle service, early check-in, or wellness packages in La Union!"
                       value={formData.message}
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 text-charcoal text-sm focus:outline-none focus:border-ocean focus:ring-1 focus:ring-ocean transition-all resize-none"

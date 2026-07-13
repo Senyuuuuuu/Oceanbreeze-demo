@@ -49,16 +49,16 @@ const ROOMS_DATA: Room[] = [
   },
   {
     id: 'surfer',
-    name: 'Surfer\'s Eco Cabin',
-    description: 'Cozy, rustic-chic coastal living tailored for sea lovers and surfers. Made with locally sourced bamboo, reclaimed timbers, fully air-conditioned, and located steps from the surf breaks.',
+    name: 'Beachside Eco Cabin',
+    description: 'Cozy, rustic-chic coastal living tailored for sea lovers and peace seekers. Made with locally sourced bamboo, reclaimed timbers, fully air-conditioned, and located steps from the gentle shoreline.',
     capacity: '2 Guests',
     size: '28 m²',
     bedType: 'Queen Size Bed',
     price: 4200,
     image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=800&q=80',
-    amenities: ['Surfboard Rack', 'Air Conditioning', 'Outdoor Rain Shower', 'Eco Toiletries', 'Front Hammock'],
+    amenities: ['Private Hammock', 'Air Conditioning', 'Outdoor Rain Shower', 'Eco Toiletries', 'Beach Lounge Chairs'],
     featured: false,
-    view: 'Direct Surf Break Steps'
+    view: 'Direct Beachfront Access'
   }
 ];
 
