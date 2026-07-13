@@ -178,10 +178,11 @@ export default function Gallery() {
               <motion.div
                 layout
                 key={item.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.4 }}
+                initial={{ opacity: 0, y: 35, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, amount: 0.15 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                 onClick={() => setLightboxIndex(index)}
                 className="break-inside-avoid relative rounded-3xl overflow-hidden shadow-md group cursor-pointer bg-white border border-gray-100"
               >

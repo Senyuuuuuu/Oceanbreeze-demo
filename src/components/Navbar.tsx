@@ -44,14 +44,17 @@ export default function Navbar({ onOpenBooking, activePage, onChangePage }: Navb
 
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+      <motion.header
+        initial={{ y: -30, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 flex items-center ${
           isSolid
-            ? 'py-2.5 bg-white/95 backdrop-blur-md shadow-md border-b border-gray-100'
-            : 'py-5 bg-gradient-to-b from-charcoal/45 to-transparent'
+            ? 'h-[70px] bg-white/95 backdrop-blur-[15px] shadow-md border-b border-gray-100'
+            : 'h-[90px] bg-gradient-to-b from-charcoal/45 to-transparent'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <a
@@ -159,7 +162,7 @@ export default function Navbar({ onOpenBooking, activePage, onChangePage }: Navb
             </div>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* Mobile Drawer Overlay */}
       <AnimatePresence>

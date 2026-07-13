@@ -88,18 +88,25 @@ export default function Hero({ onOpenBooking, onChangePage }: HeroProps) {
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.5, ease: 'easeOut' }}
             className="absolute inset-0"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/20 to-charcoal/50 z-10" />
-            <img
+            <motion.img
               src={HERO_SLIDES[currentSlide].url}
               alt={HERO_SLIDES[currentSlide].title}
               referrerPolicy="no-referrer"
               className="h-full w-full object-cover"
+              animate={{ scale: [1, 1.08] }}
+              transition={{
+                duration: 20,
+                ease: 'easeInOut',
+                repeat: Infinity,
+                repeatType: 'reverse'
+              }}
             />
           </motion.div>
         </AnimatePresence>
@@ -122,24 +129,35 @@ export default function Hero({ onOpenBooking, onChangePage }: HeroProps) {
               {HERO_SLIDES[currentSlide].accent}
             </motion.div>
  
-            {/* Headline */}
-            <motion.h2
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
-              className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-tight"
-            >
-              Escape to the <br className="hidden md:inline" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-sand via-coral to-ocean">
-                Beauty of La Union
+            {/* Headline with premium split mask-slide effect */}
+            <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-tight flex flex-col gap-1.5">
+              <span className="block overflow-hidden pb-1">
+                <motion.span
+                  className="block"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
+                >
+                  Escape to the
+                </motion.span>
               </span>
-            </motion.h2>
+              <span className="block overflow-hidden pb-1">
+                <motion.span
+                  className="block text-transparent bg-clip-text bg-gradient-to-r from-sand via-coral to-ocean"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+                >
+                  Beauty of La Union
+                </motion.span>
+              </span>
+            </h2>
  
             {/* Subheading */}
             <motion.p
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.55 }}
               className="mt-6 text-base sm:text-lg md:text-xl text-white/95 leading-relaxed max-w-2xl font-sans font-light"
             >
               Relax by the sea, enjoy breathtaking sunsets, and experience comfortable beachfront accommodations at Ocean Breeze Resort. Your tropical oasis awaits.
@@ -147,9 +165,9 @@ export default function Hero({ onOpenBooking, onChangePage }: HeroProps) {
  
             {/* CTA Buttons */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.55 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.7 }}
               className="mt-8 flex flex-wrap gap-4"
             >
               <motion.button

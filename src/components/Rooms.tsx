@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Users, Waves, Ruler, BedDouble, Star, Sparkles, Check, ChevronRight } from 'lucide-react';
+import { Users, Waves, Ruler, BedDouble, Star, Sparkles, Check, ChevronRight, X } from 'lucide-react';
 import { Room } from '../types';
 
 interface RoomsProps {
@@ -65,6 +65,66 @@ const ROOMS_DATA: Room[] = [
 export default function Rooms({ onOpenBooking }: RoomsProps) {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
+  // Lock scroll when the selected room modal is open
+  useEffect(() => {
+    if (selectedRoom) {
+      document.body.style.overflow = 'hidden';
+      if ((window as any).lenis) {
+        (window as any).lenis.stop();
+      }
+    } else {
+      document.body.style.overflow = 'unset';
+      if ((window as any).lenis) {
+        (window as any).lenis.start();
+      }
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      if ((window as any).lenis) {
+        (window as any).lenis.start();
+      }
+    };
+  }, [selectedRoom]);
+
+  const RECOMMENDATIONS: Record<string, { bestFor: string; verdict: string; badge: string; bgClass: string; textClass: string; borderClass: string; iconColor: string }> = {
+    deluxe: {
+      bestFor: 'Couples & Ocean Watchers',
+      verdict: 'Perfect if you want to wake up directly facing the surf. It features amazing direct sea sightlines and a large ocean breeze balcony to watch San Juan’s dynamic waves.',
+      badge: 'Bestselling Ocean View',
+      bgClass: 'bg-sky-50/70',
+      textClass: 'text-sky-800',
+      borderClass: 'border-sky-100',
+      iconColor: 'text-sky-500'
+    },
+    sunset: {
+      bestFor: 'Honeymooners, Couples & Luxury Seekers',
+      verdict: 'The crown jewel of our resort. Standalone privacy, a private plunge pool deck, and an outdoor tub makes it our ultimate luxury package for memorable sunset moments.',
+      badge: 'Ultimate Premium Choice',
+      bgClass: 'bg-amber-50/70',
+      textClass: 'text-amber-800',
+      borderClass: 'border-amber-100',
+      iconColor: 'text-amber-500'
+    },
+    family: {
+      bestFor: 'Families & Group Retreats',
+      verdict: 'Designed for optimal room and shared experiences. The split-level loft layout lets parents enjoy a private space while the rest of the group loves the terrace and kitchenette.',
+      badge: 'Top Choice for Families',
+      bgClass: 'bg-emerald-50/70',
+      textClass: 'text-emerald-800',
+      borderClass: 'border-emerald-100',
+      iconColor: 'text-emerald-500'
+    },
+    surfer: {
+      bestFor: 'Surfers, Solo Adventurers & Nature Lovers',
+      verdict: 'Cozy, sustainable bamboo cabin steps from the shoreline. Recommended for active travelers who want rustic-chic surf vibes, fresh air, and immediate beach access.',
+      badge: 'Authentic Coastal Vibe',
+      bgClass: 'bg-teal-50/70',
+      textClass: 'text-teal-800',
+      borderClass: 'border-teal-100',
+      iconColor: 'text-teal-500'
+    }
+  };
+
   // Staggered variants for cards
   const gridContainerVariants = {
     hidden: { opacity: 0 },
@@ -110,26 +170,28 @@ export default function Rooms({ onOpenBooking }: RoomsProps) {
         </motion.div>
 
         {/* Rooms Card Grid */}
-        <motion.div
-          variants={gridContainerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
           {ROOMS_DATA.map((room) => (
             <motion.div
               key={room.id}
-              variants={cardVariants}
-              className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-slate-100 flex flex-col h-full"
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{ 
+                y: -6, 
+                scale: 1.012,
+                boxShadow: "0 25px 45px -12px rgba(11, 30, 54, 0.14)"
+              }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              onClick={() => setSelectedRoom(room)}
+              className="group bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 flex flex-col h-full cursor-pointer relative"
             >
               {/* Card Image Container with Hover zoom and labels */}
-              <div className="relative h-64 sm:h-76 overflow-hidden">
+              <div className="relative h-64 sm:h-76 overflow-hidden shrink-0">
                 <motion.img
                   src={room.image}
                   alt={room.name}
                   referrerPolicy="no-referrer"
-                  whileHover={{ scale: 1.08 }}
+                  whileHover={{ scale: 1.06 }}
                   transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                   className="w-full h-full object-cover"
                 />
@@ -167,31 +229,25 @@ export default function Rooms({ onOpenBooking }: RoomsProps) {
                   {room.description}
                 </p>
 
-                {/* Meta details (Capacity, Size, Bed) */}
-                <div className="grid grid-cols-3 gap-2 border-t border-b border-gray-100 py-4 mb-6 text-[11px] text-gray-500 font-medium">
+                {/* Meta details (Capacity and Scenic View only, removing style/bed config and size) */}
+                <div className="grid grid-cols-2 gap-4 border-t border-b border-gray-100 py-4 mb-6 text-[11px] text-gray-500 font-medium">
                   <div className="flex flex-col gap-1">
                     <span className="text-[9px] uppercase text-gray-400 font-bold tracking-wider flex items-center gap-1">
                       <Users className="w-3.5 h-3.5 text-coral" /> Capacity
                     </span>
                     <span className="text-charcoal font-sans truncate">{room.capacity}</span>
                   </div>
-                  <div className="flex flex-col gap-1 border-l border-r border-gray-100 px-3">
+                  <div className="flex flex-col gap-1 border-l border-gray-100 pl-4">
                     <span className="text-[9px] uppercase text-gray-400 font-bold tracking-wider flex items-center gap-1">
-                      <Ruler className="w-3.5 h-3.5 text-ocean" /> Room Size
+                      <Waves className="w-3.5 h-3.5 text-ocean" /> Scenic View
                     </span>
-                    <span className="text-charcoal font-sans">{room.size}</span>
-                  </div>
-                  <div className="flex flex-col gap-1 pl-3">
-                    <span className="text-[9px] uppercase text-gray-400 font-bold tracking-wider flex items-center gap-1">
-                      <BedDouble className="w-3.5 h-3.5 text-sunset" /> Bed Config
-                    </span>
-                    <span className="text-charcoal font-sans truncate">{room.bedType}</span>
+                    <span className="text-charcoal font-sans truncate">{room.view}</span>
                   </div>
                 </div>
 
                 {/* Amenities checklist row */}
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {room.amenities.map(amenity => (
+                  {room.amenities.slice(0, 3).map(amenity => (
                     <span
                       key={amenity}
                       className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-sans text-[10px] font-medium"
@@ -199,20 +255,25 @@ export default function Rooms({ onOpenBooking }: RoomsProps) {
                       <Check className="w-2.5 h-2.5 text-ocean" /> {amenity}
                     </span>
                   ))}
+                  {room.amenities.length > 3 && (
+                    <span className="inline-flex items-center px-2 py-1 rounded-full bg-slate-50 text-slate-500 font-sans text-[9px] font-bold">
+                      +{room.amenities.length - 3} More
+                    </span>
+                  )}
                 </div>
 
                 {/* Action Buttons */}
                 <div className="grid grid-cols-2 gap-4 mt-auto pt-2">
-                  <motion.button
-                    onClick={() => setSelectedRoom(room)}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="py-2.5 px-4 rounded-full border border-gray-200 hover:bg-slate-50 text-charcoal font-sans text-xs font-semibold tracking-wider transition-colors text-center focus:outline-none cursor-pointer"
+                  <div
+                    className="py-2.5 px-4 rounded-full border border-slate-200 bg-white text-charcoal group-hover:border-charcoal group-hover:bg-charcoal group-hover:text-white font-sans text-xs font-bold tracking-wider transition-all duration-300 text-center flex items-center justify-center gap-1.5 focus:outline-none cursor-pointer shadow-xs group-hover:shadow-md"
                   >
                     View Details
-                  </motion.button>
+                  </div>
                   <motion.button
-                    onClick={() => onOpenBooking(room.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onOpenBooking(room.id);
+                    }}
                     whileHover={{ scale: 1.03, boxShadow: "0 10px 20px -5px rgba(245, 124, 0, 0.3)" }}
                     whileTap={{ scale: 0.97 }}
                     className="py-2.5 px-4 rounded-full bg-sunset text-white font-sans text-xs font-bold tracking-wider uppercase transition-colors shadow-md shadow-sunset/10 text-center flex items-center justify-center gap-1 cursor-pointer focus:outline-none"
@@ -224,94 +285,197 @@ export default function Rooms({ onOpenBooking }: RoomsProps) {
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
       {/* Popover/Detail Drawer for Room details */}
       <AnimatePresence>
         {selectedRoom && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 md:p-10">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedRoom(null)}
-              className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-charcoal/75 backdrop-blur-md z-0"
             />
 
             {/* Content Drawer Box */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-xl bg-white rounded-3xl overflow-hidden shadow-2xl glass-panel border border-white/40"
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl border border-slate-100 flex flex-col md:flex-row h-[82vh] md:h-[580px] z-10"
             >
               {/* Close Button */}
               <button
                 onClick={() => setSelectedRoom(null)}
-                className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white transition-colors focus:outline-none"
+                className="absolute top-4 right-4 z-30 p-2 rounded-full bg-white/90 hover:bg-white text-charcoal shadow-md border border-slate-200/50 transition-all active:scale-95 focus:outline-none cursor-pointer"
+                aria-label="Close details"
               >
-                <XIcon className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
 
-              <div className="h-56 overflow-hidden relative">
+              {/* Left Column: Image Area */}
+              <div className="relative w-full md:w-[42%] h-44 md:h-full shrink-0 overflow-hidden bg-slate-900">
                 <img
                   src={selectedRoom.image}
                   alt={selectedRoom.name}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-transparent to-black/30" />
-                <div className="absolute bottom-4 left-6">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-sand block mb-1">
-                    Luxury Retreat
+                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-charcoal/90 via-charcoal/20 to-transparent md:from-charcoal/95 md:via-charcoal/40 md:to-transparent" />
+                
+                {/* Featured Badge */}
+                {selectedRoom.featured && (
+                  <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-sand text-charcoal font-sans text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 border border-sand shadow-sm">
+                    <Star className="w-3 h-3 fill-sunset text-sunset" /> Highly Requested
+                  </div>
+                )}
+
+                {/* Mobile-only Title Overlay to save space */}
+                <div className="absolute bottom-4 left-5 right-5 md:hidden">
+                  <span className="text-[9px] uppercase font-bold tracking-[0.2em] text-sand/90 block mb-0.5">
+                    Sanctuary
                   </span>
-                  <h4 className="font-serif text-2xl font-bold text-white">
+                  <h4 className="font-serif text-lg sm:text-xl font-bold text-white leading-tight">
                     {selectedRoom.name}
                   </h4>
                 </div>
               </div>
 
-              <div className="p-6 md:p-8">
-                <h5 className="text-xs font-bold uppercase tracking-wider text-charcoal/80 mb-2">
-                  About the sanctuary
-                </h5>
-                <p className="text-gray-500 text-xs sm:text-sm font-light leading-relaxed mb-6">
-                  {selectedRoom.description} All our rooms feature climate-controlled energy-saving air conditioning systems, luxurious hypo-allergenic mattresses, hand-woven linens, high-speed fiber internet, and bespoke bath products.
-                </p>
-
-                <h5 className="text-xs font-bold uppercase tracking-wider text-charcoal/80 mb-3">
-                  Included Amenities
-                </h5>
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  {selectedRoom.amenities.map(amenity => (
-                    <div key={amenity} className="flex items-center gap-2 text-xs text-gray-600">
-                      <div className="w-5 h-5 rounded-full bg-ocean/10 text-ocean flex items-center justify-center shrink-0">
-                        <Check className="w-3 h-3" />
-                      </div>
-                      <span>{amenity}</span>
-                    </div>
-                  ))}
-                  <div className="flex items-center gap-2 text-xs text-gray-600">
-                    <div className="w-5 h-5 rounded-full bg-ocean/10 text-ocean flex items-center justify-center shrink-0">
-                      <Check className="w-3 h-3" />
-                    </div>
-                    <span>High-Speed Free Wi-Fi</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-gray-600">
-                    <div className="w-5 h-5 rounded-full bg-ocean/10 text-ocean flex items-center justify-center shrink-0">
-                      <Check className="w-3 h-3" />
-                    </div>
-                    <span>Air Conditioned Room</span>
-                  </div>
+              {/* Right Column: Title and Scrollable Info Panel */}
+              <div className="flex flex-col flex-1 min-h-0 md:w-[58%] h-[calc(100%-11rem)] md:h-full overflow-hidden bg-white">
+                
+                {/* Desktop Title Block */}
+                <div className="hidden md:block px-8 pt-8 pb-3 shrink-0 border-b border-slate-50">
+                  <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-sunset block mb-1">
+                    Sanctuary Overview
+                  </span>
+                  <h4 className="font-serif text-2xl md:text-3xl font-bold text-charcoal leading-tight">
+                    {selectedRoom.name}
+                  </h4>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-gray-100 pt-6">
+                {/* Scrollable body content */}
+                <div className="overflow-y-auto flex-grow p-5 sm:p-6 md:px-8 md:py-5 space-y-5 scrollbar-thin">
+                  
+                  {/* Resort Recommendation Verdict Card */}
+                  {RECOMMENDATIONS[selectedRoom.id] && (
+                    <div className={`p-3.5 sm:p-4 rounded-2xl border ${RECOMMENDATIONS[selectedRoom.id].bgClass} ${RECOMMENDATIONS[selectedRoom.id].borderClass} flex gap-3 items-start`}>
+                      <div className={`p-1.5 rounded-lg bg-white shadow-xs shrink-0 ${RECOMMENDATIONS[selectedRoom.id].iconColor}`}>
+                        <Sparkles className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <span className="text-[9px] uppercase font-extrabold tracking-widest text-slate-400">RESORT VERDICT</span>
+                          <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-md bg-white border border-slate-100 shadow-3xs ${RECOMMENDATIONS[selectedRoom.id].textClass}`}>
+                            {RECOMMENDATIONS[selectedRoom.id].badge}
+                          </span>
+                        </div>
+                        <h6 className="font-sans text-[11px] font-bold text-charcoal mb-0.5">
+                          Best For: <span className="font-normal text-slate-700">{RECOMMENDATIONS[selectedRoom.id].bestFor}</span>
+                        </h6>
+                        <p className="text-slate-600 text-[11px] font-light leading-relaxed">
+                          {RECOMMENDATIONS[selectedRoom.id].verdict}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Specifications Grid */}
+                  <div className="space-y-2">
+                    <h5 className="text-[9px] font-bold uppercase tracking-widest text-slate-400">
+                      Sanctuary Specifications
+                    </h5>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                        <div className="w-7 h-7 rounded-lg bg-coral/10 text-coral flex items-center justify-center shrink-0">
+                          <Users className="w-3.5 h-3.5" />
+                        </div>
+                        <div>
+                          <span className="text-[8px] uppercase text-gray-400 font-bold block tracking-wider leading-none mb-0.5">Capacity</span>
+                          <span className="text-xs text-charcoal font-semibold leading-none">{selectedRoom.capacity}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                        <div className="w-7 h-7 rounded-lg bg-ocean/10 text-ocean flex items-center justify-center shrink-0">
+                          <Waves className="w-3.5 h-3.5" />
+                        </div>
+                        <div>
+                          <span className="text-[8px] uppercase text-gray-400 font-bold block tracking-wider leading-none mb-0.5">Scenic View</span>
+                          <span className="text-xs text-charcoal font-semibold leading-none truncate max-w-[110px] block">{selectedRoom.view}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                        <div className="w-7 h-7 rounded-lg bg-sunset/10 text-sunset flex items-center justify-center shrink-0">
+                          <BedDouble className="w-3.5 h-3.5" />
+                        </div>
+                        <div>
+                          <span className="text-[8px] uppercase text-gray-400 font-bold block tracking-wider leading-none mb-0.5">Bed Setup</span>
+                          <span className="text-xs text-charcoal font-semibold leading-none">{selectedRoom.bedType}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                        <div className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+                          <Ruler className="w-3.5 h-3.5" />
+                        </div>
+                        <div>
+                          <span className="text-[8px] uppercase text-gray-400 font-bold block tracking-wider leading-none mb-0.5">Room Size</span>
+                          <span className="text-xs text-charcoal font-semibold leading-none">{selectedRoom.size}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* About Details */}
+                  <div className="space-y-1.5">
+                    <h5 className="text-[9px] font-bold uppercase tracking-widest text-slate-400">
+                      Bespoke Design & Comforts
+                    </h5>
+                    <p className="text-slate-600 text-xs font-light leading-relaxed">
+                      {selectedRoom.description} Our private spaces come outfitted with high-performance cooling systems, luxury memory foam mattresses, and custom local organic towels & toiletries.
+                    </p>
+                  </div>
+
+                  {/* Included Amenities Checklist */}
+                  <div className="space-y-2">
+                    <h5 className="text-[9px] font-bold uppercase tracking-widest text-slate-400">
+                      In-Room Amenities Included
+                    </h5>
+                    <div className="grid grid-cols-2 gap-2 p-3 sm:p-3.5 rounded-2xl bg-slate-50/50 border border-slate-100">
+                      {selectedRoom.amenities.map(amenity => (
+                        <div key={amenity} className="flex items-center gap-2 text-xs text-slate-700">
+                          <div className="w-4 h-4 rounded-full bg-ocean/10 text-ocean flex items-center justify-center shrink-0">
+                            <Check className="w-2.5 h-2.5" />
+                          </div>
+                          <span className="font-medium truncate">{amenity}</span>
+                        </div>
+                      ))}
+                      <div className="flex items-center gap-2 text-xs text-slate-700">
+                        <div className="w-4 h-4 rounded-full bg-ocean/10 text-ocean flex items-center justify-center shrink-0">
+                          <Check className="w-2.5 h-2.5" />
+                        </div>
+                        <span className="font-medium">Free High-Speed Wi-Fi</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Fixed Footer Bar */}
+                <div className="flex items-center justify-between border-t border-slate-100 px-6 sm:px-8 py-4 bg-slate-50/90 backdrop-blur-md shrink-0">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-gray-400 block tracking-wider">Estimated Price</span>
-                    <span className="font-serif text-xl font-bold text-sunset">₱{selectedRoom.price.toLocaleString()}</span>
-                    <span className="text-xs text-gray-500"> / Night</span>
+                    <span className="text-[8px] uppercase font-bold text-slate-400 block tracking-wider">Estimated Price</span>
+                    <div className="flex items-baseline gap-0.5">
+                      <span className="font-serif text-lg sm:text-xl font-bold text-sunset">₱{selectedRoom.price.toLocaleString()}</span>
+                      <span className="text-[10px] text-slate-500 font-light">/ Night</span>
+                    </div>
                   </div>
                   <button
                     onClick={() => {
@@ -319,36 +483,18 @@ export default function Rooms({ onOpenBooking }: RoomsProps) {
                       setSelectedRoom(null);
                       onOpenBooking(id);
                     }}
-                    className="px-6 py-3 rounded-full bg-sunset hover:bg-sunset/90 text-white font-semibold text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 cursor-pointer focus:outline-none"
+                    className="px-5 py-2.5 rounded-full bg-sunset hover:bg-sunset/90 text-white font-sans text-xs font-bold uppercase tracking-wider transition-all shadow-md active:scale-95 cursor-pointer focus:outline-none flex items-center gap-1"
                   >
-                    Inquire Availability
+                    Book Room
+                    <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
+
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
     </section>
-  );
-}
-
-// Simple internal helper component for close icon
-function XIcon({ className = 'w-4 h-4' }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="24"
-      height="24"
-      stroke="currentColor"
-      strokeWidth="2"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <line x1="18" y1="6" x2="6" y2="18"></line>
-      <line x1="6" y1="6" x2="18" y2="18"></line>
-    </svg>
   );
 }

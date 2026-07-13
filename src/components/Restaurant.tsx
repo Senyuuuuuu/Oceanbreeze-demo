@@ -826,7 +826,13 @@ export default function Restaurant() {
       />
 
       {/* Brand & Narrative Block */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
+      >
         <div className="lg:col-span-5 flex justify-center bg-[#0B1E36] rounded-3xl p-8 shadow-2xl border border-white/10 relative overflow-hidden">
           {/* Subtle gold sparks inside the logo card */}
           <div className="absolute top-4 right-4 text-[#E5BF71]/35 animate-pulse">
@@ -875,10 +881,16 @@ export default function Restaurant() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Main Menu Section */}
-      <section className="bg-slate-50/50 py-16 md:py-24 border-y border-slate-100">
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.05 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="bg-slate-50/50 py-16 md:py-24 border-y border-slate-100"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Menu Intro */}
@@ -1132,10 +1144,16 @@ export default function Restaurant() {
           </div>
 
         </div>
-      </section>
+      </motion.section>
 
       {/* Reservation Section */}
-      <section className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <motion.section
+        initial={{ opacity: 0, y: 35 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.08 }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 bg-[#0B1E36] rounded-[40px] overflow-hidden shadow-2xl border border-white/5 relative">
           
           {/* Ambient Design Details */}
@@ -1334,7 +1352,7 @@ export default function Restaurant() {
           </div>
 
         </div>
-      </section>
+      </motion.section>
 
     </div>
   );
