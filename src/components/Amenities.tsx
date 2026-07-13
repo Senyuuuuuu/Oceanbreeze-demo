@@ -200,9 +200,74 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
           viewport={{ once: true }}
           className="mt-16 bg-gradient-to-r from-charcoal to-charcoal/90 rounded-3xl p-6 md:p-10 text-white relative overflow-hidden shadow-xl"
         >
+          {/* Custom style injection for high-performance GPU-accelerated wave animation */}
+          <style>{`
+            @keyframes waveMoveLeft {
+              0% {
+                transform: translate3d(0, 0, 0);
+              }
+              100% {
+                transform: translate3d(-50%, 0, 0);
+              }
+            }
+            @keyframes waveMoveRight {
+              0% {
+                transform: translate3d(-50%, 0, 0);
+              }
+              100% {
+                transform: translate3d(0, 0, 0);
+              }
+            }
+            .animate-wave-slow {
+              animation: waveMoveLeft 25s linear infinite;
+              will-change: transform;
+            }
+            .animate-wave-medium {
+              animation: waveMoveRight 18s linear infinite;
+              will-change: transform;
+            }
+            .animate-wave-fast {
+              animation: waveMoveLeft 12s linear infinite;
+              will-change: transform;
+            }
+          `}</style>
+
           {/* Subtle sunburst overlay */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-sunset/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-ocean/5 rounded-full blur-2xl pointer-events-none" />
+
+          {/* Beautiful, smooth layered wave background animations */}
+          <div className="absolute bottom-0 left-0 w-full h-20 pointer-events-none overflow-hidden select-none z-0 rounded-b-3xl">
+            {/* Back wave: slow, deep tropical teal-blue */}
+            <div className="absolute bottom-0 left-0 w-[200%] h-full animate-wave-slow opacity-60">
+              <svg className="w-full h-full" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path 
+                  d="M 0 60 Q 150 100, 300 60 T 600 60 Q 750 100, 900 60 T 1200 60 L 1200 120 L 0 120 Z" 
+                  fill="rgba(14, 116, 144, 0.45)"
+                />
+              </svg>
+            </div>
+            
+            {/* Middle wave: medium, beautiful glowing cyan */}
+            <div className="absolute bottom-0 left-0 w-[200%] h-full animate-wave-medium opacity-50">
+              <svg className="w-full h-full" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path 
+                  d="M 0 70 Q 150 110, 300 70 T 600 70 Q 750 110, 900 70 T 1200 70 L 1200 120 L 0 120 Z" 
+                  fill="rgba(6, 182, 212, 0.40)"
+                />
+              </svg>
+            </div>
+
+            {/* Front wave: fast, vibrant seafoam blue-white */}
+            <div className="absolute bottom-0 left-0 w-[200%] h-full animate-wave-fast opacity-45">
+              <svg className="w-full h-full" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path 
+                  d="M 0 80 Q 150 115, 300 80 T 600 80 Q 750 115, 900 80 T 1200 80 L 1200 120 L 0 120 Z" 
+                  fill="rgba(56, 189, 248, 0.35)"
+                />
+              </svg>
+            </div>
+          </div>
 
           <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div className="max-w-2xl">
