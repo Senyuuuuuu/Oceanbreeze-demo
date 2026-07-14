@@ -151,6 +151,14 @@ export default function Footer({ onOpenBooking, onChangePage }: FooterProps) {
             <p className="text-gray-500 font-sans text-[11px] font-light">
               © {new Date().getFullYear()} Ocean Breeze Resort, La Union. All Rights Reserved.
             </p>
+            <span className="hidden sm:inline text-white/15">•</span>
+            <a
+              href="#automation"
+              onClick={(e) => handleLinkClick(e, 'automation')}
+              className="text-gray-500 hover:text-sunset transition-colors text-[11px] font-sans font-semibold hover:underline"
+            >
+              Automation & API Hub
+            </a>
           </div>
           <p className="text-gray-500 font-sans text-[10px] flex items-center gap-1 justify-center font-light">
             Made with <Heart className="w-3 h-3 text-red-500 fill-red-500" /> on the shores of San Juan, La Union.

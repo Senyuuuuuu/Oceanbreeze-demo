@@ -673,6 +673,39 @@ export class BookingStore {
       await this.appendBookingToSheet(successfulBooking);
     }
 
+    // Dispatch to custom Google Apps Script Web App if configured by the user
+    const customScriptUrl = localStorage.getItem('ob_apps_script_url');
+    if (customScriptUrl) {
+      onProgress('Triggering custom Google Apps Script Web App...');
+      try {
+        const payload = {
+          guestName: successfulBooking.name,
+          email: successfulBooking.email,
+          phone: successfulBooking.phone,
+          roomType: successfulBooking.roomType,
+          checkIn: successfulBooking.checkIn,
+          checkOut: successfulBooking.checkOut,
+          guests: String(successfulBooking.guests),
+          specialRequests: successfulBooking.message || "None",
+          totalAmount: successfulBooking.roomType === 'deluxe' ? '12000' : successfulBooking.roomType === 'sunset' ? '18000' : successfulBooking.roomType === 'family' ? '15000' : '8000',
+          bookingId: successfulBooking.id,
+          timestamp: successfulBooking.timestamp
+        };
+
+        await fetch(customScriptUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(payload)
+        });
+        this.addLog('success', `📡 [APPS-SCRIPT] Successfully triggered custom Apps Script automation webhook: ${customScriptUrl}`);
+      } catch (e: any) {
+        this.addLog('warning', `📡 [APPS-SCRIPT] Apps Script webhook dispatch failed: ${e.message}`);
+      }
+    }
+
     onProgress('Notifying resort owner of booking details...');
     await new Promise(r => setTimeout(r, 600));
     this.triggerOwnerNotification(successfulBooking);

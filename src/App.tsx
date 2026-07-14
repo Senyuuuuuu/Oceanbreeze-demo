@@ -18,6 +18,7 @@ import BookingInquiryModal from './components/BookingInquiryModal';
 import PageHeader from './components/PageHeader';
 import IntroLoader from './components/IntroLoader';
 import ChatBot from './components/ChatBot';
+import AutomationHub from './components/AutomationHub';
 import { motion, AnimatePresence } from 'motion/react';
 import Lenis from 'lenis';
 
@@ -25,20 +26,25 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [activePage, setActivePage] = useState<string>('home');
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [preSelectedRoom, setPreSelectedRoom] = useState<string>('');
+  const [preSelectedRoom, setPreSelectedRoom] = useState<string>('deluxe');
+  const [checkIn, setCheckIn] = useState<string>('');
+  const [checkOut, setCheckOut] = useState<string>('');
+  const [guests, setGuests] = useState<string>('2');
 
-  const handleOpenBooking = (roomType?: string) => {
+  const handleOpenBooking = (roomType?: string, datesAndGuests?: { checkIn?: string, checkOut?: string, guests?: string }) => {
     if (roomType) {
       setPreSelectedRoom(roomType);
-    } else {
-      setPreSelectedRoom('');
+    }
+    if (datesAndGuests) {
+      if (datesAndGuests.checkIn) setCheckIn(datesAndGuests.checkIn);
+      if (datesAndGuests.checkOut) setCheckOut(datesAndGuests.checkOut);
+      if (datesAndGuests.guests) setGuests(datesAndGuests.guests);
     }
     setIsBookingOpen(true);
   };
 
   const handleCloseBooking = () => {
     setIsBookingOpen(false);
-    setPreSelectedRoom('');
   };
 
   // Initialize Lenis for smooth momentum-scrolling
@@ -195,6 +201,25 @@ export default function App() {
              <Location onOpenBooking={handleOpenBooking} />
           </motion.div>
         );
+      case 'automation':
+        return (
+          <motion.div
+            key="automation"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+          >
+            <PageHeader
+              title="Automation & Google Sheets Integration"
+              subtitle="Production-ready Google Apps Script webhook integration, sheet schema configuration, and interactive payload testing."
+              category="Automation Setup"
+              backgroundImageUrl="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1920&q=80"
+              onHomeClick={() => handlePageChange('home')}
+            />
+            <AutomationHub />
+          </motion.div>
+        );
       case 'home':
       default:
         return (
@@ -206,7 +231,18 @@ export default function App() {
             transition={{ duration: 0.6 }}
           >
             {/* Full-Screen Hero */}
-            <Hero onOpenBooking={handleOpenBooking} onChangePage={handlePageChange} />
+            <Hero
+              onOpenBooking={handleOpenBooking}
+              onChangePage={handlePageChange}
+              checkIn={checkIn}
+              setCheckIn={setCheckIn}
+              checkOut={checkOut}
+              setCheckOut={setCheckOut}
+              guests={guests}
+              setGuests={setGuests}
+              roomType={preSelectedRoom}
+              setRoomType={setPreSelectedRoom}
+            />
 
             {/* Brand Narrative Intro */}
             <Welcome onOpenBooking={handleOpenBooking} onChangePage={handlePageChange} />
@@ -260,6 +296,13 @@ export default function App() {
           isOpen={isBookingOpen}
           onClose={handleCloseBooking}
           preSelectedRoom={preSelectedRoom}
+          setPreSelectedRoom={setPreSelectedRoom}
+          checkIn={checkIn}
+          setCheckIn={setCheckIn}
+          checkOut={checkOut}
+          setCheckOut={setCheckOut}
+          guests={guests}
+          setGuests={setGuests}
         />
 
         {/* Floating Beachfront Concierge Chat Bot */}

@@ -6,7 +6,14 @@ import { bookingStore, Booking } from '../lib/bookingStore';
 interface BookingInquiryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  preSelectedRoom?: string;
+  preSelectedRoom: string;
+  setPreSelectedRoom: (val: string) => void;
+  checkIn: string;
+  setCheckIn: (val: string) => void;
+  checkOut: string;
+  setCheckOut: (val: string) => void;
+  guests: string;
+  setGuests: (val: string) => void;
 }
 
 const ROOM_OPTIONS = [
@@ -16,18 +23,33 @@ const ROOM_OPTIONS = [
   { id: 'surfer', name: 'Beachside Eco Cabin' }
 ];
 
+const formatDateString = (dateStr: string) => {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  } catch {
+    return dateStr;
+  }
+};
+
 export default function BookingInquiryModal({
   isOpen,
   onClose,
-  preSelectedRoom = ''
+  preSelectedRoom = 'deluxe',
+  setPreSelectedRoom,
+  checkIn,
+  setCheckIn,
+  checkOut,
+  setCheckOut,
+  guests,
+  setGuests
 }: BookingInquiryModalProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    checkIn: '',
-    checkOut: '',
-    guests: '2',
     roomType: '',
     message: ''
   });
@@ -44,6 +66,7 @@ export default function BookingInquiryModal({
   const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
   const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
   const [isPulling, setIsPulling] = useState(false);
+  const [showCalendarOverlay, setShowCalendarOverlay] = useState(false);
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -85,16 +108,16 @@ export default function BookingInquiryModal({
     }
   }, [isOpen, preSelectedRoom]);
 
-  // Keep calendar month aligned when user selects checkIn from native date inputs
+  // Keep calendar month aligned when user selects checkIn
   useEffect(() => {
-    if (formData.checkIn) {
-      const date = new Date(formData.checkIn);
+    if (checkIn) {
+      const date = new Date(checkIn);
       if (!isNaN(date.getTime())) {
         setCalendarMonth(date.getMonth());
         setCalendarYear(date.getFullYear());
       }
     }
-  }, [formData.checkIn]);
+  }, [checkIn]);
 
   // Update blocked dates when room selection changes
   useEffect(() => {
@@ -178,13 +201,13 @@ export default function BookingInquiryModal({
 
     const isPast = cellDate < today;
     const isBlocked = blockedDates.includes(dateString);
-    const isCheckIn = formData.checkIn === dateString;
-    const isCheckOut = formData.checkOut === dateString;
+    const isCheckIn = checkIn === dateString;
+    const isCheckOut = checkOut === dateString;
 
     let isInRange = false;
-    if (formData.checkIn && formData.checkOut) {
-      const start = new Date(formData.checkIn);
-      const end = new Date(formData.checkOut);
+    if (checkIn && checkOut) {
+      const start = new Date(checkIn);
+      const end = new Date(checkOut);
       start.setHours(0,0,0,0);
       end.setHours(0,0,0,0);
       isInRange = cellDate > start && cellDate < end;
@@ -204,20 +227,27 @@ export default function BookingInquiryModal({
     today.setHours(0,0,0,0);
     if (clickedDate < today) return; // don't allow past dates
 
-    if (!formData.checkIn || (formData.checkIn && formData.checkOut)) {
-      setFormData(prev => ({
-        ...prev,
-        checkIn: dateString,
-        checkOut: ''
-      }));
+    // Toggle/Deselect if clicking currently selected check-in date
+    if (checkIn === dateString) {
+      setCheckIn('');
+      setCheckOut('');
+      return;
+    }
+
+    // Toggle/Deselect if clicking currently selected check-out date
+    if (checkOut === dateString) {
+      setCheckOut('');
+      return;
+    }
+
+    if (!checkIn || (checkIn && checkOut)) {
+      setCheckIn(dateString);
+      setCheckOut('');
     } else {
-      const checkInDate = new Date(formData.checkIn);
+      const checkInDate = new Date(checkIn);
       if (clickedDate <= checkInDate) {
-        setFormData(prev => ({
-          ...prev,
-          checkIn: dateString,
-          checkOut: ''
-        }));
+        setCheckIn(dateString);
+        setCheckOut('');
       } else {
         // Verify if any date between checkIn and clickedDate is blocked
         let hasBlockedDateBetween = false;
@@ -233,16 +263,10 @@ export default function BookingInquiryModal({
         }
 
         if (hasBlockedDateBetween) {
-          setFormData(prev => ({
-            ...prev,
-            checkIn: dateString,
-            checkOut: ''
-          }));
+          setCheckIn(dateString);
+          setCheckOut('');
         } else {
-          setFormData(prev => ({
-            ...prev,
-            checkOut: dateString
-          }));
+          setCheckOut(dateString);
         }
       }
     }
@@ -253,6 +277,9 @@ export default function BookingInquiryModal({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === 'roomType' && setPreSelectedRoom) {
+      setPreSelectedRoom(value);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -262,7 +289,12 @@ export default function BookingInquiryModal({
 
     try {
       // Run automatic sheets checker from store
-      const result = await bookingStore.submitWithSheetsCheck(formData, (progressText) => {
+      const result = await bookingStore.submitWithSheetsCheck({
+        ...formData,
+        checkIn,
+        checkOut,
+        guests
+      }, (progressText) => {
         setCheckingProgress(progressText);
       });
 
@@ -304,8 +336,8 @@ export default function BookingInquiryModal({
   if (!isOpen) return null;
 
   // Check if dates selected are already blocked
-  const selectedDatesOverlap = formData.checkIn && formData.checkOut && 
-    !bookingStore.checkAvailabilityLocal(formData.roomType, formData.checkIn, formData.checkOut);
+  const selectedDatesOverlap = checkIn && checkOut && 
+    !bookingStore.checkAvailabilityLocal(formData.roomType, checkIn, checkOut);
 
   return (
     <AnimatePresence>
@@ -363,12 +395,7 @@ export default function BookingInquiryModal({
                   Querying live cells in Google Sheet spreadsheet to verify date overlaps...
                 </p>
 
-                <div className="w-full mt-8 bg-charcoal text-slate-300 font-mono text-[10px] p-4 rounded-2xl text-left space-y-1.5">
-                  <p className="text-gray-500">📡 [API] Connecting to sheets.googleapis.com...</p>
-                  <p className="text-emerald-400">✓ Auth status: persistent token validated</p>
-                  <p className="text-ocean">📂 Spreadsheet ID found in localStorage cache</p>
-                  <p className="text-slate-300">🔍 Scanning check-in dates matching "{formData.roomType}"...</p>
-                </div>
+
               </div>
             ) : errorText ? (
               /* Overlapping Error State (Blocked/Slashed UI) */
@@ -392,7 +419,7 @@ export default function BookingInquiryModal({
                   <div className="flex flex-wrap justify-center gap-1.5">
                     {blockedDates.map(d => (
                       <span key={d} className="px-2.5 py-1 text-xs rounded bg-white border border-red-200 text-red-500 line-through font-mono font-bold">
-                        {d} /
+                        {d}
                       </span>
                     ))}
                   </div>
@@ -449,174 +476,199 @@ export default function BookingInquiryModal({
                     </select>
                   </div>
 
-                  {/* Blocked Dates Indicator with Slash */}
-                  {blockedDates.length > 0 && (
-                    <div className="bg-red-50/70 border border-red-100 rounded-xl p-3 text-xs text-red-600">
-                      <p className="font-semibold mb-1 flex items-center gap-1">
-                        <AlertTriangle className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                        Google Sheet Booked/Locked Dates (Slashed):
-                      </p>
-                      <div className="flex flex-wrap gap-1.5 mt-1.5 max-h-24 overflow-y-auto">
-                        {blockedDates.map(date => (
-                          <span key={date} className="px-2 py-0.5 rounded bg-white border border-red-200/50 line-through text-red-500 font-mono tracking-tighter decoration-red-400 decoration-1">
-                            {date} /
+                  {/* Dates Selection & Custom Popover */}
+                  <div className={`relative ${showCalendarOverlay ? 'z-[1000]' : 'z-10'}`}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-charcoal/70 mb-1.5 flex items-center gap-1.5 font-sans">
+                          <Calendar className="w-3.5 h-3.5 text-sunset" /> Check-In Date
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setShowCalendarOverlay(!showCalendarOverlay)}
+                          className={`w-full text-left px-4 py-3 rounded-xl border text-sm text-charcoal bg-gray-50/50 hover:bg-slate-100/50 hover:border-slate-300 transition-all cursor-pointer flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-ocean ${
+                            selectedDatesOverlap ? 'border-red-400 ring-1 ring-red-400 bg-red-50/20' : 'border-gray-200'
+                          }`}
+                        >
+                          <span className="font-sans font-medium">
+                            {checkIn ? formatDateString(checkIn) : 'Select Check-In'}
                           </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Interactive Calendar Integration */}
-                  <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-4 my-2">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="w-4 h-4 text-sunset" />
-                        <span className="text-xs font-bold text-charcoal uppercase tracking-wider">
-                          Interactive Booking Calendar
-                        </span>
-                        {isPulling && (
-                          <RefreshCw className="w-3.5 h-3.5 text-sunset animate-spin shrink-0" />
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={handlePrevMonth}
-                          className="p-1.5 rounded-lg hover:bg-slate-200 text-charcoal transition-colors cursor-pointer text-xs font-bold"
-                        >
-                          &larr;
+                          <Calendar className="w-4 h-4 text-gray-400 shrink-0" />
                         </button>
-                        <span className="text-xs font-bold text-charcoal min-w-[90px] text-center font-serif">
-                          {MONTHS[calendarMonth]} {calendarYear}
-                        </span>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-charcoal/70 mb-1.5 flex items-center gap-1.5 font-sans">
+                          <Calendar className="w-3.5 h-3.5 text-sunset" /> Check-Out Date
+                        </label>
                         <button
                           type="button"
-                          onClick={handleNextMonth}
-                          className="p-1.5 rounded-lg hover:bg-slate-200 text-charcoal transition-colors cursor-pointer text-xs font-bold"
+                          disabled={!checkIn}
+                          onClick={() => {
+                            if (checkIn) {
+                              setShowCalendarOverlay(true);
+                            }
+                          }}
+                          className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all cursor-pointer flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-ocean ${
+                            !checkIn 
+                              ? 'opacity-60 cursor-not-allowed border-gray-150 bg-gray-100/30 text-gray-400' 
+                              : selectedDatesOverlap 
+                                ? 'border-red-400 ring-1 ring-red-400 bg-red-50/20 text-charcoal' 
+                                : 'border-gray-200 bg-gray-50/50 hover:bg-slate-100/50 hover:border-slate-300 text-charcoal'
+                          }`}
                         >
-                          &rarr;
+                          <span className="font-sans font-medium">
+                            {checkOut ? formatDateString(checkOut) : 'Select Check-Out'}
+                          </span>
+                          <Calendar className="w-4 h-4 text-gray-400 shrink-0" />
                         </button>
                       </div>
                     </div>
 
-                    {/* Weekday headers */}
-                    <div className="grid grid-cols-7 gap-1 text-center mb-1">
-                      {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
-                        <span key={day} className="text-[10px] font-bold text-gray-400 uppercase tracking-widest py-1 font-sans">
-                          {day}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Days grid */}
-                    <div className="grid grid-cols-7 gap-1">
-                      {calendarDays.map((cell, idx) => {
-                        const { isPast, isBlocked, isCheckIn, isCheckOut, isInRange } = getDayStatus(cell.dateString);
-                        const isCurrentMonth = cell.isCurrentMonth;
+                    {/* Popover Custom Calendar Overlay */}
+                    {showCalendarOverlay && (
+                      <>
+                        {/* Backdrop clicking allows closing */}
+                        <div 
+                          className="fixed inset-0 z-[1001] cursor-default" 
+                          onClick={() => setShowCalendarOverlay(false)} 
+                        />
                         
-                        let cellClass = "aspect-square rounded-xl flex flex-col items-center justify-center text-xs font-medium relative transition-all ";
-                        
-                        if (!isCurrentMonth) {
-                          cellClass += "text-gray-300 pointer-events-none";
-                        } else if (isBlocked) {
-                          cellClass += "bg-red-50 text-red-500 line-through cursor-not-allowed border border-red-150/40";
-                        } else if (isPast) {
-                          cellClass += "text-gray-300 cursor-not-allowed";
-                        } else if (isCheckIn || isCheckOut) {
-                          cellClass += "bg-gradient-to-br from-sunset to-coral text-white font-bold shadow-md shadow-sunset/15 scale-105 z-10 cursor-pointer";
-                        } else if (isInRange) {
-                          cellClass += "bg-sunset/15 text-sunset font-semibold cursor-pointer border border-sunset/20";
-                        } else {
-                          cellClass += "bg-white hover:bg-slate-100 text-charcoal cursor-pointer shadow-sm border border-slate-100";
-                        }
-
-                        return (
-                          <button
-                            key={idx}
-                            type="button"
-                            disabled={!isCurrentMonth || isBlocked || isPast}
-                            onClick={() => handleDayClick(cell.dateString)}
-                            className={cellClass}
-                            title={isBlocked ? "Fully Booked / Slashed 🔒" : cell.dateString}
-                          >
-                            <span>{cell.day}</span>
-                            
-                            {isBlocked && isCurrentMonth && (
-                              <span className="absolute bottom-1 text-[8px] text-red-400 font-sans tracking-tighter">
-                                / 🔒
+                        <div className="absolute left-0 right-0 mt-2 p-4 bg-white border border-slate-200/80 shadow-2xl rounded-2xl z-[1002] animate-in fade-in slide-in-from-top-3 duration-200 w-full">
+                          <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+                            <div className="flex items-center gap-1.5">
+                              <Calendar className="w-4 h-4 text-sunset" />
+                              <span className="text-xs font-bold text-charcoal uppercase tracking-wider font-sans">
+                                Interactive Stay Calendar
                               </span>
-                            )}
-                            
-                            {isCheckIn && isCurrentMonth && (
-                              <span className="absolute bottom-0.5 text-[7px] text-white uppercase tracking-tighter scale-90">
-                                In
+                              {isPulling && (
+                                <RefreshCw className="w-3.5 h-3.5 text-sunset animate-spin shrink-0" />
+                              )}
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={handlePrevMonth}
+                                className="p-1.5 rounded-lg hover:bg-slate-100 text-charcoal transition-colors cursor-pointer text-xs font-bold"
+                              >
+                                &larr;
+                              </button>
+                              <span className="text-xs font-bold text-charcoal min-w-[90px] text-center font-serif">
+                                {MONTHS[calendarMonth]} {calendarYear}
                               </span>
-                            )}
-                            {isCheckOut && isCurrentMonth && (
-                              <span className="absolute bottom-0.5 text-[7px] text-white uppercase tracking-tighter scale-90">
-                                Out
+                              <button
+                                type="button"
+                                onClick={handleNextMonth}
+                                className="p-1.5 rounded-lg hover:bg-slate-100 text-charcoal transition-colors cursor-pointer text-xs font-bold"
+                              >
+                                &rarr;
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Weekday headers */}
+                          <div className="grid grid-cols-7 gap-1 text-center mb-1">
+                            {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+                              <span key={day} className="text-[10px] font-bold text-gray-400 uppercase tracking-widest py-1 font-sans">
+                                {day}
                               </span>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
+                            ))}
+                          </div>
 
-                    {/* Legend */}
-                    <div className="flex flex-wrap items-center justify-between gap-2 mt-3.5 pt-3 border-t border-slate-200/60 text-[10px]">
-                      <div className="flex items-center gap-1">
-                        <span className="w-2.5 h-2.5 rounded bg-white border border-slate-200" />
-                        <span className="text-gray-500">Available</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="w-2.5 h-2.5 rounded bg-red-50 border border-red-200 line-through text-red-500 text-[6px] flex items-center justify-center">/</span>
-                        <span className="text-gray-500">Booked (Slashed)</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="w-2.5 h-2.5 rounded bg-gradient-to-br from-sunset to-coral" />
-                        <span className="text-gray-500">Check-In/Out</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="w-2.5 h-2.5 rounded bg-sunset/15 border border-sunset/20" />
-                        <span className="text-gray-500">Selected Range</span>
-                      </div>
-                    </div>
-                  </div>
+                          {/* Days grid */}
+                          <div className="grid grid-cols-7 gap-1">
+                            {calendarDays.map((cell, idx) => {
+                              const { isPast, isBlocked, isCheckIn, isCheckOut, isInRange } = getDayStatus(cell.dateString);
+                              const isCurrentMonth = cell.isCurrentMonth;
+                              
+                              let cellClass = "aspect-square rounded-xl flex flex-col items-center justify-center text-xs font-medium relative transition-all ";
+                              
+                              if (!isCurrentMonth) {
+                                cellClass += "text-gray-300 pointer-events-none";
+                              } else if (isBlocked) {
+                                cellClass += "bg-red-50 text-red-500 line-through cursor-not-allowed border border-red-150/40";
+                              } else if (isPast) {
+                                cellClass += "text-gray-300 cursor-not-allowed";
+                              } else if (isCheckIn || isCheckOut) {
+                                cellClass += "bg-gradient-to-br from-sunset to-coral text-white font-bold shadow-md shadow-sunset/15 scale-105 z-10 cursor-pointer";
+                              } else if (isInRange) {
+                                cellClass += "bg-sunset/15 text-sunset font-semibold cursor-pointer border border-sunset/20";
+                              } else {
+                                cellClass += "bg-white hover:bg-slate-100 text-charcoal cursor-pointer shadow-sm border border-slate-100";
+                              }
 
-                  {/* Dates Selection */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-charcoal/70 mb-1.5 flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-sunset" /> Check-In Date
-                      </label>
-                      <input
-                        type="date"
-                        name="checkIn"
-                        required
-                        value={formData.checkIn}
-                        onChange={handleChange}
-                        min={new Date().toISOString().split('T')[0]}
-                        className={`w-full px-4 py-2.5 rounded-xl border text-charcoal text-sm focus:outline-none focus:ring-1 transition-all ${
-                          selectedDatesOverlap ? 'border-red-400 focus:border-red-500 focus:ring-red-500 bg-red-50/20' : 'border-gray-200 bg-gray-50/50 focus:border-ocean focus:ring-ocean'
-                        }`}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-charcoal/70 mb-1.5 flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-sunset" /> Check-Out Date
-                      </label>
-                      <input
-                        type="date"
-                        name="checkOut"
-                        required
-                        value={formData.checkOut}
-                        onChange={handleChange}
-                        min={formData.checkIn || new Date().toISOString().split('T')[0]}
-                        className={`w-full px-4 py-2.5 rounded-xl border text-charcoal text-sm focus:outline-none focus:ring-1 transition-all ${
-                          selectedDatesOverlap ? 'border-red-400 focus:border-red-500 focus:ring-red-500 bg-red-50/20' : 'border-gray-200 bg-gray-50/50 focus:border-ocean focus:ring-ocean'
-                        }`}
-                      />
-                    </div>
+                              return (
+                                <button
+                                  key={idx}
+                                  type="button"
+                                  disabled={!isCurrentMonth || isBlocked || isPast}
+                                  onClick={() => handleDayClick(cell.dateString)}
+                                  className={cellClass}
+                                  title={isBlocked ? "Fully Booked" : cell.dateString}
+                                >
+                                  <span>{cell.day}</span>
+                                  
+                                  {isBlocked && isCurrentMonth && (
+                                    <span className="absolute bottom-1 text-[8px] text-red-400 font-sans tracking-tighter">
+                                      / 🔒
+                                    </span>
+                                  )}
+                                  
+                                  {isCheckIn && isCurrentMonth && (
+                                    <span className="absolute bottom-0.5 text-[7px] text-white uppercase tracking-tighter scale-90">
+                                      In
+                                    </span>
+                                  )}
+                                  {isCheckOut && isCurrentMonth && (
+                                    <span className="absolute bottom-0.5 text-[7px] text-white uppercase tracking-tighter scale-90">
+                                      Out
+                                    </span>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          {/* Legend & Controls */}
+                          <div className="mt-3.5 pt-3 border-t border-slate-100">
+                            <div className="flex flex-wrap items-center justify-between gap-1 text-[9px] mb-3 text-gray-500 font-sans">
+                              <div className="flex items-center gap-1">
+                                <span className="w-2.5 h-2.5 rounded bg-white border border-slate-200" />
+                                <span>Available</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <span className="w-2.5 h-2.5 rounded bg-gradient-to-br from-sunset to-coral" />
+                                <span>Check-In/Out</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <span className="w-2.5 h-2.5 rounded bg-sunset/15 border border-sunset/20" />
+                                <span>Selected Range</span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-2 pt-1">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setCheckIn('');
+                                  setCheckOut('');
+                                }}
+                                className="px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-slate-50 text-gray-600 font-semibold text-[10px] uppercase tracking-wider transition-colors cursor-pointer"
+                              >
+                                Clear Selection
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setShowCalendarOverlay(false)}
+                                className="px-4 py-1.5 rounded-lg bg-sunset hover:bg-sunset/90 text-white font-semibold text-[10px] uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                              >
+                                Apply Dates
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   {selectedDatesOverlap && (
@@ -633,8 +685,8 @@ export default function BookingInquiryModal({
                     </label>
                     <select
                       name="guests"
-                      value={formData.guests}
-                      onChange={handleChange}
+                      value={guests}
+                      onChange={(e) => setGuests(e.target.value)}
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 text-charcoal text-sm focus:outline-none focus:border-ocean focus:ring-1 focus:ring-ocean transition-all appearance-none cursor-pointer"
                     >
                       <option value="1">1 Guest</option>
@@ -755,40 +807,10 @@ export default function BookingInquiryModal({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-left w-full">
-                  <div className="bg-[#1877F2]/5 border border-[#1877F2]/10 rounded-2xl p-4">
-                    <p className="text-xs text-[#1877F2] font-semibold uppercase tracking-wider mb-1 flex items-center gap-1">
-                      <span className="inline-block w-2 h-2 rounded-full bg-[#1877F2] animate-pulse" />
-                      Guest Messenger Receipt
-                    </p>
-                    <p className="text-gray-600 text-[11px] leading-relaxed">
-                      Our notification gateway has sent a complete reservation receipt directly to your number and Facebook Messenger account!
-                    </p>
-                  </div>
-
-                  <div className="bg-amber-50/70 border border-amber-200/50 rounded-2xl p-4">
-                    <p className="text-xs text-amber-700 font-semibold uppercase tracking-wider mb-1 flex items-center gap-1">
-                      <span className="inline-block w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                      Owner SMS Alert Dispatch
-                    </p>
-                    <p className="text-gray-600 text-[11px] leading-relaxed">
-                      An automated SMS notification was dispatched to the resort owner (<strong className="text-charcoal">{bookingStore.getOwnerSettings().ownerPhone}</strong>) with your check-in details.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm justify-center">
-                  <a
-                    href="https://m.me/OceanBreezeResortLaUnion"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex-1 py-2.5 px-4 rounded-full bg-[#1877F2] hover:bg-[#1877F2]/90 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 flex items-center justify-center gap-1.5"
-                  >
-                    Open Messenger Chat <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
+                <div className="flex flex-col gap-3 w-full max-w-xs justify-center pt-2">
                   <button
                     onClick={onClose}
-                    className="flex-1 py-2.5 px-4 rounded-full border border-gray-200 hover:bg-slate-50 text-charcoal font-bold text-xs uppercase tracking-wider transition-all active:scale-95"
+                    className="w-full py-3 px-6 rounded-full bg-sunset hover:bg-sunset/90 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-sunset/15 active:scale-95"
                   >
                     Back to Resort
                   </button>

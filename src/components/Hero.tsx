@@ -1,11 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Calendar, Users, ArrowRight, Sparkles, Star } from 'lucide-react';
+import { bookingStore } from '../lib/bookingStore';
 
 interface HeroProps {
-  onOpenBooking: (roomType?: string) => void;
+  onOpenBooking: (roomType?: string, datesAndGuests?: { checkIn?: string; checkOut?: string; guests?: string }) => void;
   onChangePage?: (page: string) => void;
+  checkIn: string;
+  setCheckIn: (val: string) => void;
+  checkOut: string;
+  setCheckOut: (val: string) => void;
+  guests: string;
+  setGuests: (val: string) => void;
+  roomType: string;
+  setRoomType: (val: string) => void;
 }
+
+const ROOM_OPTIONS = [
+  { id: 'deluxe', name: 'Deluxe Beachfront Suite' },
+  { id: 'sunset', name: 'Sunset Panoramic Villa' },
+  { id: 'family', name: 'Spacious Family Loft' },
+  { id: 'surfer', name: 'Beachside Eco Cabin' }
+];
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+const formatDateString = (dateStr: string) => {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  } catch {
+    return dateStr;
+  }
+};
 
 const HERO_SLIDES = [
   {
@@ -40,11 +72,50 @@ const HERO_SLIDES = [
   }
 ];
 
-export default function Hero({ onOpenBooking, onChangePage }: HeroProps) {
+export default function Hero({
+  onOpenBooking,
+  onChangePage,
+  checkIn,
+  setCheckIn,
+  checkOut,
+  setCheckOut,
+  guests,
+  setGuests,
+  roomType,
+  setRoomType
+}: HeroProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [checkIn, setCheckIn] = useState('');
-  const [checkOut, setCheckOut] = useState('');
-  const [guests, setGuests] = useState('2');
+
+  // Interactive calendar states
+  const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
+  const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
+  const [showCalendarOverlay, setShowCalendarOverlay] = useState(false);
+  const [blockedDates, setBlockedDates] = useState<string[]>([]);
+
+  // Fetch room-specific blocked dates to style the interactive calendar accurately
+  useEffect(() => {
+    setBlockedDates(bookingStore.getBlockedDates(roomType));
+    const sync = async () => {
+      try {
+        await bookingStore.pullFromSheet();
+        setBlockedDates(bookingStore.getBlockedDates(roomType));
+      } catch (e) {
+        console.error("Hero background sheet sync failed", e);
+      }
+    };
+    sync();
+  }, [roomType]);
+
+  // Sync calendar month/year when check-in is selected
+  useEffect(() => {
+    if (checkIn) {
+      const date = new Date(checkIn);
+      if (!isNaN(date.getTime())) {
+        setCalendarMonth(date.getMonth());
+        setCalendarYear(date.getFullYear());
+      }
+    }
+  }, [checkIn]);
 
   // Slide rotation every 6 seconds
   useEffect(() => {
@@ -54,10 +125,150 @@ export default function Hero({ onOpenBooking, onChangePage }: HeroProps) {
     return () => clearInterval(timer);
   }, []);
 
+  const handlePrevMonth = () => {
+    if (calendarMonth === 0) {
+      setCalendarMonth(11);
+      setCalendarYear(prev => prev - 1);
+    } else {
+      setCalendarMonth(prev => prev - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (calendarMonth === 11) {
+      setCalendarMonth(0);
+      setCalendarYear(prev => prev + 1);
+    } else {
+      setCalendarMonth(prev => prev + 1);
+    }
+  };
+
+  const getDaysInMonth = (year: number, month: number) => {
+    const date = new Date(year, month, 1);
+    const days = [];
+    const firstDayIndex = date.getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+    const prevTotalDays = new Date(year, month, 0).getDate();
+
+    // Pad previous month days
+    for (let i = firstDayIndex - 1; i >= 0; i--) {
+      days.push({
+        day: prevTotalDays - i,
+        isCurrentMonth: false,
+        dateString: ''
+      });
+    }
+
+    // Current month days
+    for (let i = 1; i <= totalDays; i++) {
+      const mm = String(month + 1).padStart(2, '0');
+      const dd = String(i).padStart(2, '0');
+      const dateString = `${year}-${mm}-${dd}`;
+      days.push({
+        day: i,
+        isCurrentMonth: true,
+        dateString
+      });
+    }
+
+    // Pad next month days
+    const totalCells = Math.ceil(days.length / 7) * 7;
+    const nextPadding = totalCells - days.length;
+    for (let i = 1; i <= nextPadding; i++) {
+      days.push({
+        day: i,
+        isCurrentMonth: false,
+        dateString: ''
+      });
+    }
+
+    return days;
+  };
+
+  const getDayStatus = (dateString: string) => {
+    if (!dateString) return { isPast: true, isBlocked: false, isCheckIn: false, isCheckOut: false, isInRange: false };
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const cellDate = new Date(dateString);
+    cellDate.setHours(0,0,0,0);
+
+    const isPast = cellDate < today;
+    const isBlocked = blockedDates.includes(dateString);
+    const isCheckIn = checkIn === dateString;
+    const isCheckOut = checkOut === dateString;
+
+    let isInRange = false;
+    if (checkIn && checkOut) {
+      const start = new Date(checkIn);
+      const end = new Date(checkOut);
+      start.setHours(0,0,0,0);
+      end.setHours(0,0,0,0);
+      isInRange = cellDate > start && cellDate < end;
+    }
+
+    return { isPast, isBlocked, isCheckIn, isCheckOut, isInRange };
+  };
+
+  const handleDayClick = (dateString: string) => {
+    if (!dateString) return;
+    if (blockedDates.includes(dateString)) return;
+
+    const clickedDate = new Date(dateString);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    if (clickedDate < today) return;
+
+    // Click same check-in date: toggle check-in and check-out off
+    if (checkIn === dateString) {
+      setCheckIn('');
+      setCheckOut('');
+      return;
+    }
+
+    // Click same check-out date: toggle check-out off
+    if (checkOut === dateString) {
+      setCheckOut('');
+      return;
+    }
+
+    if (!checkIn || (checkIn && checkOut)) {
+      setCheckIn(dateString);
+      setCheckOut('');
+    } else {
+      const checkInDate = new Date(checkIn);
+      if (clickedDate <= checkInDate) {
+        setCheckIn(dateString);
+        setCheckOut('');
+      } else {
+        // Verify if any date between checkIn and clickedDate is blocked
+        let hasBlockedDateBetween = false;
+        const current = new Date(checkInDate);
+        current.setDate(current.getDate() + 1);
+        while (current < clickedDate) {
+          const currentStr = current.toISOString().split('T')[0];
+          if (blockedDates.includes(currentStr)) {
+            hasBlockedDateBetween = true;
+            break;
+          }
+          current.setDate(current.getDate() + 1);
+        }
+
+        if (hasBlockedDateBetween) {
+          setCheckIn(dateString);
+          setCheckOut('');
+        } else {
+          setCheckOut(dateString);
+        }
+      }
+    }
+  };
+
+  const calendarDays = getDaysInMonth(calendarYear, calendarMonth);
+
   const handleCheckAvailability = (e: React.FormEvent) => {
     e.preventDefault();
-    // Open the booking modal with current parameters
-    onOpenBooking();
+    onOpenBooking(roomType, { checkIn, checkOut, guests });
   };
 
   const scrollToRooms = () => {
@@ -82,9 +293,9 @@ export default function Hero({ onOpenBooking, onChangePage }: HeroProps) {
   };
 
   return (
-    <section id="home" className="relative min-h-screen xl:h-screen w-full overflow-hidden bg-charcoal flex flex-col justify-center">
+    <section id="home" className="relative min-h-screen xl:h-screen w-full bg-charcoal flex flex-col justify-center z-10">
       {/* Background Slide Carousel */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
@@ -113,7 +324,7 @@ export default function Hero({ onOpenBooking, onChangePage }: HeroProps) {
       </div>
 
       {/* Hero Content Container */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center py-24 xl:py-0 xl:h-full">
+      <div className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center py-24 xl:py-0 xl:h-full">
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-10 xl:gap-8 items-center w-full mt-8 xl:mt-0">
           
           {/* Left Column: Headline and Narrative */}
@@ -171,7 +382,7 @@ export default function Hero({ onOpenBooking, onChangePage }: HeroProps) {
               className="mt-8 flex flex-wrap gap-4"
             >
               <motion.button
-                onClick={() => onOpenBooking()}
+                onClick={() => onOpenBooking(roomType)}
                 whileHover={{ scale: 1.03, boxShadow: "0 12px 24px -6px rgba(245, 124, 0, 0.35)" }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
@@ -197,38 +408,209 @@ export default function Hero({ onOpenBooking, onChangePage }: HeroProps) {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.7 }}
-              className="w-full z-20"
+              className={`w-full ${showCalendarOverlay ? 'z-[999]' : 'z-20'}`}
             >
               <form
                 onSubmit={handleCheckAvailability}
-                className="glass-panel p-5 md:p-6 rounded-3xl shadow-xl border border-white/35 grid grid-cols-1 md:grid-cols-4 xl:grid-cols-1 gap-4 items-end"
+                className="glass-panel p-5 md:p-6 rounded-3xl shadow-xl border border-white/35 grid grid-cols-1 md:grid-cols-5 xl:grid-cols-1 gap-4 items-end"
               >
                 <div className="md:col-span-1 xl:col-span-1">
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-charcoal/70 mb-1.5 flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-sunset" /> Check-In
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-charcoal/70 mb-1.5 flex items-center gap-1.5 font-sans">
+                    <Sparkles className="w-3.5 h-3.5 text-sunset" /> Room Type
                   </label>
-                  <input
-                    type="date"
-                    required
-                    value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]}
-                    className="w-full px-3 py-2 rounded-xl border border-gray-200/50 bg-white/70 text-charcoal text-xs focus:outline-none focus:border-ocean transition-all"
-                  />
+                  <select
+                    value={roomType}
+                    onChange={(e) => setRoomType(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-gray-200/50 bg-white/70 text-charcoal text-xs focus:outline-none focus:border-ocean transition-all cursor-pointer font-semibold"
+                  >
+                    {ROOM_OPTIONS.map((opt) => (
+                      <option key={opt.id} value={opt.id}>
+                        {opt.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
- 
-                <div className="md:col-span-1 xl:col-span-1">
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-charcoal/70 mb-1.5 flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-sunset" /> Check-Out
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={checkOut}
-                    onChange={(e) => setCheckOut(e.target.value)}
-                    min={checkIn || new Date().toISOString().split('T')[0]}
-                    className="w-full px-3 py-2 rounded-xl border border-gray-200/50 bg-white/70 text-charcoal text-xs focus:outline-none focus:border-ocean transition-all"
-                  />
+                <div className={`md:col-span-2 xl:col-span-1 relative ${showCalendarOverlay ? 'z-[1000]' : 'z-10'}`}>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-charcoal/70 mb-1.5 flex items-center gap-1.5 font-sans">
+                        <Calendar className="w-3.5 h-3.5 text-sunset" /> Check-In
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setShowCalendarOverlay(!showCalendarOverlay)}
+                        className="w-full text-left px-3 py-2.5 rounded-xl border border-gray-200/50 bg-white/70 hover:bg-white text-charcoal text-xs transition-all cursor-pointer flex items-center justify-between focus:outline-none"
+                      >
+                        <span className="truncate">{checkIn ? formatDateString(checkIn) : 'Select'}</span>
+                        <Calendar className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                      </button>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-charcoal/70 mb-1.5 flex items-center gap-1.5 font-sans">
+                        <Calendar className="w-3.5 h-3.5 text-sunset" /> Check-Out
+                      </label>
+                      <button
+                        type="button"
+                        disabled={!checkIn}
+                        onClick={() => {
+                          if (checkIn) {
+                            setShowCalendarOverlay(true);
+                          }
+                        }}
+                        className={`w-full text-left px-3 py-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between focus:outline-none ${
+                          !checkIn 
+                            ? 'opacity-60 cursor-not-allowed border-gray-200/30 bg-gray-200/20 text-gray-400' 
+                            : 'border-gray-200/50 bg-white/70 hover:bg-white text-charcoal text-xs'
+                        }`}
+                      >
+                        <span className="truncate">{checkOut ? formatDateString(checkOut) : 'Select'}</span>
+                        <Calendar className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Popover Custom Calendar Overlay */}
+                  {showCalendarOverlay && (
+                    <>
+                      {/* Backdrop clicking allows closing */}
+                      <div 
+                        className="fixed inset-0 z-[1001] cursor-default" 
+                        onClick={() => setShowCalendarOverlay(false)} 
+                      />
+                      
+                      <div className="absolute bottom-full mb-3 left-0 right-0 xl:bottom-auto xl:top-full xl:mt-2 xl:left-auto xl:right-0 xl:w-[320px] p-4 bg-white border border-slate-200/80 shadow-2xl rounded-2xl z-[1002] animate-in fade-in slide-in-from-top-3 duration-200 text-charcoal">
+                        <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+                          <div className="flex items-center gap-1.5">
+                            <Calendar className="w-4 h-4 text-sunset" />
+                            <span className="text-[10px] font-bold text-charcoal uppercase tracking-wider font-sans">
+                              Interactive Stay Calendar
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={handlePrevMonth}
+                              className="p-1 rounded hover:bg-slate-150 text-charcoal transition-colors cursor-pointer text-xs font-bold"
+                            >
+                              &larr;
+                            </button>
+                            <span className="text-[10px] font-bold text-charcoal min-w-[70px] text-center font-serif">
+                              {MONTHS[calendarMonth]} {calendarYear}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={handleNextMonth}
+                              className="p-1 rounded hover:bg-slate-150 text-charcoal transition-colors cursor-pointer text-xs font-bold"
+                            >
+                              &rarr;
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Weekday headers */}
+                        <div className="grid grid-cols-7 gap-0.5 text-center mb-1">
+                          {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+                            <span key={day} className="text-[9px] font-bold text-gray-400 uppercase tracking-widest py-0.5 font-sans">
+                              {day}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Days grid */}
+                        <div className="grid grid-cols-7 gap-0.5">
+                          {calendarDays.map((cell, idx) => {
+                            const { isPast, isBlocked, isCheckIn, isCheckOut, isInRange } = getDayStatus(cell.dateString);
+                            const isCurrentMonth = cell.isCurrentMonth;
+                            
+                            let cellClass = "aspect-square rounded-lg flex flex-col items-center justify-center text-[10px] font-medium relative transition-all ";
+                            
+                            if (!isCurrentMonth) {
+                              cellClass += "text-gray-300 pointer-events-none";
+                            } else if (isBlocked) {
+                              cellClass += "bg-red-50 text-red-500 line-through cursor-not-allowed border border-red-150/40";
+                            } else if (isPast) {
+                              cellClass += "text-gray-300 cursor-not-allowed";
+                            } else if (isCheckIn || isCheckOut) {
+                              cellClass += "bg-gradient-to-br from-sunset to-coral text-white font-bold shadow-md shadow-sunset/15 scale-105 z-10 cursor-pointer";
+                            } else if (isInRange) {
+                              cellClass += "bg-sunset/15 text-sunset font-semibold cursor-pointer border border-sunset/20";
+                            } else {
+                              cellClass += "bg-white hover:bg-slate-100 text-charcoal cursor-pointer shadow-sm border border-slate-100";
+                            }
+
+                            return (
+                              <button
+                                key={idx}
+                                type="button"
+                                disabled={!isCurrentMonth || isBlocked || isPast}
+                                onClick={() => handleDayClick(cell.dateString)}
+                                className={cellClass}
+                                title={isBlocked ? "Fully Booked" : cell.dateString}
+                              >
+                                <span>{cell.day}</span>
+                                
+                                {isBlocked && isCurrentMonth && (
+                                  <span className="absolute bottom-0.5 text-[6px] text-red-400 font-sans tracking-tighter">
+                                    / 🔒
+                                  </span>
+                                )}
+                                
+                                {isCheckIn && isCurrentMonth && (
+                                  <span className="absolute bottom-0 text-[5px] text-white uppercase tracking-tighter scale-90">
+                                    In
+                                  </span>
+                                )}
+                                {isCheckOut && isCurrentMonth && (
+                                  <span className="absolute bottom-0 text-[5px] text-white uppercase tracking-tighter scale-90">
+                                    Out
+                                  </span>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Legend & Controls */}
+                        <div className="mt-2.5 pt-2 border-t border-slate-100">
+                          <div className="flex flex-wrap items-center justify-between gap-1 text-[8px] mb-2 text-gray-500 font-sans">
+                            <div className="flex items-center gap-0.5">
+                              <span className="w-2 h-2 rounded bg-white border border-slate-200" />
+                              <span>Available</span>
+                            </div>
+                            <div className="flex items-center gap-0.5">
+                              <span className="w-2 h-2 rounded bg-gradient-to-br from-sunset to-coral" />
+                              <span>Stay Dates</span>
+                            </div>
+                            <div className="flex items-center gap-0.5">
+                              <span className="w-2 h-2 rounded bg-sunset/15 border border-sunset/20" />
+                              <span>Range</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between gap-2 pt-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setCheckIn('');
+                                setCheckOut('');
+                              }}
+                              className="px-2 py-1 rounded border border-gray-200 hover:bg-slate-50 text-gray-600 font-semibold text-[8px] uppercase tracking-wider transition-colors cursor-pointer"
+                            >
+                              Clear
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setShowCalendarOverlay(false)}
+                              className="px-3 py-1 rounded bg-sunset hover:bg-sunset/90 text-white font-semibold text-[8px] uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
  
                 <div className="md:col-span-1 xl:col-span-1">
@@ -280,18 +662,7 @@ export default function Hero({ onOpenBooking, onChangePage }: HeroProps) {
         </div>
       </div>
 
-      {/* Decorative Wave Divider at Hero Bottom */}
-      <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none">
-        <svg
-          viewBox="0 0 1440 120"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-[60px] md:h-[90px] text-white fill-current"
-          preserveAspectRatio="none"
-        >
-          <path d="M0,64L48,58.7C96,53,192,43,288,48C384,53,480,75,576,80C672,85,768,75,864,64C960,53,1056,43,1152,42.7C1248,43,1344,53,1392,58.7L1440,64L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z" />
-        </svg>
-      </div>
+
     </section>
   );
 }
