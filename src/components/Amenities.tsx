@@ -237,33 +237,33 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-ocean/5 rounded-full blur-2xl pointer-events-none" />
 
           {/* Beautiful, smooth layered wave background animations */}
-          <div className="absolute bottom-0 left-0 w-full h-20 pointer-events-none overflow-hidden select-none z-0 rounded-b-3xl">
+          <div className="absolute bottom-0 left-0 w-full h-36 pointer-events-none overflow-hidden select-none z-0 rounded-b-3xl">
             {/* Back wave: slow, deep tropical teal-blue */}
-            <div className="absolute bottom-0 left-0 w-[200%] h-full animate-wave-slow opacity-60">
+            <div className="absolute bottom-0 left-0 w-[200%] h-full animate-wave-slow opacity-85">
               <svg className="w-full h-full" viewBox="0 0 1200 120" preserveAspectRatio="none">
                 <path 
                   d="M 0 60 Q 150 100, 300 60 T 600 60 Q 750 100, 900 60 T 1200 60 L 1200 120 L 0 120 Z" 
-                  fill="rgba(14, 116, 144, 0.45)"
+                  fill="rgba(14, 116, 144, 0.75)"
                 />
               </svg>
             </div>
             
             {/* Middle wave: medium, beautiful glowing cyan */}
-            <div className="absolute bottom-0 left-0 w-[200%] h-full animate-wave-medium opacity-50">
+            <div className="absolute bottom-0 left-0 w-[200%] h-full animate-wave-medium opacity-80">
               <svg className="w-full h-full" viewBox="0 0 1200 120" preserveAspectRatio="none">
                 <path 
                   d="M 0 70 Q 150 110, 300 70 T 600 70 Q 750 110, 900 70 T 1200 70 L 1200 120 L 0 120 Z" 
-                  fill="rgba(6, 182, 212, 0.40)"
+                  fill="rgba(6, 182, 212, 0.70)"
                 />
               </svg>
             </div>
 
             {/* Front wave: fast, vibrant seafoam blue-white */}
-            <div className="absolute bottom-0 left-0 w-[200%] h-full animate-wave-fast opacity-45">
+            <div className="absolute bottom-0 left-0 w-[200%] h-full animate-wave-fast opacity-75">
               <svg className="w-full h-full" viewBox="0 0 1200 120" preserveAspectRatio="none">
                 <path 
                   d="M 0 80 Q 150 115, 300 80 T 600 80 Q 750 115, 900 80 T 1200 80 L 1200 120 L 0 120 Z" 
-                  fill="rgba(56, 189, 248, 0.35)"
+                  fill="rgba(56, 189, 248, 0.65)"
                 />
               </svg>
             </div>
