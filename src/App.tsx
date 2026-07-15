@@ -26,25 +26,29 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [activePage, setActivePage] = useState<string>('home');
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [preSelectedRoom, setPreSelectedRoom] = useState<string>('deluxe');
-  const [checkIn, setCheckIn] = useState<string>('');
-  const [checkOut, setCheckOut] = useState<string>('');
-  const [guests, setGuests] = useState<string>('2');
+  const [preSelectedRoom, setPreSelectedRoom] = useState<string>('');
+  const [initialCheckIn, setInitialCheckIn] = useState<string>('');
+  const [initialCheckOut, setInitialCheckOut] = useState<string>('');
+  const [initialGuests, setInitialGuests] = useState<string>('2');
 
   const handleOpenBooking = (roomType?: string, datesAndGuests?: { checkIn?: string, checkOut?: string, guests?: string }) => {
     if (roomType) {
       setPreSelectedRoom(roomType);
+    } else {
+      setPreSelectedRoom('');
     }
     if (datesAndGuests) {
-      if (datesAndGuests.checkIn) setCheckIn(datesAndGuests.checkIn);
-      if (datesAndGuests.checkOut) setCheckOut(datesAndGuests.checkOut);
-      if (datesAndGuests.guests) setGuests(datesAndGuests.guests);
+      if (datesAndGuests.checkIn) setInitialCheckIn(datesAndGuests.checkIn);
+      if (datesAndGuests.checkOut) setInitialCheckOut(datesAndGuests.checkOut);
+      if (datesAndGuests.guests) setInitialGuests(datesAndGuests.guests);
     }
     setIsBookingOpen(true);
   };
 
   const handleCloseBooking = () => {
     setIsBookingOpen(false);
+    setPreSelectedRoom('');
+    // Keep initialCheckIn, initialCheckOut, and initialGuests intact so they stay synced with the hero section
   };
 
   // Initialize Lenis for smooth momentum-scrolling
@@ -231,17 +235,15 @@ export default function App() {
             transition={{ duration: 0.6 }}
           >
             {/* Full-Screen Hero */}
-            <Hero
-              onOpenBooking={handleOpenBooking}
+            <Hero 
+              onOpenBooking={handleOpenBooking} 
               onChangePage={handlePageChange}
-              checkIn={checkIn}
-              setCheckIn={setCheckIn}
-              checkOut={checkOut}
-              setCheckOut={setCheckOut}
-              guests={guests}
-              setGuests={setGuests}
-              roomType={preSelectedRoom}
-              setRoomType={setPreSelectedRoom}
+              checkIn={initialCheckIn}
+              setCheckIn={setInitialCheckIn}
+              checkOut={initialCheckOut}
+              setCheckOut={setInitialCheckOut}
+              guests={initialGuests}
+              setGuests={setInitialGuests}
             />
 
             {/* Brand Narrative Intro */}
@@ -296,17 +298,18 @@ export default function App() {
           isOpen={isBookingOpen}
           onClose={handleCloseBooking}
           preSelectedRoom={preSelectedRoom}
-          setPreSelectedRoom={setPreSelectedRoom}
-          checkIn={checkIn}
-          setCheckIn={setCheckIn}
-          checkOut={checkOut}
-          setCheckOut={setCheckOut}
-          guests={guests}
-          setGuests={setGuests}
+          initialCheckIn={initialCheckIn}
+          initialCheckOut={initialCheckOut}
+          initialGuests={initialGuests}
+          onDatesGuestsChange={(vals) => {
+            setInitialCheckIn(vals.checkIn);
+            setInitialCheckOut(vals.checkOut);
+            setInitialGuests(vals.guests);
+          }}
         />
 
         {/* Floating Beachfront Concierge Chat Bot */}
-        <ChatBot onOpenBooking={handleOpenBooking} />
+        <ChatBot onOpenBooking={handleOpenBooking} isBookingOpen={isBookingOpen} />
       </div>
     </>
   );

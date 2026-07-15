@@ -125,31 +125,10 @@ export default function Navbar({ onOpenBooking, activePage, onChangePage }: Navb
               >
                 <Phone className="w-3.5 h-3.5 text-coral" /> +63 917 123 4567
               </a>
-              <button
-                onClick={() => onOpenBooking()}
-                className={`px-5 py-2 rounded-full font-sans text-xs font-bold tracking-wider uppercase transition-all duration-300 shadow-lg cursor-pointer hover:shadow-xl active:scale-95 flex items-center gap-1 focus:outline-none ${
-                  isSolid
-                    ? 'bg-sunset hover:bg-sunset/90 text-white shadow-sunset/15'
-                    : 'bg-white hover:bg-sand text-charcoal shadow-black/10'
-                }`}
-              >
-                Book Now
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
             </div>
 
             {/* Mobile Menu Trigger */}
             <div className="flex items-center gap-3 lg:hidden">
-              <button
-                onClick={() => onOpenBooking()}
-                className={`px-3.5 py-1.5 rounded-full font-sans text-[10px] font-bold tracking-wider uppercase transition-all active:scale-95 flex items-center gap-1 focus:outline-none ${
-                  isSolid
-                    ? 'bg-sunset text-white'
-                    : 'bg-white text-charcoal'
-                }`}
-              >
-                Book
-              </button>
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className={`p-1.5 rounded-lg transition-colors focus:outline-none ${

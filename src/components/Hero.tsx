@@ -12,16 +12,7 @@ interface HeroProps {
   setCheckOut: (val: string) => void;
   guests: string;
   setGuests: (val: string) => void;
-  roomType: string;
-  setRoomType: (val: string) => void;
 }
-
-const ROOM_OPTIONS = [
-  { id: 'deluxe', name: 'Deluxe Beachfront Suite' },
-  { id: 'sunset', name: 'Sunset Panoramic Villa' },
-  { id: 'family', name: 'Spacious Family Loft' },
-  { id: 'surfer', name: 'Beachside Eco Cabin' }
-];
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -72,17 +63,15 @@ const HERO_SLIDES = [
   }
 ];
 
-export default function Hero({
-  onOpenBooking,
+export default function Hero({ 
+  onOpenBooking, 
   onChangePage,
   checkIn,
   setCheckIn,
   checkOut,
   setCheckOut,
   guests,
-  setGuests,
-  roomType,
-  setRoomType
+  setGuests
 }: HeroProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -92,19 +81,19 @@ export default function Hero({
   const [showCalendarOverlay, setShowCalendarOverlay] = useState(false);
   const [blockedDates, setBlockedDates] = useState<string[]>([]);
 
-  // Fetch room-specific blocked dates to style the interactive calendar accurately
+  // Fetch general blocked dates to style the interactive calendar accurately
   useEffect(() => {
-    setBlockedDates(bookingStore.getBlockedDates(roomType));
+    setBlockedDates(bookingStore.getBlockedDates(''));
     const sync = async () => {
       try {
         await bookingStore.pullFromSheet();
-        setBlockedDates(bookingStore.getBlockedDates(roomType));
+        setBlockedDates(bookingStore.getBlockedDates(''));
       } catch (e) {
         console.error("Hero background sheet sync failed", e);
       }
     };
     sync();
-  }, [roomType]);
+  }, []);
 
   // Sync calendar month/year when check-in is selected
   useEffect(() => {
@@ -268,7 +257,7 @@ export default function Hero({
 
   const handleCheckAvailability = (e: React.FormEvent) => {
     e.preventDefault();
-    onOpenBooking(roomType, { checkIn, checkOut, guests });
+    onOpenBooking(undefined, { checkIn, checkOut, guests });
   };
 
   const scrollToRooms = () => {
@@ -293,7 +282,7 @@ export default function Hero({
   };
 
   return (
-    <section id="home" className="relative min-h-screen xl:h-screen w-full bg-charcoal flex flex-col justify-center z-10">
+    <section id="home" className="relative min-h-screen xl:h-screen w-full bg-charcoal flex flex-col justify-center">
       {/* Background Slide Carousel */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <AnimatePresence mode="wait">
@@ -382,7 +371,7 @@ export default function Hero({
               className="mt-8 flex flex-wrap gap-4"
             >
               <motion.button
-                onClick={() => onOpenBooking(roomType)}
+                onClick={() => onOpenBooking(undefined, { checkIn, checkOut, guests })}
                 whileHover={{ scale: 1.03, boxShadow: "0 12px 24px -6px rgba(245, 124, 0, 0.35)" }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
@@ -412,24 +401,8 @@ export default function Hero({
             >
               <form
                 onSubmit={handleCheckAvailability}
-                className="glass-panel p-5 md:p-6 rounded-3xl shadow-xl border border-white/35 grid grid-cols-1 md:grid-cols-5 xl:grid-cols-1 gap-4 items-end"
+                className="glass-panel p-5 md:p-6 rounded-3xl shadow-xl border border-white/35 grid grid-cols-1 md:grid-cols-4 xl:grid-cols-1 gap-4 items-end"
               >
-                <div className="md:col-span-1 xl:col-span-1">
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-charcoal/70 mb-1.5 flex items-center gap-1.5 font-sans">
-                    <Sparkles className="w-3.5 h-3.5 text-sunset" /> Room Type
-                  </label>
-                  <select
-                    value={roomType}
-                    onChange={(e) => setRoomType(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-gray-200/50 bg-white/70 text-charcoal text-xs focus:outline-none focus:border-ocean transition-all cursor-pointer font-semibold"
-                  >
-                    {ROOM_OPTIONS.map((opt) => (
-                      <option key={opt.id} value={opt.id}>
-                        {opt.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
                 <div className={`md:col-span-2 xl:col-span-1 relative ${showCalendarOverlay ? 'z-[1000]' : 'z-10'}`}>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
@@ -662,7 +635,18 @@ export default function Hero({
         </div>
       </div>
 
-
+      {/* Decorative Wave Divider at Hero Bottom */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none">
+        <svg
+          viewBox="0 0 1440 120"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-[60px] md:h-[90px] text-white fill-current"
+          preserveAspectRatio="none"
+        >
+          <path d="M0,64L48,58.7C96,53,192,43,288,48C384,53,480,75,576,80C672,85,768,75,864,64C960,53,1056,43,1152,42.7C1248,43,1344,53,1392,58.7L1440,64L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z" />
+        </svg>
+      </div>
     </section>
   );
 }

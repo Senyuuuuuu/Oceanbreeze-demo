@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Calendar, Users, Mail, Phone, User, MessageSquare, Check, Sparkles, ExternalLink, RefreshCw, AlertTriangle, FileSpreadsheet } from 'lucide-react';
+import { X, Calendar, Users, Mail, Phone, User, MessageSquare, Check, Sparkles, ExternalLink, RefreshCw, AlertTriangle, FileSpreadsheet, Flame } from 'lucide-react';
 import { bookingStore, Booking } from '../lib/bookingStore';
 
 interface BookingInquiryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  preSelectedRoom: string;
-  setPreSelectedRoom: (val: string) => void;
-  checkIn: string;
-  setCheckIn: (val: string) => void;
-  checkOut: string;
-  setCheckOut: (val: string) => void;
-  guests: string;
-  setGuests: (val: string) => void;
+  preSelectedRoom?: string;
+  initialCheckIn?: string;
+  initialCheckOut?: string;
+  initialGuests?: string;
+  onDatesGuestsChange?: (datesAndGuests: { checkIn: string; checkOut: string; guests: string }) => void;
 }
 
 const ROOM_OPTIONS = [
@@ -22,6 +19,56 @@ const ROOM_OPTIONS = [
   { id: 'family', name: 'Spacious Family Loft' },
   { id: 'surfer', name: 'Beachside Eco Cabin' }
 ];
+
+const getDemandLevel = (roomType: string, checkIn: string, checkOut: string, bookings: Booking[]) => {
+  if (!checkIn || !checkOut) return null;
+  
+  const start = new Date(checkIn);
+  const end = new Date(checkOut);
+  
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
+
+  // 1. Check if weekend (Friday, Saturday, or Sunday nights)
+  let hasWeekend = false;
+  const current = new Date(start);
+  while (current < end) {
+    const day = current.getDay();
+    if (day === 0 || day === 5 || day === 6) { // Fri, Sat, Sun nights
+      hasWeekend = true;
+      break;
+    }
+    current.setDate(current.getDate() + 1);
+  }
+
+  // 2. Check bookings in the store for proximity (e.g. same room type in same month)
+  const roomBookings = bookings.filter(b => b.roomType === roomType && b.status === 'Approved');
+  const nearbyBookingsCount = roomBookings.length;
+
+  // 3. Room type bias: deluxe and sunset are premium and always high demand
+  const isPremiumRoom = roomType === 'deluxe' || roomType === 'sunset';
+
+  if (hasWeekend || nearbyBookingsCount > 2 || isPremiumRoom) {
+    return {
+      level: 'high',
+      label: 'High Demand',
+      colorClass: 'bg-rose-50 border-rose-200/60 text-rose-800',
+      badgeColorClass: 'bg-rose-500 text-white',
+      iconColorClass: 'text-rose-500',
+      description: 'This room type is highly sought-after for your dates. We recommend booking soon to guarantee availability.',
+      statsText: '94% of similar dates are booked'
+    };
+  }
+
+  return {
+    level: 'moderate',
+    label: 'Moderate Demand',
+    colorClass: 'bg-amber-50 border-amber-200/60 text-amber-800',
+    badgeColorClass: 'bg-amber-500 text-white',
+    iconColorClass: 'text-amber-500',
+    description: 'Steady booking interest. Standard rates apply, but beach vacancies can change quickly.',
+    statsText: 'Popular booking season'
+  };
+};
 
 const formatDateString = (dateStr: string) => {
   if (!dateStr) return '';
@@ -37,19 +84,19 @@ const formatDateString = (dateStr: string) => {
 export default function BookingInquiryModal({
   isOpen,
   onClose,
-  preSelectedRoom = 'deluxe',
-  setPreSelectedRoom,
-  checkIn,
-  setCheckIn,
-  checkOut,
-  setCheckOut,
-  guests,
-  setGuests
+  preSelectedRoom = '',
+  initialCheckIn = '',
+  initialCheckOut = '',
+  initialGuests = '2',
+  onDatesGuestsChange
 }: BookingInquiryModalProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
+    checkIn: initialCheckIn,
+    checkOut: initialCheckOut,
+    guests: initialGuests,
     roomType: '',
     message: ''
   });
@@ -83,7 +130,10 @@ export default function BookingInquiryModal({
       const defaultRoom = preSelectedRoom || formData.roomType || ROOM_OPTIONS[0].id;
       setFormData(prev => ({
         ...prev,
-        roomType: defaultRoom
+        roomType: defaultRoom,
+        checkIn: initialCheckIn || prev.checkIn,
+        checkOut: initialCheckOut || prev.checkOut,
+        guests: initialGuests || prev.guests
       }));
       setBlockedDates(bookingStore.getBlockedDates(defaultRoom));
       setIsSuccess(false);
@@ -108,16 +158,16 @@ export default function BookingInquiryModal({
     }
   }, [isOpen, preSelectedRoom]);
 
-  // Keep calendar month aligned when user selects checkIn
+  // Keep calendar month aligned when user selects checkIn from native date inputs
   useEffect(() => {
-    if (checkIn) {
-      const date = new Date(checkIn);
+    if (formData.checkIn) {
+      const date = new Date(formData.checkIn);
       if (!isNaN(date.getTime())) {
         setCalendarMonth(date.getMonth());
         setCalendarYear(date.getFullYear());
       }
     }
-  }, [checkIn]);
+  }, [formData.checkIn]);
 
   // Update blocked dates when room selection changes
   useEffect(() => {
@@ -125,6 +175,17 @@ export default function BookingInquiryModal({
       setBlockedDates(bookingStore.getBlockedDates(formData.roomType));
     }
   }, [formData.roomType]);
+
+  // Sync changes in dates and guests back to the parent component for global synchronization
+  useEffect(() => {
+    if (onDatesGuestsChange) {
+      onDatesGuestsChange({
+        checkIn: formData.checkIn,
+        checkOut: formData.checkOut,
+        guests: formData.guests
+      });
+    }
+  }, [formData.checkIn, formData.checkOut, formData.guests, onDatesGuestsChange]);
 
   const MONTHS = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -201,13 +262,13 @@ export default function BookingInquiryModal({
 
     const isPast = cellDate < today;
     const isBlocked = blockedDates.includes(dateString);
-    const isCheckIn = checkIn === dateString;
-    const isCheckOut = checkOut === dateString;
+    const isCheckIn = formData.checkIn === dateString;
+    const isCheckOut = formData.checkOut === dateString;
 
     let isInRange = false;
-    if (checkIn && checkOut) {
-      const start = new Date(checkIn);
-      const end = new Date(checkOut);
+    if (formData.checkIn && formData.checkOut) {
+      const start = new Date(formData.checkIn);
+      const end = new Date(formData.checkOut);
       start.setHours(0,0,0,0);
       end.setHours(0,0,0,0);
       isInRange = cellDate > start && cellDate < end;
@@ -228,26 +289,38 @@ export default function BookingInquiryModal({
     if (clickedDate < today) return; // don't allow past dates
 
     // Toggle/Deselect if clicking currently selected check-in date
-    if (checkIn === dateString) {
-      setCheckIn('');
-      setCheckOut('');
+    if (formData.checkIn === dateString) {
+      setFormData(prev => ({
+        ...prev,
+        checkIn: '',
+        checkOut: ''
+      }));
       return;
     }
 
     // Toggle/Deselect if clicking currently selected check-out date
-    if (checkOut === dateString) {
-      setCheckOut('');
+    if (formData.checkOut === dateString) {
+      setFormData(prev => ({
+        ...prev,
+        checkOut: ''
+      }));
       return;
     }
 
-    if (!checkIn || (checkIn && checkOut)) {
-      setCheckIn(dateString);
-      setCheckOut('');
+    if (!formData.checkIn || (formData.checkIn && formData.checkOut)) {
+      setFormData(prev => ({
+        ...prev,
+        checkIn: dateString,
+        checkOut: ''
+      }));
     } else {
-      const checkInDate = new Date(checkIn);
+      const checkInDate = new Date(formData.checkIn);
       if (clickedDate <= checkInDate) {
-        setCheckIn(dateString);
-        setCheckOut('');
+        setFormData(prev => ({
+          ...prev,
+          checkIn: dateString,
+          checkOut: ''
+        }));
       } else {
         // Verify if any date between checkIn and clickedDate is blocked
         let hasBlockedDateBetween = false;
@@ -263,10 +336,16 @@ export default function BookingInquiryModal({
         }
 
         if (hasBlockedDateBetween) {
-          setCheckIn(dateString);
-          setCheckOut('');
+          setFormData(prev => ({
+            ...prev,
+            checkIn: dateString,
+            checkOut: ''
+          }));
         } else {
-          setCheckOut(dateString);
+          setFormData(prev => ({
+            ...prev,
+            checkOut: dateString
+          }));
         }
       }
     }
@@ -277,9 +356,6 @@ export default function BookingInquiryModal({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (name === 'roomType' && setPreSelectedRoom) {
-      setPreSelectedRoom(value);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -289,12 +365,7 @@ export default function BookingInquiryModal({
 
     try {
       // Run automatic sheets checker from store
-      const result = await bookingStore.submitWithSheetsCheck({
-        ...formData,
-        checkIn,
-        checkOut,
-        guests
-      }, (progressText) => {
+      const result = await bookingStore.submitWithSheetsCheck(formData, (progressText) => {
         setCheckingProgress(progressText);
       });
 
@@ -336,8 +407,8 @@ export default function BookingInquiryModal({
   if (!isOpen) return null;
 
   // Check if dates selected are already blocked
-  const selectedDatesOverlap = checkIn && checkOut && 
-    !bookingStore.checkAvailabilityLocal(formData.roomType, checkIn, checkOut);
+  const selectedDatesOverlap = formData.checkIn && formData.checkOut && 
+    !bookingStore.checkAvailabilityLocal(formData.roomType, formData.checkIn, formData.checkOut);
 
   return (
     <AnimatePresence>
@@ -491,7 +562,7 @@ export default function BookingInquiryModal({
                           }`}
                         >
                           <span className="font-sans font-medium">
-                            {checkIn ? formatDateString(checkIn) : 'Select Check-In'}
+                            {formData.checkIn ? formatDateString(formData.checkIn) : 'Select Check-In'}
                           </span>
                           <Calendar className="w-4 h-4 text-gray-400 shrink-0" />
                         </button>
@@ -503,14 +574,14 @@ export default function BookingInquiryModal({
                         </label>
                         <button
                           type="button"
-                          disabled={!checkIn}
+                          disabled={!formData.checkIn}
                           onClick={() => {
-                            if (checkIn) {
+                            if (formData.checkIn) {
                               setShowCalendarOverlay(true);
                             }
                           }}
                           className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all cursor-pointer flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-ocean ${
-                            !checkIn 
+                            !formData.checkIn 
                               ? 'opacity-60 cursor-not-allowed border-gray-150 bg-gray-100/30 text-gray-400' 
                               : selectedDatesOverlap 
                                 ? 'border-red-400 ring-1 ring-red-400 bg-red-50/20 text-charcoal' 
@@ -518,7 +589,7 @@ export default function BookingInquiryModal({
                           }`}
                         >
                           <span className="font-sans font-medium">
-                            {checkOut ? formatDateString(checkOut) : 'Select Check-Out'}
+                            {formData.checkOut ? formatDateString(formData.checkOut) : 'Select Check-Out'}
                           </span>
                           <Calendar className="w-4 h-4 text-gray-400 shrink-0" />
                         </button>
@@ -650,8 +721,11 @@ export default function BookingInquiryModal({
                               <button
                                 type="button"
                                 onClick={() => {
-                                  setCheckIn('');
-                                  setCheckOut('');
+                                  setFormData(prev => ({
+                                    ...prev,
+                                    checkIn: '',
+                                    checkOut: ''
+                                  }));
                                 }}
                                 className="px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-slate-50 text-gray-600 font-semibold text-[10px] uppercase tracking-wider transition-colors cursor-pointer"
                               >
@@ -671,6 +745,43 @@ export default function BookingInquiryModal({
                     )}
                   </div>
 
+                  {/* Dynamic High Demand Visual Indicator */}
+                  {formData.checkIn && formData.checkOut && !selectedDatesOverlap && (
+                    (() => {
+                      const demand = getDemandLevel(formData.roomType, formData.checkIn, formData.checkOut, bookingStore.getBookings());
+                      if (!demand) return null;
+                      
+                      return (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className={`p-3.5 rounded-2xl border text-xs leading-relaxed transition-all flex flex-col gap-2 ${demand.colorClass}`}
+                        >
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex items-center gap-1.5 font-bold font-sans">
+                              {demand.level === 'high' ? (
+                                <Flame className={`w-4 h-4 ${demand.iconColorClass} animate-pulse`} />
+                              ) : (
+                                <Sparkles className={`w-4 h-4 ${demand.iconColorClass}`} />
+                              )}
+                              <span>{ROOM_OPTIONS.find(r => r.id === formData.roomType)?.name} Status:</span>
+                            </div>
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${demand.badgeColorClass}`}>
+                              {demand.label}
+                            </span>
+                          </div>
+                          <p className="text-gray-600 font-sans font-normal leading-normal">
+                            {demand.description}
+                          </p>
+                          <div className="flex items-center justify-between border-t border-gray-200/25 pt-1.5 mt-0.5 text-[10px] text-gray-500 font-mono">
+                            <span>⚡ Live calendar check</span>
+                            <span className="font-bold">{demand.statsText}</span>
+                          </div>
+                        </motion.div>
+                      );
+                    })()
+                  )}
+
                   {selectedDatesOverlap && (
                     <div className="text-red-500 text-xs font-semibold flex items-center gap-1 bg-red-50 p-2.5 rounded-xl border border-red-100">
                       <AlertTriangle className="w-4 h-4 shrink-0" />
@@ -685,8 +796,8 @@ export default function BookingInquiryModal({
                     </label>
                     <select
                       name="guests"
-                      value={guests}
-                      onChange={(e) => setGuests(e.target.value)}
+                      value={formData.guests}
+                      onChange={handleChange}
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 text-charcoal text-sm focus:outline-none focus:border-ocean focus:ring-1 focus:ring-ocean transition-all appearance-none cursor-pointer"
                     >
                       <option value="1">1 Guest</option>

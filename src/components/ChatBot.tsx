@@ -11,9 +11,10 @@ interface Message {
 
 interface ChatBotProps {
   onOpenBooking: (roomType?: string) => void;
+  isBookingOpen?: boolean;
 }
 
-export default function ChatBot({ onOpenBooking }: ChatBotProps) {
+export default function ChatBot({ onOpenBooking, isBookingOpen = false }: ChatBotProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -31,6 +32,17 @@ export default function ChatBot({ onOpenBooking }: ChatBotProps) {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    if (isBookingOpen) {
+      setIsOpen(false);
+    }
+  }, [isBookingOpen]);
+
+  // If the booking modal is open, we hide the chatbot entirely to avoid overlaps in the UI
+  if (isBookingOpen) {
+    return null;
+  }
 
   useEffect(() => {
     if (isOpen) {
