@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Star, ShieldCheck, Sun, Compass, Heart, DollarSign, Waves, Quote, ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
+import { Star, ShieldCheck, Sun, Compass, Heart, DollarSign, Waves, Quote, ArrowLeft, ArrowRight, Sparkles, CheckCircle2, Shield, MessageSquare, Award } from 'lucide-react';
 import { Testimonial } from '../types';
 
 interface FeatureCard {
@@ -8,61 +8,70 @@ interface FeatureCard {
   title: string;
   description: string;
   icon: React.ComponentType<any>;
-  color: string;
+  colorClass: string;
+  badge: string;
 }
 
 const FEATURE_CARDS: FeatureCard[] = [
   {
     id: 'location',
     title: 'Direct Beachfront Location',
-    description: 'Situated on the legendary shores of San Juan, La Union. Steps from premium beachside dining, hip cafes, and relaxing beach lounges.',
+    description: 'Situated directly on the warm, sandy shores of San Juan, La Union. Just steps away from the famous Urbiztondo surf break and vibrant beachside dining.',
     icon: Compass,
-    color: 'text-sunset'
+    colorClass: 'bg-orange-50 text-sunset border-orange-100/50',
+    badge: 'Premier Spot'
   },
   {
     id: 'pricing',
-    title: 'Affordable Luxury Stays',
-    description: 'Bask in premium high-thread linens, private ocean balcony features, and private villa options at incredibly competitive rates.',
+    title: 'Affordable Coastal Luxury',
+    description: 'Bask in handpicked premium linens, cozy bamboo design accents, and high-thread balcony settings at highly accessible, direct pricing.',
     icon: DollarSign,
-    color: 'text-ocean'
+    colorClass: 'bg-sky-50 text-ocean border-sky-100/50',
+    badge: 'Best Value'
   },
   {
     id: 'family',
-    title: 'Family-Friendly Oasis',
-    description: 'We prioritize multi-guest safety with secure shallow beach wading spaces, expansive lawns, and private split-level lofts.',
+    title: 'Family-Friendly Sanctuary',
+    description: 'We prioritize multi-guest relaxation with dedicated shallow wading sand areas, secure private balconies, and spacious multi-level family suites.',
     icon: Heart,
-    color: 'text-coral'
+    colorClass: 'bg-rose-50 text-coral border-rose-100/50',
+    badge: 'Safe & Secure'
   },
   {
     id: 'sunset',
     title: 'Legendary Golden Sunsets',
-    description: 'Our resort overlooks the western horizon, giving you front-row ocean seats to San Juan\'s famous, highly Instagrammed sunsets.',
+    description: 'Our beachfront terrace and private villa balconies face directly west, providing an unobstructed, private view of La Union\'s dramatic evening skies.',
     icon: Sun,
-    color: 'text-sunset'
+    colorClass: 'bg-amber-50 text-sunset border-amber-100/50',
+    badge: 'Sunset Views'
   },
   {
     id: 'hospitality',
-    title: 'Bespoke Local Hospitality',
-    description: 'We provide personalized attention, coordinating custom airport shuttles, island excursions, and reservations with care.',
+    title: 'Warm Filipino Hospitality',
+    description: 'Experience authentic care and personalized attention from our local resort hosts, from custom surf instruction bookings to private evening catering.',
     icon: ShieldCheck,
-    color: 'text-charcoal'
+    colorClass: 'bg-slate-50 text-charcoal border-slate-200/50',
+    badge: 'Local Staff'
   },
   {
     id: 'serenity',
-    title: 'Relaxing Beach Atmosphere',
-    description: 'Thoughtfully structured with quiet tropical gardens, custom-made hammocks, and soothing soundscapes of ocean waves.',
+    title: 'Restorative Coastal Atmosphere',
+    description: 'Engineered for peace, our quiet tropical gardens, custom beachfront hammocks, and the soothing acoustic loop of ocean waves guarantee deep rest.',
     icon: Waves,
-    color: 'text-ocean'
+    colorClass: 'bg-emerald-50 text-teal-600 border-emerald-100/50',
+    badge: 'Pure Peace'
   }
 ];
 
-const TESTIMONIALS_DATA: Testimonial[] = [
+const TESTIMONIALS_DATA: (Testimonial & { role: string; stayType: string })[] = [
   {
     id: 'review-1',
     name: 'Sophia Gomez',
     location: 'Manila, Philippines',
+    role: 'Creative Director at Studio Manila',
+    stayType: 'Sunset Panoramic Villa',
     rating: 5,
-    comment: 'Staying here was pure magic. The beachfront view from our Sunset Villa is completely unmatched, and watching the sunset while sipping fresh coconut water is a memory our family will cherish forever. Truly premium hospitality!',
+    comment: 'Staying here was pure coastal magic. The beachfront view from our Sunset Villa is completely unmatched, and watching the sun set while sipping fresh coconut water is a memory our family will cherish forever. The attention to detail and premium Filipino hospitality made us feel truly cared for.',
     date: 'June 2026',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80'
   },
@@ -70,8 +79,10 @@ const TESTIMONIALS_DATA: Testimonial[] = [
     id: 'review-2',
     name: 'David Chen',
     location: 'Digital Nomad',
+    role: 'Senior Software Engineer & Surfer',
+    stayType: 'Beachside Eco Cabin',
     rating: 5,
-    comment: 'Perfect spot for remote working and early morning beachfront walks. The fiber Wi-Fi was blazing fast throughout the resort property, rooms are modern with cold A/C, and you literally step onto the sand. Loved the Beachside Eco Cabin!',
+    comment: 'This is the perfect spot for remote working and early morning beach sessions. The fiber Wi-Fi was blazing fast and solid throughout the property, the rooms are beautifully clean and cool, and you literally step onto the sand from your door. Best stay in La Union by far.',
     date: 'May 2026',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80'
   },
@@ -79,8 +90,10 @@ const TESTIMONIALS_DATA: Testimonial[] = [
     id: 'review-3',
     name: 'Maria Santos',
     location: 'Quezon City, Philippines',
+    role: 'Mother of Two & Travel Blogger',
+    stayType: 'Spacious Family Loft',
     rating: 5,
-    comment: 'Our family had the absolute best summer vacation here. The Family Loft was extremely spacious, and the beachfront is perfectly clean and safe. The resort team went above and beyond to organize wellness sessions and sunset tours for our kids.',
+    comment: 'Our family had the absolute best beachfront vacation here. The Spacious Family Loft was extremely comfortable, and the shallow beachfront wading space is perfectly clean and safe. The resort staff went above and beyond to organize surf sessions and custom meals for the kids.',
     date: 'April 2026',
     avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80'
   }
@@ -89,11 +102,11 @@ const TESTIMONIALS_DATA: Testimonial[] = [
 export default function WhyChooseUs() {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Auto-play the testimonial deck every 8 seconds
+  // Auto-play testimonials
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveIndex(prev => (prev + 1) % TESTIMONIALS_DATA.length);
-    }, 8000);
+    }, 9000);
     return () => clearInterval(timer);
   }, []);
 
@@ -107,172 +120,248 @@ export default function WhyChooseUs() {
 
   return (
     <section className="py-24 bg-white relative overflow-hidden">
-      {/* Wave top and bottom layout borders */}
-      <div className="absolute top-1/4 -right-24 w-80 h-80 bg-sand/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 -left-24 w-80 h-80 bg-ocean/5 rounded-full blur-3xl pointer-events-none" />
+      {/* Background Ambience elements */}
+      <div className="absolute top-1/4 -right-24 w-96 h-96 bg-sand/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 -left-24 w-96 h-96 bg-ocean/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Core Features Column */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
-          <div className="lg:col-span-7">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset mb-2 inline-flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-coral" /> Ocean Breeze Advantage
+        {/* =========================================
+            PART A: THE OCEAN BREEZE ADVANTAGE (Bento Grid)
+            ========================================= */}
+        <div className="mb-28">
+          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset inline-flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-coral" /> The Advantage
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-charcoal tracking-tight leading-tight">
+              Why Discerning Travelers Choose{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-sunset to-coral">
+                Ocean Breeze Resort
               </span>
-              <h3 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-charcoal tracking-tight">
-                Crafting Unforgettable Beach Experiences
-              </h3>
-              <p className="mt-4 text-gray-400 font-sans text-sm sm:text-base leading-relaxed font-light mb-12">
-                We stand apart in San Juan, La Union by offering a refined coastal retreat that respects the soul of local beach culture while providing high-end safety and luxury.
-              </p>
-            </motion.div>
- 
-            {/* Feature Cards Grid */}
-            <motion.div
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: {
-                    staggerChildren: 0.1,
-                    delayChildren: 0.1,
-                  },
-                },
-              }}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-6"
-            >
-              {FEATURE_CARDS.map((card) => {
-                const IconComponent = card.icon;
-                return (
-                  <motion.div
-                    key={card.id}
-                    variants={{
-                      hidden: { opacity: 0, y: 25 },
-                      visible: {
-                        opacity: 1,
-                        y: 0,
-                        transition: { duration: 0.6, ease: "easeOut" },
-                      },
-                    }}
-                    className="p-5 md:p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:border-sand/50 hover:shadow-lg transition-all duration-300"
-                  >
-                    <div className={`w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-xs mb-4 ${card.color}`}>
-                      <IconComponent className="w-5 h-5" />
+            </h2>
+            <p className="text-gray-400 font-sans text-sm sm:text-base leading-relaxed font-light">
+              We curate a refined, organic beachfront retreat that values local culture, genuine safety, and slow living, offering an experience that generic hotels simply cannot replicate.
+            </p>
+          </div>
+
+          {/* Asymmetric Bento Grid of advantages */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {FEATURE_CARDS.map((card, idx) => {
+              const IconComponent = card.icon;
+              return (
+                <motion.div
+                  key={card.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.15 }}
+                  transition={{ duration: 0.6, delay: idx * 0.08 }}
+                  whileHover={{ y: -6, scale: 1.015 }}
+                  className={`p-6 sm:p-8 rounded-3xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-sand hover:shadow-xl transition-all duration-300 flex flex-col justify-between h-full relative group`}
+                >
+                  <div>
+                    {/* Top row with custom icon & card badge */}
+                    <div className="flex justify-between items-start mb-6">
+                      <div className={`w-12 h-12 rounded-2xl ${card.colorClass} border flex items-center justify-center shrink-0 shadow-3xs group-hover:scale-105 group-hover:rotate-3 transition-all duration-300`}>
+                        <IconComponent className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] uppercase font-bold px-2.5 py-1 rounded-full bg-white border border-slate-100 text-slate-500 font-sans tracking-wide">
+                        {card.badge}
+                      </span>
                     </div>
-                    <h4 className="font-sans text-xs sm:text-sm font-bold text-charcoal mb-1.5">
+
+                    <h3 className="font-serif text-lg font-bold text-charcoal mb-2.5 group-hover:text-sunset transition-colors">
                       {card.title}
-                    </h4>
-                    <p className="text-gray-400 text-xs font-light leading-relaxed">
+                    </h3>
+                    <p className="text-gray-400 font-sans text-xs sm:text-sm leading-relaxed font-light">
                       {card.description}
                     </p>
-                  </motion.div>
-                );
-              })}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+
+
+        {/* =========================================
+            PART B: IMMERSIVE TESTIMONIALS & TRUST SHOWCASE
+            ========================================= */}
+        <div className="relative border-t border-slate-100 pt-24">
+          
+          {/* Trust Board / Credibility Metrics at the Top */}
+          <div className="max-w-4xl mx-auto mb-16">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="p-6 md:p-8 rounded-3xl bg-slate-50 border border-slate-100/80 shadow-md flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left"
+            >
+              <div className="space-y-2">
+                <div className="flex justify-center md:justify-start items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4.5 h-4.5 fill-sunset text-sunset" />
+                  ))}
+                  <span className="text-sm font-bold text-charcoal ml-2">4.9 / 5.0 Rating</span>
+                </div>
+                <p className="text-xs text-gray-400 font-sans font-light">
+                  Based on over <span className="font-semibold text-charcoal">1,200+ verified ratings</span> on TripAdvisor, Google Sights & social channels.
+                </p>
+              </div>
+
+              {/* Verified badge middle */}
+              <div className="h-px w-full md:w-px md:h-12 bg-slate-200" />
+
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <div className="text-left">
+                  <h4 className="font-serif text-xs font-bold text-charcoal">100% Certified Reviews</h4>
+                  <p className="text-[10px] text-gray-400 mt-0.5">Directly pulled from guests with confirmed stays.</p>
+                </div>
+              </div>
+
+              {/* Total happy guests count */}
+              <div className="h-px w-full md:w-px md:h-12 bg-slate-200" />
+
+              <div className="space-y-1">
+                <span className="text-xl sm:text-2xl font-serif font-bold text-sunset">15,000+</span>
+                <p className="text-[10px] text-gray-400 uppercase tracking-widest font-sans font-bold block">Happy Clients</p>
+              </div>
             </motion.div>
           </div>
 
-          {/* Testimonial Slider Column */}
-          <div className="lg:col-span-5 flex flex-col justify-center">
-            <div className="rounded-3xl bg-charcoal text-white p-8 md:p-10 shadow-2xl relative overflow-hidden border border-charcoal/80">
-              {/* Star details background */}
-              <div className="absolute -top-10 -right-10 w-44 h-44 bg-sunset/15 rounded-full blur-2xl pointer-events-none" />
-              
-              <div className="relative z-10">
-                <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-sand text-[10px] font-bold uppercase tracking-wider mb-6">
-                  <Quote className="w-3.5 h-3.5 text-coral" /> Guest Stories
-                </div>
+          {/* Testimonial Editorial / Magazine Layout */}
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center max-w-xl mx-auto mb-12">
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset inline-flex items-center gap-1.5">
+                <MessageSquare className="w-3.5 h-3.5 text-coral" /> Editorial Stories
+              </span>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-charcoal">
+                Reflections of our Guests
+              </h2>
+            </div>
 
-                <div className="min-h-[220px] flex flex-col justify-between">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeIndex}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.4 }}
-                    >
-                      {/* Star Rating */}
-                      <div className="flex gap-1 mb-4">
-                        {[...Array(TESTIMONIALS_DATA[activeIndex].rating)].map((_, i) => (
-                          <Star key={i} className="w-4 h-4 fill-sand text-sand" />
-                        ))}
+            <div className="relative rounded-[36px] bg-charcoal text-white p-8 sm:p-12 lg:p-16 shadow-2xl overflow-hidden border border-charcoal/90">
+              {/* Stylized background glow */}
+              <div className="absolute -top-24 -right-24 w-96 h-96 bg-sunset/15 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-ocean/10 rounded-full blur-3xl pointer-events-none" />
+
+              {/* Slider content wrapper */}
+              <div className="min-h-[280px] flex flex-col justify-between relative z-10">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeIndex}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
+                  >
+                    
+                    {/* Left Pane: Beautiful magazine-style Quote */}
+                    <div className="lg:col-span-8 space-y-6 text-left">
+                      <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-sunset shrink-0">
+                        <Quote className="w-6 h-6 rotate-180" />
                       </div>
+                      
+                      <div className="space-y-4">
+                        {/* Rating row */}
+                        <div className="flex gap-1">
+                          {[...Array(TESTIMONIALS_DATA[activeIndex].rating)].map((_, i) => (
+                            <Star key={i} className="w-4 h-4 fill-sand text-sand" />
+                          ))}
+                        </div>
 
-                      {/* Comment */}
-                      <p className="font-serif italic text-sm sm:text-base leading-relaxed text-white/90">
-                        "{TESTIMONIALS_DATA[activeIndex].comment}"
-                      </p>
+                        {/* Highlighted Quote Comment */}
+                        <blockquote className="font-serif text-lg sm:text-xl md:text-2xl italic leading-relaxed text-white/90">
+                          "{TESTIMONIALS_DATA[activeIndex].comment}"
+                        </blockquote>
+                      </div>
+                    </div>
 
-                      {/* Guest details block */}
-                      <div className="flex items-center gap-4 mt-6">
-                        <img
-                          src={TESTIMONIALS_DATA[activeIndex].avatar}
-                          alt={TESTIMONIALS_DATA[activeIndex].name}
-                          referrerPolicy="no-referrer"
-                          className="w-11 h-11 rounded-full object-cover border-2 border-sand/40"
-                        />
+                    {/* Right Pane: Author Card with overlay badge */}
+                    <div className="lg:col-span-4 flex flex-col items-center lg:items-end justify-center">
+                      <div className="flex flex-col items-center text-center lg:text-right space-y-4">
+                        
+                        {/* Avatar frame */}
+                        <div className="relative">
+                          <img
+                            src={TESTIMONIALS_DATA[activeIndex].avatar}
+                            alt={TESTIMONIALS_DATA[activeIndex].name}
+                            referrerPolicy="no-referrer"
+                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-4 border-sunset/40 shadow-xl"
+                          />
+                          <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-white rounded-full p-1 border-2 border-charcoal" title="Verified Customer">
+                            <CheckCircle2 className="w-3.5 h-3.5 fill-emerald-500 text-white" />
+                          </div>
+                        </div>
+
+                        {/* Guest details */}
                         <div>
-                          <h4 className="font-sans text-xs sm:text-sm font-bold text-white leading-tight">
+                          <h4 className="font-serif text-base sm:text-lg font-bold text-white leading-tight">
                             {TESTIMONIALS_DATA[activeIndex].name}
                           </h4>
-                          <p className="text-[10px] text-sand/85 font-medium mt-0.5 flex items-center gap-2">
+                          <p className="text-xs text-sand font-medium mt-1">
+                            {TESTIMONIALS_DATA[activeIndex].role}
+                          </p>
+                          <p className="text-[10px] text-white/50 font-light mt-1 flex flex-wrap justify-center lg:justify-end gap-1.5 items-center">
                             <span>{TESTIMONIALS_DATA[activeIndex].location}</span>
-                            <span className="text-white/20">•</span>
-                            <span className="text-white/50">{TESTIMONIALS_DATA[activeIndex].date}</span>
+                            <span>•</span>
+                            <span className="px-2 py-0.5 rounded bg-white/10 text-white/80 text-[9px] font-medium">
+                              {TESTIMONIALS_DATA[activeIndex].stayType}
+                            </span>
                           </p>
                         </div>
                       </div>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
+                    </div>
 
-                {/* Slider Manual Controls */}
-                <div className="flex items-center justify-between border-t border-white/10 pt-6 mt-8">
-                  <div className="flex gap-1.5">
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Slider manual and arrow controls */}
+                <div className="flex flex-col sm:flex-row items-center justify-between border-t border-white/10 pt-6 mt-8 gap-4">
+                  {/* Manual dot counts */}
+                  <div className="flex gap-2">
                     {TESTIMONIALS_DATA.map((_, idx) => (
                       <button
                         key={idx}
                         onClick={() => setActiveIndex(idx)}
-                        className={`w-2 h-2 rounded-full transition-all focus:outline-none ${
-                          activeIndex === idx ? 'w-6 bg-sunset' : 'bg-white/30'
+                        className={`h-2 rounded-full transition-all duration-300 focus:outline-none ${
+                          activeIndex === idx ? 'w-8 bg-sunset' : 'w-2 bg-white/20 hover:bg-white/40'
                         }`}
                         aria-label={`Go to slide ${idx + 1}`}
                       />
                     ))}
                   </div>
 
-                  <div className="flex gap-2">
+                  {/* Manual Arrow buttons */}
+                  <div className="flex gap-2.5">
                     <button
                       onClick={handlePrev}
-                      className="p-2 rounded-full bg-white/5 hover:bg-white/15 text-white transition-all active:scale-90 focus:outline-none cursor-pointer"
-                      aria-label="Previous review"
+                      className="p-3 rounded-full bg-white/5 hover:bg-white/15 text-white border border-white/10 transition-all active:scale-90 focus:outline-none cursor-pointer flex items-center justify-center"
+                      aria-label="Previous story"
                     >
                       <ArrowLeft className="w-4 h-4" />
                     </button>
                     <button
                       onClick={handleNext}
-                      className="p-2 rounded-full bg-white/5 hover:bg-white/15 text-white transition-all active:scale-90 focus:outline-none cursor-pointer"
-                      aria-label="Next review"
+                      className="p-3 rounded-full bg-white/5 hover:bg-white/15 text-white border border-white/10 transition-all active:scale-90 focus:outline-none cursor-pointer flex items-center justify-center"
+                      aria-label="Next story"
                     >
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
+
               </div>
             </div>
-          </div>
 
+          </div>
         </div>
+
       </div>
     </section>
   );

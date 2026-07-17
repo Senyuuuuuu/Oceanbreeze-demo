@@ -169,122 +169,130 @@ export default function Rooms({ onOpenBooking }: RoomsProps) {
           </p>
         </motion.div>
 
-        {/* Rooms Card Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-          {ROOMS_DATA.map((room) => (
-            <motion.div
-              key={room.id}
-              initial={{ opacity: 0, y: 25 }}
-              animate={{ opacity: 1, y: 0 }}
-              whileHover={{ 
-                y: -6, 
-                scale: 1.012,
-                boxShadow: "0 25px 45px -12px rgba(11, 30, 54, 0.14)"
-              }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              onClick={() => setSelectedRoom(room)}
-              className="group bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 flex flex-col h-full cursor-pointer relative"
-            >
-              {/* Card Image Container with Hover zoom and labels */}
-              <div className="relative h-64 sm:h-76 overflow-hidden shrink-0">
-                <motion.img
-                  src={room.image}
-                  alt={room.name}
-                  referrerPolicy="no-referrer"
-                  whileHover={{ scale: 1.06 }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal/40 to-transparent opacity-60 pointer-events-none" />
-                
-                {/* Floating view badge */}
-                <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-charcoal/80 backdrop-blur-md text-white font-sans text-[10px] font-semibold uppercase tracking-wider flex items-center gap-1">
-                  <Waves className="w-3.5 h-3.5 text-ocean" /> {room.view}
-                </div>
-
-                {/* Floating featured banner */}
-                {room.featured && (
-                  <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-sand text-charcoal font-sans text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 border border-sand shadow-sm">
-                    <Star className="w-3 h-3 fill-sunset text-sunset" /> Highly Requested
+        {/* Rooms Alternating Rows Layout */}
+        <div className="space-y-12 lg:space-y-16">
+          {ROOMS_DATA.map((room, index) => {
+            const isEven = index % 2 === 0;
+            return (
+              <motion.div
+                key={room.id}
+                initial={{ opacity: 0, y: 35 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ 
+                  y: -4, 
+                  boxShadow: "0 25px 50px -12px rgba(11, 30, 54, 0.12)"
+                }}
+                onClick={() => setSelectedRoom(room)}
+                className={`group bg-white rounded-[32px] overflow-hidden shadow-lg border border-slate-100 flex flex-col md:flex-row h-auto cursor-pointer relative transition-all duration-300`}
+              >
+                {/* Card Image Container with Hover zoom and labels (takes left or right based on index) */}
+                <div className={`relative w-full md:w-[46%] h-64 sm:h-80 md:h-[360px] overflow-hidden shrink-0 ${!isEven ? 'md:order-2' : ''}`}>
+                  <motion.img
+                    src={room.image}
+                    alt={room.name}
+                    referrerPolicy="no-referrer"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal/40 to-transparent opacity-60 pointer-events-none" />
+                  
+                  {/* Floating view badge */}
+                  <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-charcoal/85 backdrop-blur-md text-white font-sans text-[10px] font-semibold uppercase tracking-wider flex items-center gap-1">
+                    <Waves className="w-3.5 h-3.5 text-ocean" /> {room.view}
                   </div>
-                )}
 
-                {/* Floating Price overlay */}
-                <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-md py-1.5 px-4 rounded-xl text-charcoal shadow-sm border border-white/20">
-                  <span className="text-[10px] uppercase font-bold text-gray-400 block tracking-wider">From</span>
-                  <span className="font-serif text-lg font-bold text-sunset">₱{room.price.toLocaleString()}</span>
-                  <span className="text-[10px] text-gray-500 font-medium"> / Night</span>
-                </div>
-              </div>
-
-              {/* Card Content block */}
-              <div className="p-6 md:p-8 flex flex-col flex-grow">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-serif text-xl sm:text-2xl font-bold text-charcoal group-hover:text-sunset transition-colors">
-                    {room.name}
-                  </h4>
-                </div>
-
-                <p className="text-gray-500 text-xs sm:text-sm font-light leading-relaxed mb-6 flex-grow">
-                  {room.description}
-                </p>
-
-                {/* Meta details (Capacity and Scenic View only, removing style/bed config and size) */}
-                <div className="grid grid-cols-2 gap-4 border-t border-b border-gray-100 py-4 mb-6 text-[11px] text-gray-500 font-medium">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[9px] uppercase text-gray-400 font-bold tracking-wider flex items-center gap-1">
-                      <Users className="w-3.5 h-3.5 text-coral" /> Capacity
-                    </span>
-                    <span className="text-charcoal font-sans truncate">{room.capacity}</span>
-                  </div>
-                  <div className="flex flex-col gap-1 border-l border-gray-100 pl-4">
-                    <span className="text-[9px] uppercase text-gray-400 font-bold tracking-wider flex items-center gap-1">
-                      <Waves className="w-3.5 h-3.5 text-ocean" /> Scenic View
-                    </span>
-                    <span className="text-charcoal font-sans truncate">{room.view}</span>
-                  </div>
-                </div>
-
-                {/* Amenities checklist row */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {room.amenities.slice(0, 3).map(amenity => (
-                    <span
-                      key={amenity}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-sans text-[10px] font-medium"
-                    >
-                      <Check className="w-2.5 h-2.5 text-ocean" /> {amenity}
-                    </span>
-                  ))}
-                  {room.amenities.length > 3 && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full bg-slate-50 text-slate-500 font-sans text-[9px] font-bold">
-                      +{room.amenities.length - 3} More
-                    </span>
+                  {/* Floating featured banner */}
+                  {room.featured && (
+                    <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-sand text-charcoal font-sans text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 border border-sand shadow-sm">
+                      <Star className="w-3 h-3 fill-sunset text-sunset" /> Crown Jewel
+                    </div>
                   )}
+
+                  {/* Floating Price overlay */}
+                  <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-md py-1.5 px-4 rounded-xl text-charcoal shadow-sm border border-white/20">
+                    <span className="text-[9px] uppercase font-bold text-gray-400 block tracking-wider leading-none mb-0.5">From</span>
+                    <div className="flex items-baseline gap-0.5">
+                      <span className="font-serif text-base sm:text-lg font-bold text-sunset">₱{room.price.toLocaleString()}</span>
+                      <span className="text-[9px] text-gray-500 font-medium"> / Night</span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="grid grid-cols-2 gap-4 mt-auto pt-2">
-                  <div
-                    className="py-2.5 px-4 rounded-full border border-slate-200 bg-white text-charcoal group-hover:border-charcoal group-hover:bg-charcoal group-hover:text-white font-sans text-xs font-bold tracking-wider transition-all duration-300 text-center flex items-center justify-center gap-1.5 focus:outline-none cursor-pointer shadow-xs group-hover:shadow-md"
-                  >
-                    View Details
+                {/* Card Content block */}
+                <div className="p-6 sm:p-8 md:p-10 flex flex-col justify-center flex-grow">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-sunset block mb-1">
+                      Ocean Haven
+                    </span>
+                    <h4 className="font-serif text-xl sm:text-2xl md:text-3xl font-bold text-charcoal group-hover:text-sunset transition-colors leading-snug">
+                      {room.name}
+                    </h4>
                   </div>
-                  <motion.button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onOpenBooking(room.id);
-                    }}
-                    whileHover={{ scale: 1.03, boxShadow: "0 10px 20px -5px rgba(245, 124, 0, 0.3)" }}
-                    whileTap={{ scale: 0.97 }}
-                    className="py-2.5 px-4 rounded-full bg-sunset text-white font-sans text-xs font-bold tracking-wider uppercase transition-colors shadow-md shadow-sunset/10 text-center flex items-center justify-center gap-1 cursor-pointer focus:outline-none"
-                  >
-                    Book Room
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </motion.button>
+
+                  <p className="text-gray-500 text-xs sm:text-sm font-light leading-relaxed mt-4 mb-6">
+                    {room.description}
+                  </p>
+
+                  {/* Meta details (Capacity and Scenic View only) */}
+                  <div className="grid grid-cols-2 gap-4 border-t border-b border-gray-100 py-4 mb-6 text-[11px] text-gray-500 font-medium">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[9px] uppercase text-gray-400 font-bold tracking-wider flex items-center gap-1">
+                        <Users className="w-3.5 h-3.5 text-coral" /> Capacity
+                      </span>
+                      <span className="text-charcoal font-sans truncate">{room.capacity}</span>
+                    </div>
+                    <div className="flex flex-col gap-1 border-l border-gray-100 pl-4">
+                      <span className="text-[9px] uppercase text-gray-400 font-bold tracking-wider flex items-center gap-1">
+                        <Waves className="w-3.5 h-3.5 text-ocean" /> Scenic View
+                      </span>
+                      <span className="text-charcoal font-sans truncate">{room.view}</span>
+                    </div>
+                  </div>
+
+                  {/* Amenities checklist row */}
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {room.amenities.slice(0, 4).map(amenity => (
+                      <span
+                        key={amenity}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 text-slate-600 font-sans text-[10px] font-medium border border-slate-100"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-ocean" /> {amenity}
+                      </span>
+                    ))}
+                    {room.amenities.length > 4 && (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 font-sans text-[9px] font-bold border border-slate-200">
+                        +{room.amenities.length - 4} More
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap gap-4 pt-2">
+                    <div
+                      className="py-2.5 px-6 rounded-full border border-slate-200 bg-white text-charcoal group-hover:border-charcoal group-hover:bg-charcoal group-hover:text-white font-sans text-xs font-bold tracking-wider transition-all duration-300 text-center flex items-center justify-center gap-1.5 focus:outline-none cursor-pointer shadow-xs"
+                    >
+                      Explore Details
+                    </div>
+                    <motion.button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onOpenBooking(room.id);
+                      }}
+                      whileHover={{ scale: 1.03, boxShadow: "0 10px 20px -5px rgba(245, 124, 0, 0.3)" }}
+                      whileTap={{ scale: 0.97 }}
+                      className="py-2.5 px-6 rounded-full bg-sunset text-white font-sans text-xs font-bold tracking-wider uppercase transition-colors shadow-md shadow-sunset/10 text-center flex items-center justify-center gap-1 cursor-pointer focus:outline-none"
+                    >
+                      Book Room
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </motion.button>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
 

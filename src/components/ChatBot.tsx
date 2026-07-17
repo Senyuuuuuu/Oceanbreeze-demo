@@ -39,11 +39,6 @@ export default function ChatBot({ onOpenBooking, isBookingOpen = false }: ChatBo
     }
   }, [isBookingOpen]);
 
-  // If the booking modal is open, we hide the chatbot entirely to avoid overlaps in the UI
-  if (isBookingOpen) {
-    return null;
-  }
-
   useEffect(() => {
     if (isOpen) {
       // Delay slightly to allow the open animation to complete
@@ -180,6 +175,11 @@ export default function ChatBot({ onOpenBooking, isBookingOpen = false }: ChatBo
     { label: '📍 Location', query: 'Where is the resort located?' },
     { label: '📅 Book Now', query: 'How do I book a stay?' }
   ];
+
+  // If the booking modal is open, we hide the chatbot entirely to avoid overlaps in the UI
+  if (isBookingOpen) {
+    return null;
+  }
 
   return (
     <>

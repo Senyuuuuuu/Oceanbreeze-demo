@@ -11,6 +11,13 @@ interface BookingInquiryModalProps {
   initialCheckOut?: string;
   initialGuests?: string;
   onDatesGuestsChange?: (datesAndGuests: { checkIn: string; checkOut: string; guests: string }) => void;
+  onSuccess?: (bookingDetails: {
+    roomName: string;
+    checkIn: string;
+    checkOut: string;
+    confirmationCode: string;
+    guestName: string;
+  }) => void;
 }
 
 const ROOM_OPTIONS = [
@@ -73,12 +80,27 @@ const getDemandLevel = (roomType: string, checkIn: string, checkOut: string, boo
 const formatDateString = (dateStr: string) => {
   if (!dateStr) return '';
   try {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr;
-    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    return dateStr;
   } catch {
     return dateStr;
   }
+};
+
+const parseLocalDate = (dateString: string): Date => {
+  const parts = dateString.split('-');
+  return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]), 0, 0, 0, 0);
+};
+
+const formatLocalDate = (date: Date): string => {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
 };
 
 export default function BookingInquiryModal({
@@ -88,7 +110,8 @@ export default function BookingInquiryModal({
   initialCheckIn = '',
   initialCheckOut = '',
   initialGuests = '2',
-  onDatesGuestsChange
+  onDatesGuestsChange,
+  onSuccess
 }: BookingInquiryModalProps) {
   const [formData, setFormData] = useState({
     name: '',
@@ -124,17 +147,35 @@ export default function BookingInquiryModal({
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  // Sync pre-selected room and reload blocked dates when opening, and auto-pull from Google Sheet
+  const onDatesGuestsChangeRef = React.useRef(onDatesGuestsChange);
+  useEffect(() => {
+    onDatesGuestsChangeRef.current = onDatesGuestsChange;
+  }, [onDatesGuestsChange]);
+
+  const lastProcessedPropsRef = React.useRef({
+    checkIn: initialCheckIn || '',
+    checkOut: initialCheckOut || '',
+    guests: initialGuests || '2'
+  });
+
+  // Initialize modal state and reload blocked dates when opening, and auto-pull from Google Sheet
   useEffect(() => {
     if (isOpen) {
       const defaultRoom = preSelectedRoom || formData.roomType || ROOM_OPTIONS[0].id;
       setFormData(prev => ({
         ...prev,
         roomType: defaultRoom,
-        checkIn: initialCheckIn || prev.checkIn,
-        checkOut: initialCheckOut || prev.checkOut,
-        guests: initialGuests || prev.guests
+        checkIn: initialCheckIn || '',
+        checkOut: initialCheckOut || '',
+        guests: initialGuests || '2'
       }));
+
+      lastProcessedPropsRef.current = {
+        checkIn: initialCheckIn || '',
+        checkOut: initialCheckOut || '',
+        guests: initialGuests || '2'
+      };
+      
       setBlockedDates(bookingStore.getBlockedDates(defaultRoom));
       setIsSuccess(false);
       setErrorText('');
@@ -156,15 +197,56 @@ export default function BookingInquiryModal({
       };
       syncWithSheet();
     }
+  }, [isOpen]);
+
+  // Keep local dates & guests state in sync with parent props when they change from the outside
+  useEffect(() => {
+    if (isOpen) {
+      const parentCheckIn = initialCheckIn || '';
+      const parentCheckOut = initialCheckOut || '';
+      const parentGuests = initialGuests || '2';
+
+      if (
+        parentCheckIn !== lastProcessedPropsRef.current.checkIn ||
+        parentCheckOut !== lastProcessedPropsRef.current.checkOut ||
+        parentGuests !== lastProcessedPropsRef.current.guests
+      ) {
+        setFormData(prev => ({
+          ...prev,
+          checkIn: parentCheckIn,
+          checkOut: parentCheckOut,
+          guests: parentGuests
+        }));
+        lastProcessedPropsRef.current = {
+          checkIn: parentCheckIn,
+          checkOut: parentCheckOut,
+          guests: parentGuests
+        };
+      }
+    }
+  }, [isOpen, initialCheckIn, initialCheckOut, initialGuests]);
+
+  // Sync pre-selected room to local form state
+  useEffect(() => {
+    if (isOpen && preSelectedRoom) {
+      setFormData(prev => ({
+        ...prev,
+        roomType: preSelectedRoom
+      }));
+    }
   }, [isOpen, preSelectedRoom]);
 
   // Keep calendar month aligned when user selects checkIn from native date inputs
   useEffect(() => {
     if (formData.checkIn) {
-      const date = new Date(formData.checkIn);
-      if (!isNaN(date.getTime())) {
-        setCalendarMonth(date.getMonth());
-        setCalendarYear(date.getFullYear());
+      const parts = formData.checkIn.split('-');
+      if (parts.length === 3) {
+        const year = Number(parts[0]);
+        const month = Number(parts[1]) - 1;
+        if (!isNaN(year) && !isNaN(month)) {
+          setCalendarMonth(month);
+          setCalendarYear(year);
+        }
       }
     }
   }, [formData.checkIn]);
@@ -178,14 +260,27 @@ export default function BookingInquiryModal({
 
   // Sync changes in dates and guests back to the parent component for global synchronization
   useEffect(() => {
-    if (onDatesGuestsChange) {
-      onDatesGuestsChange({
-        checkIn: formData.checkIn,
-        checkOut: formData.checkOut,
-        guests: formData.guests
-      });
+    if (!isOpen) return;
+    if (onDatesGuestsChangeRef.current) {
+      // Only call if the values are actually different from our processed values
+      if (
+        formData.checkIn !== lastProcessedPropsRef.current.checkIn ||
+        formData.checkOut !== lastProcessedPropsRef.current.checkOut ||
+        formData.guests !== lastProcessedPropsRef.current.guests
+      ) {
+        lastProcessedPropsRef.current = {
+          checkIn: formData.checkIn,
+          checkOut: formData.checkOut,
+          guests: formData.guests
+        };
+        onDatesGuestsChangeRef.current({
+          checkIn: formData.checkIn,
+          checkOut: formData.checkOut,
+          guests: formData.guests
+        });
+      }
     }
-  }, [formData.checkIn, formData.checkOut, formData.guests, onDatesGuestsChange]);
+  }, [isOpen, formData.checkIn, formData.checkOut, formData.guests]);
 
   const MONTHS = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -257,8 +352,7 @@ export default function BookingInquiryModal({
 
     const today = new Date();
     today.setHours(0,0,0,0);
-    const cellDate = new Date(dateString);
-    cellDate.setHours(0,0,0,0);
+    const cellDate = parseLocalDate(dateString);
 
     const isPast = cellDate < today;
     const isBlocked = blockedDates.includes(dateString);
@@ -267,10 +361,8 @@ export default function BookingInquiryModal({
 
     let isInRange = false;
     if (formData.checkIn && formData.checkOut) {
-      const start = new Date(formData.checkIn);
-      const end = new Date(formData.checkOut);
-      start.setHours(0,0,0,0);
-      end.setHours(0,0,0,0);
+      const start = parseLocalDate(formData.checkIn);
+      const end = parseLocalDate(formData.checkOut);
       isInRange = cellDate > start && cellDate < end;
     }
 
@@ -283,7 +375,7 @@ export default function BookingInquiryModal({
     // If the clicked date is blocked, don't allow selection
     if (blockedDates.includes(dateString)) return;
 
-    const clickedDate = new Date(dateString);
+    const clickedDate = parseLocalDate(dateString);
     const today = new Date();
     today.setHours(0,0,0,0);
     if (clickedDate < today) return; // don't allow past dates
@@ -314,7 +406,7 @@ export default function BookingInquiryModal({
         checkOut: ''
       }));
     } else {
-      const checkInDate = new Date(formData.checkIn);
+      const checkInDate = parseLocalDate(formData.checkIn);
       if (clickedDate <= checkInDate) {
         setFormData(prev => ({
           ...prev,
@@ -327,7 +419,7 @@ export default function BookingInquiryModal({
         const current = new Date(checkInDate);
         current.setDate(current.getDate() + 1);
         while (current < clickedDate) {
-          const currentStr = current.toISOString().split('T')[0];
+          const currentStr = formatLocalDate(current);
           if (blockedDates.includes(currentStr)) {
             hasBlockedDateBetween = true;
             break;
@@ -374,6 +466,15 @@ export default function BookingInquiryModal({
       if (result.success) {
         setConfirmedBooking(result.booking);
         setIsSuccess(true);
+        if (onSuccess) {
+          onSuccess({
+            roomName: ROOM_OPTIONS.find(r => r.id === formData.roomType)?.name || 'Resort Room',
+            checkIn: formData.checkIn,
+            checkOut: formData.checkOut,
+            confirmationCode: result.booking?.confirmationCode || 'OB-DLX-9284',
+            guestName: formData.name
+          });
+        }
       } else {
         setErrorText(result.error || 'This room is not available in Google Sheets for these dates.');
       }
@@ -596,6 +697,23 @@ export default function BookingInquiryModal({
                       </div>
                     </div>
 
+                    {/* Mini Visual Legend for stay dates and slashes */}
+                    <div className="mt-3 px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl flex flex-wrap items-center justify-between gap-2.5 text-[9px] text-gray-500 font-sans">
+                      <span className="font-semibold text-charcoal/80">Stay Indicator:</span>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1" title="You can select this date for stay">
+                          <span className="w-2 h-2 rounded bg-white border border-slate-200 shadow-sm shrink-0" />
+                          <span>Available</span>
+                        </div>
+                        <div className="flex items-center gap-1" title="Already booked or fully reserved dates">
+                          <span className="w-2 h-2 rounded bg-red-50 border border-red-200/50 relative overflow-hidden shrink-0">
+                            <span className="absolute inset-0 bg-red-300 transform -rotate-45 h-[1px] top-1/2" />
+                          </span>
+                          <span className="font-medium text-red-500">Booked (Diagonal Slash)</span>
+                        </div>
+                      </div>
+                    </div>
+
                     {/* Popover Custom Calendar Overlay */}
                     {showCalendarOverlay && (
                       <>
@@ -649,23 +767,31 @@ export default function BookingInquiryModal({
                           {/* Days grid */}
                           <div className="grid grid-cols-7 gap-1">
                             {calendarDays.map((cell, idx) => {
-                              const { isPast, isBlocked, isCheckIn, isCheckOut, isInRange } = getDayStatus(cell.dateString);
+                              const { isPast, isBlocked: rawIsBlocked, isCheckIn, isCheckOut, isInRange } = getDayStatus(cell.dateString);
                               const isCurrentMonth = cell.isCurrentMonth;
                               
-                              let cellClass = "aspect-square rounded-xl flex flex-col items-center justify-center text-xs font-medium relative transition-all ";
+                              // Fetch/query Google Sheet booked dates status inside the calendar rendering loop
+                              const querySheetBookedDates = (dateStr: string): boolean => {
+                                if (!dateStr || !isCurrentMonth) return false;
+                                return rawIsBlocked || blockedDates.includes(dateStr);
+                              };
+                              
+                              const isBlocked = querySheetBookedDates(cell.dateString);
+                              
+                              let cellClass = "aspect-square rounded-xl flex flex-col items-center justify-center text-xs font-medium relative transition-all duration-200 ";
                               
                               if (!isCurrentMonth) {
                                 cellClass += "text-gray-300 pointer-events-none";
                               } else if (isBlocked) {
-                                cellClass += "bg-red-50 text-red-500 line-through cursor-not-allowed border border-red-150/40";
+                                cellClass += "bg-red-50 text-red-500 line-through cursor-not-allowed border border-red-200/50";
                               } else if (isPast) {
                                 cellClass += "text-gray-300 cursor-not-allowed";
                               } else if (isCheckIn || isCheckOut) {
-                                cellClass += "bg-gradient-to-br from-sunset to-coral text-white font-bold shadow-md shadow-sunset/15 scale-105 z-10 cursor-pointer";
+                                cellClass += "bg-gradient-to-br from-sunset to-coral text-white font-bold shadow-lg shadow-sunset/20 scale-110 z-10 cursor-pointer ring-2 ring-sunset ring-offset-2 border border-white";
                               } else if (isInRange) {
                                 cellClass += "bg-sunset/15 text-sunset font-semibold cursor-pointer border border-sunset/20";
                               } else {
-                                cellClass += "bg-white hover:bg-slate-100 text-charcoal cursor-pointer shadow-sm border border-slate-100";
+                                cellClass += "bg-white hover:bg-sunset/10 hover:text-sunset hover:scale-105 text-charcoal cursor-pointer shadow-sm border border-slate-100";
                               }
 
                               return (
@@ -680,9 +806,7 @@ export default function BookingInquiryModal({
                                   <span>{cell.day}</span>
                                   
                                   {isBlocked && isCurrentMonth && (
-                                    <span className="absolute bottom-1 text-[8px] text-red-400 font-sans tracking-tighter">
-                                      / 🔒
-                                    </span>
+                                    <div className="diagonal-slash-overlay" />
                                   )}
                                   
                                   {isCheckIn && isCurrentMonth && (
@@ -702,18 +826,24 @@ export default function BookingInquiryModal({
 
                           {/* Legend & Controls */}
                           <div className="mt-3.5 pt-3 border-t border-slate-100">
-                            <div className="flex flex-wrap items-center justify-between gap-1 text-[9px] mb-3 text-gray-500 font-sans">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[9px] mb-3 text-gray-500 font-sans">
                               <div className="flex items-center gap-1">
-                                <span className="w-2.5 h-2.5 rounded bg-white border border-slate-200" />
+                                <span className="w-2.5 h-2.5 rounded bg-white border border-slate-200 shrink-0" />
                                 <span>Available</span>
                               </div>
                               <div className="flex items-center gap-1">
-                                <span className="w-2.5 h-2.5 rounded bg-gradient-to-br from-sunset to-coral" />
+                                <span className="w-2.5 h-2.5 rounded bg-gradient-to-br from-sunset to-coral shrink-0" />
                                 <span>Check-In/Out</span>
                               </div>
                               <div className="flex items-center gap-1">
-                                <span className="w-2.5 h-2.5 rounded bg-sunset/15 border border-sunset/20" />
-                                <span>Selected Range</span>
+                                <span className="w-2.5 h-2.5 rounded bg-sunset/15 border border-sunset/20 shrink-0" />
+                                <span>Range</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <span className="w-2.5 h-2.5 rounded bg-red-50 border border-red-200/50 relative overflow-hidden shrink-0">
+                                  <span className="absolute inset-0 bg-red-300 transform -rotate-45 h-[1px] top-1/2" />
+                                </span>
+                                <span>Booked</span>
                               </div>
                             </div>
 

@@ -22,12 +22,27 @@ const MONTHS = [
 const formatDateString = (dateStr: string) => {
   if (!dateStr) return '';
   try {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr;
-    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    return dateStr;
   } catch {
     return dateStr;
   }
+};
+
+const parseLocalDate = (dateString: string): Date => {
+  const parts = dateString.split('-');
+  return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]), 0, 0, 0, 0);
+};
+
+const formatLocalDate = (date: Date): string => {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
 };
 
 const HERO_SLIDES = [
@@ -98,10 +113,14 @@ export default function Hero({
   // Sync calendar month/year when check-in is selected
   useEffect(() => {
     if (checkIn) {
-      const date = new Date(checkIn);
-      if (!isNaN(date.getTime())) {
-        setCalendarMonth(date.getMonth());
-        setCalendarYear(date.getFullYear());
+      const parts = checkIn.split('-');
+      if (parts.length === 3) {
+        const year = Number(parts[0]);
+        const month = Number(parts[1]) - 1;
+        if (!isNaN(year) && !isNaN(month)) {
+          setCalendarMonth(month);
+          setCalendarYear(year);
+        }
       }
     }
   }, [checkIn]);
@@ -179,8 +198,7 @@ export default function Hero({
 
     const today = new Date();
     today.setHours(0,0,0,0);
-    const cellDate = new Date(dateString);
-    cellDate.setHours(0,0,0,0);
+    const cellDate = parseLocalDate(dateString);
 
     const isPast = cellDate < today;
     const isBlocked = blockedDates.includes(dateString);
@@ -189,10 +207,8 @@ export default function Hero({
 
     let isInRange = false;
     if (checkIn && checkOut) {
-      const start = new Date(checkIn);
-      const end = new Date(checkOut);
-      start.setHours(0,0,0,0);
-      end.setHours(0,0,0,0);
+      const start = parseLocalDate(checkIn);
+      const end = parseLocalDate(checkOut);
       isInRange = cellDate > start && cellDate < end;
     }
 
@@ -203,7 +219,7 @@ export default function Hero({
     if (!dateString) return;
     if (blockedDates.includes(dateString)) return;
 
-    const clickedDate = new Date(dateString);
+    const clickedDate = parseLocalDate(dateString);
     const today = new Date();
     today.setHours(0,0,0,0);
     if (clickedDate < today) return;
@@ -225,7 +241,7 @@ export default function Hero({
       setCheckIn(dateString);
       setCheckOut('');
     } else {
-      const checkInDate = new Date(checkIn);
+      const checkInDate = parseLocalDate(checkIn);
       if (clickedDate <= checkInDate) {
         setCheckIn(dateString);
         setCheckOut('');
@@ -235,7 +251,7 @@ export default function Hero({
         const current = new Date(checkInDate);
         current.setDate(current.getDate() + 1);
         while (current < clickedDate) {
-          const currentStr = current.toISOString().split('T')[0];
+          const currentStr = formatLocalDate(current);
           if (blockedDates.includes(currentStr)) {
             hasBlockedDateBetween = true;
             break;
@@ -493,23 +509,31 @@ export default function Hero({
                         {/* Days grid */}
                         <div className="grid grid-cols-7 gap-0.5">
                           {calendarDays.map((cell, idx) => {
-                            const { isPast, isBlocked, isCheckIn, isCheckOut, isInRange } = getDayStatus(cell.dateString);
+                            const { isPast, isBlocked: rawIsBlocked, isCheckIn, isCheckOut, isInRange } = getDayStatus(cell.dateString);
                             const isCurrentMonth = cell.isCurrentMonth;
                             
-                            let cellClass = "aspect-square rounded-lg flex flex-col items-center justify-center text-[10px] font-medium relative transition-all ";
+                            // Fetch/query Google Sheet booked dates status inside the calendar rendering loop
+                            const querySheetBookedDates = (dateStr: string): boolean => {
+                              if (!dateStr || !isCurrentMonth) return false;
+                              return rawIsBlocked || blockedDates.includes(dateStr);
+                            };
+                            
+                            const isBlocked = querySheetBookedDates(cell.dateString);
+                            
+                            let cellClass = "aspect-square rounded-lg flex flex-col items-center justify-center text-[10px] font-medium relative transition-all duration-200 ";
                             
                             if (!isCurrentMonth) {
                               cellClass += "text-gray-300 pointer-events-none";
                             } else if (isBlocked) {
-                              cellClass += "bg-red-50 text-red-500 line-through cursor-not-allowed border border-red-150/40";
+                              cellClass += "bg-red-50 text-red-500 line-through cursor-not-allowed border border-red-200/50";
                             } else if (isPast) {
                               cellClass += "text-gray-300 cursor-not-allowed";
                             } else if (isCheckIn || isCheckOut) {
-                              cellClass += "bg-gradient-to-br from-sunset to-coral text-white font-bold shadow-md shadow-sunset/15 scale-105 z-10 cursor-pointer";
+                              cellClass += "bg-gradient-to-br from-sunset to-coral text-white font-bold shadow-lg shadow-sunset/20 scale-110 z-10 cursor-pointer ring-2 ring-sunset ring-offset-1 border border-white";
                             } else if (isInRange) {
                               cellClass += "bg-sunset/15 text-sunset font-semibold cursor-pointer border border-sunset/20";
                             } else {
-                              cellClass += "bg-white hover:bg-slate-100 text-charcoal cursor-pointer shadow-sm border border-slate-100";
+                              cellClass += "bg-white hover:bg-sunset/10 hover:text-sunset hover:scale-105 text-charcoal cursor-pointer shadow-sm border border-slate-100";
                             }
 
                             return (
@@ -524,9 +548,7 @@ export default function Hero({
                                 <span>{cell.day}</span>
                                 
                                 {isBlocked && isCurrentMonth && (
-                                  <span className="absolute bottom-0.5 text-[6px] text-red-400 font-sans tracking-tighter">
-                                    / 🔒
-                                  </span>
+                                  <div className="diagonal-slash-overlay" />
                                 )}
                                 
                                 {isCheckIn && isCurrentMonth && (
@@ -546,18 +568,24 @@ export default function Hero({
 
                         {/* Legend & Controls */}
                         <div className="mt-2.5 pt-2 border-t border-slate-100">
-                          <div className="flex flex-wrap items-center justify-between gap-1 text-[8px] mb-2 text-gray-500 font-sans">
-                            <div className="flex items-center gap-0.5">
-                              <span className="w-2 h-2 rounded bg-white border border-slate-200" />
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[8px] mb-2 text-gray-500 font-sans">
+                            <div className="flex items-center gap-1">
+                              <span className="w-2.5 h-2.5 rounded bg-white border border-slate-200 shrink-0" />
                               <span>Available</span>
                             </div>
-                            <div className="flex items-center gap-0.5">
-                              <span className="w-2 h-2 rounded bg-gradient-to-br from-sunset to-coral" />
+                            <div className="flex items-center gap-1">
+                              <span className="w-2.5 h-2.5 rounded bg-gradient-to-br from-sunset to-coral shrink-0" />
                               <span>Stay Dates</span>
                             </div>
-                            <div className="flex items-center gap-0.5">
-                              <span className="w-2 h-2 rounded bg-sunset/15 border border-sunset/20" />
+                            <div className="flex items-center gap-1">
+                              <span className="w-2.5 h-2.5 rounded bg-sunset/15 border border-sunset/20 shrink-0" />
                               <span>Range</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span className="w-2.5 h-2.5 rounded bg-red-50 border border-red-200/50 relative overflow-hidden shrink-0">
+                                <span className="absolute inset-0 bg-red-300 transform -rotate-45 h-[1px] top-1/2" />
+                              </span>
+                              <span>Booked</span>
                             </div>
                           </div>
 

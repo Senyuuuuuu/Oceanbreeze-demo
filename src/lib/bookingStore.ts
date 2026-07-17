@@ -180,19 +180,57 @@ export class BookingStore {
   }
 
   // Get list of booked dates for a room type (dates where booking status is 'Approved')
+  // If roomType is empty, returns dates where ALL room types are approved (fully booked resort)
   getBlockedDates(roomType: string): string[] {
+    if (!roomType) {
+      const datesCount: Record<string, Set<string>> = {};
+      const approved = this.bookings.filter(b => b.status === 'Approved');
+      
+      approved.forEach(b => {
+        const startParts = b.checkIn.split('-');
+        const endParts = b.checkOut.split('-');
+        if (startParts.length === 3 && endParts.length === 3) {
+          const start = new Date(Number(startParts[0]), Number(startParts[1]) - 1, Number(startParts[2]));
+          const end = new Date(Number(endParts[0]), Number(endParts[1]) - 1, Number(endParts[2]));
+          const current = new Date(start);
+          while (current < end) {
+            const yyyy = current.getFullYear();
+            const mm = String(current.getMonth() + 1).padStart(2, '0');
+            const dd = String(current.getDate()).padStart(2, '0');
+            const dateStr = `${yyyy}-${mm}-${dd}`;
+            
+            if (!datesCount[dateStr]) {
+              datesCount[dateStr] = new Set();
+            }
+            datesCount[dateStr].add(b.roomType);
+            current.setDate(current.getDate() + 1);
+          }
+        }
+      });
+      
+      // If a date has all 4 room types approved, it's completely booked out
+      return Object.keys(datesCount).filter(dateStr => datesCount[dateStr].size >= 4);
+    }
+
     const dates: string[] = [];
     const approved = this.bookings.filter(b => b.roomType === roomType && b.status === 'Approved');
     
     approved.forEach(b => {
-      const start = new Date(b.checkIn);
-      const end = new Date(b.checkOut);
-      const current = new Date(start);
-      
-      // Add all dates between checkIn and checkOut (inclusive of checkIn, exclusive of checkout afternoon)
-      while (current < end) {
-        dates.push(current.toISOString().split('T')[0]);
-        current.setDate(current.getDate() + 1);
+      const startParts = b.checkIn.split('-');
+      const endParts = b.checkOut.split('-');
+      if (startParts.length === 3 && endParts.length === 3) {
+        const start = new Date(Number(startParts[0]), Number(startParts[1]) - 1, Number(startParts[2]));
+        const end = new Date(Number(endParts[0]), Number(endParts[1]) - 1, Number(endParts[2]));
+        const current = new Date(start);
+        
+        // Add all dates between checkIn and checkOut (inclusive of checkIn, exclusive of checkout afternoon)
+        while (current < end) {
+          const yyyy = current.getFullYear();
+          const mm = String(current.getMonth() + 1).padStart(2, '0');
+          const dd = String(current.getDate()).padStart(2, '0');
+          dates.push(`${yyyy}-${mm}-${dd}`);
+          current.setDate(current.getDate() + 1);
+        }
       }
     });
     return dates;

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useEffect } from 'react';
+import { motion } from 'motion/react';
 
 interface IntroLoaderProps {
   onComplete: () => void;
@@ -7,22 +7,14 @@ interface IntroLoaderProps {
 }
 
 export default function IntroLoader({ onComplete }: IntroLoaderProps) {
-  const [isVisible, setIsVisible] = useState(true);
-
   useEffect(() => {
     // Elegant duration for the master SVG reveal to unfold naturally
     const timer = setTimeout(() => {
-      setIsVisible(false);
-    }, 3200);
-
-    // Call onComplete when animation transitions out
-    const completeTimer = setTimeout(() => {
       onComplete();
-    }, 3800);
+    }, 3200);
 
     return () => {
       clearTimeout(timer);
-      clearTimeout(completeTimer);
     };
   }, [onComplete]);
 
@@ -100,14 +92,9 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
   };
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: 'easeInOut' }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-charcoal"
-        >
+    <div
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-charcoal"
+    >
           {/* Subtle background luxury textures and color fades */}
           <div className="absolute inset-0 z-0 opacity-20 flex flex-col justify-between pointer-events-none overflow-hidden">
             <div className="w-full h-1/2 bg-gradient-to-b from-sunset/20 via-coral/5 to-transparent" />
@@ -352,8 +339,6 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
               </span>
             </motion.div>
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    </div>
   );
 }

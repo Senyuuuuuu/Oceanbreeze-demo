@@ -10,6 +10,28 @@
   --color-sunset: #F57C00;
   --color-coral: #FFA866;
   --color-charcoal: #2E2E35;
+
+  --animate-wave-slow: wave-move-slow 22s linear infinite;
+  --animate-wave-medium: wave-move-medium 15s linear infinite;
+  --animate-wave-fast: wave-move-fast 9s linear infinite;
+}
+
+@keyframes wave-move-slow {
+  0% { transform: translateX(0) translateZ(0) scaleY(1); }
+  50% { transform: translateX(-25%) translateZ(0) scaleY(1.1); }
+  100% { transform: translateX(-50%) translateZ(0) scaleY(1); }
+}
+
+@keyframes wave-move-medium {
+  0% { transform: translateX(0) translateZ(0) scaleY(1); }
+  50% { transform: translateX(-30%) translateZ(0) scaleY(1.15); }
+  100% { transform: translateX(-50%) translateZ(0) scaleY(1); }
+}
+
+@keyframes wave-move-fast {
+  0% { transform: translateX(0) translateZ(0) scaleY(1); }
+  50% { transform: translateX(-35%) translateZ(0) scaleY(1.2); }
+  100% { transform: translateX(-50%) translateZ(0) scaleY(1); }
 }
 
 /* Custom styles for smooth scrolling and scrollbar */
@@ -82,5 +104,26 @@ html.lenis, html.lenis body {
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Diagonal slash overlay for booked/unavailable dates */
+.diagonal-slash-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 0.75rem; /* 12px rounded-xl */
+}
+
+.diagonal-slash-overlay::after {
+  content: "";
+  position: absolute;
+  width: 141%;
+  height: 1.5px;
+  background-color: #fca5a5; /* red-300 colors */
+  transform: rotate(-45deg);
 }
 
