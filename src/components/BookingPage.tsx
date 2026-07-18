@@ -22,7 +22,7 @@ interface BookingPageProps {
   onBackToHome: () => void;
 }
 
-const ROOM_OPTIONS = [
+const FALLBACK_ROOMS = [
   { 
     id: 'deluxe', 
     name: 'Deluxe Beachfront Suite', 
@@ -64,6 +64,11 @@ const ROOM_OPTIONS = [
     view: 'Direct Beachfront Access'
   }
 ];
+
+const getRoomOptions = () => {
+  const rooms = bookingStore.getRooms().filter(r => !r.disabled);
+  return rooms.length > 0 ? rooms : FALLBACK_ROOMS;
+};
 
 const getDemandLevel = (roomType: string, checkIn: string, checkOut: string, bookings: Booking[]) => {
   if (!checkIn || !checkOut) return null;
@@ -159,6 +164,8 @@ export default function BookingPage({
   onSuccess,
   onBackToHome
 }: BookingPageProps) {
+  const ROOM_OPTIONS = React.useMemo(() => getRoomOptions(), []);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -166,7 +173,7 @@ export default function BookingPage({
     checkIn: initialCheckIn,
     checkOut: initialCheckOut,
     guests: initialGuests,
-    roomType: preSelectedRoom || ROOM_OPTIONS[0].id,
+    roomType: preSelectedRoom || getRoomOptions()[0].id,
     message: ''
   });
 

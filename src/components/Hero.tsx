@@ -664,16 +664,69 @@ export default function Hero({
       </div>
 
       {/* Decorative Wave Divider at Hero Bottom */}
-      <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none">
-        <svg
-          viewBox="0 0 1440 120"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-[60px] md:h-[90px] text-white fill-current"
-          preserveAspectRatio="none"
-        >
-          <path d="M0,64L48,58.7C96,53,192,43,288,48C384,53,480,75,576,80C672,85,768,75,864,64C960,53,1056,43,1152,42.7C1248,43,1344,53,1392,58.7L1440,64L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z" />
-        </svg>
+      <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none overflow-hidden h-[70px] md:h-[100px] select-none">
+        {/* Inject high-performance local styles for Hero wave animations */}
+        <style>{`
+          @keyframes heroWaveMoveLeft {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
+          }
+          @keyframes heroWaveMoveRight {
+            0% { transform: translate3d(-50%, 0, 0); }
+            100% { transform: translate3d(0, 0, 0); }
+          }
+          .animate-hero-wave-slow {
+            animation: heroWaveMoveLeft 38s linear infinite;
+            will-change: transform;
+          }
+          .animate-hero-wave-medium {
+            animation: heroWaveMoveRight 28s linear infinite;
+            will-change: transform;
+          }
+          .animate-hero-wave-fast {
+            animation: heroWaveMoveLeft 18s linear infinite;
+            will-change: transform;
+          }
+        `}</style>
+
+        {/* Layer 1: Deep Back Wave (Softest Opacity, tallest height) */}
+        <div className="absolute bottom-0 left-0 w-[200%] h-full animate-hero-wave-slow opacity-30">
+          <svg
+            viewBox="0 0 2880 120"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-full h-full text-white fill-current"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,64L48,58.7C96,53,192,43,288,48C384,53,480,75,576,80C672,85,768,75,864,64C960,53,1056,43,1152,42.7C1248,43,1344,53,1392,58.7L1440,64L1488,58.7C1536,53,1632,43,1728,48C1824,53,1920,75,2016,80C2112,85,2208,75,2304,64C2400,53,2496,43,2592,42.7C2688,43,2784,53,2832,58.7L2880,64L2880,120L0,120Z" />
+          </svg>
+        </div>
+
+        {/* Layer 2: Middle Wave (Medium Opacity, medium height) */}
+        <div className="absolute bottom-0 left-0 w-[200%] h-[92%] animate-hero-wave-medium opacity-60">
+          <svg
+            viewBox="0 0 2880 120"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-full h-full text-white fill-current"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,64L48,58.7C96,53,192,43,288,48C384,53,480,75,576,80C672,85,768,75,864,64C960,53,1056,43,1152,42.7C1248,43,1344,53,1392,58.7L1440,64L1488,58.7C1536,53,1632,43,1728,48C1824,53,1920,75,2016,80C2112,85,2208,75,2304,64C2400,53,2496,43,2592,42.7C2688,43,2784,53,2832,58.7L2880,64L2880,120L0,120Z" />
+          </svg>
+        </div>
+
+        {/* Layer 3: Solid Front Wave (Full Opacity, standard height) */}
+        <div className="absolute bottom-0 left-0 w-[200%] h-[85%] animate-hero-wave-fast text-white">
+          <svg
+            viewBox="0 0 2880 120"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-full h-full text-white fill-current"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,64L48,58.7C96,53,192,43,288,48C384,53,480,75,576,80C672,85,768,75,864,64C960,53,1056,43,1152,42.7C1248,43,1344,53,1392,58.7L1440,64L1488,58.7C1536,53,1632,43,1728,48C1824,53,1920,75,2016,80C2112,85,2208,75,2304,64C2400,53,2496,43,2592,42.7C2688,43,2784,53,2832,58.7L2880,64L2880,120L0,120Z" />
+          </svg>
+        </div>
       </div>
     </section>
   );

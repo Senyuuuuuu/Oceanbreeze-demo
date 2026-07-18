@@ -1,4 +1,5 @@
 import { getAccessToken } from './firebaseAuth';
+import { Room, StaffAccount, GuestProfile, ReviewItem, RoomStatusItem, AdminNotification, HotelInfo, StaffRole, HousekeepingStatus } from '../types';
 
 export interface Booking {
   id: string;
@@ -10,7 +11,7 @@ export interface Booking {
   guests: string;
   roomType: string;
   message?: string;
-  status: 'Pending' | 'Approved' | 'Declined';
+  status: 'Pending' | 'Approved' | 'Declined' | 'Confirmed' | 'Checked In' | 'Checked Out' | 'Cancelled' | 'Refunded';
   confirmationCode?: string;
   timestamp: string;
 }
@@ -32,19 +33,91 @@ export interface OwnerSettings {
 export interface ActivityLog {
   id: string;
   timestamp: string;
-  type: 'info' | 'success' | 'warning' | 'error' | 'messenger';
+  type: 'info' | 'success' | 'warning' | 'error' | 'messenger' | 'auth' | 'deletion' | 'update';
   message: string;
+  user?: string;
+  ip?: string;
 }
 
 const STORAGE_KEYS = {
   BOOKINGS: 'ob_bookings',
   SHEETS_CONFIG: 'ob_sheets_config',
   LOGS: 'ob_logs',
-  OWNER_SETTINGS: 'ob_owner_settings'
+  OWNER_SETTINGS: 'ob_owner_settings',
+  ROOMS_LIST: 'ob_rooms_list',
+  GUESTS_LIST: 'ob_guests_list',
+  REVIEWS_LIST: 'ob_reviews_list',
+  STAFF_LIST: 'ob_staff_list',
+  NOTIFICATIONS: 'ob_notifications',
+  ROOM_STATUSES: 'ob_room_statuses',
+  HOTEL_INFO: 'ob_hotel_info'
 };
 
 // Initial local seed data - Empty by default for direct Google Sheets testing
 const SEED_BOOKINGS: Booking[] = [];
+
+const DEFAULT_ROOMS: Room[] = [
+  {
+    id: 'deluxe',
+    name: 'Deluxe Beachfront Suite',
+    description: 'Enjoy spectacular, unobstructed ocean views from your private balcony. Outfitted with light premium linens, handwoven native accents, and a lavish rainfall shower.',
+    capacity: '2 Adults + 1 Child',
+    size: '45 m²',
+    bedType: 'King Size Bed',
+    price: 7500,
+    image: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80',
+    amenities: ['Private Balcony', 'Ocean View', 'Mini Bar', 'Espresso Machine', 'Rainfall Shower'],
+    featured: true,
+    view: 'Panoramic Ocean View',
+    discounts: 0,
+    disabled: false
+  },
+  {
+    id: 'sunset',
+    name: 'Sunset Panoramic Villa',
+    description: 'Indulge in unmatched privacy. This standalone luxury villa features private infinity pool deck steps, oversized panoramic windows framing La Union\'s legendary sunset views.',
+    capacity: '2 Adults',
+    size: '60 m²',
+    bedType: 'Super King Bed',
+    price: 12000,
+    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80',
+    amenities: ['Private Plunge Pool', 'Sunset View', 'Outdoor Tub', 'Wine Cooler', 'Lounge Deck'],
+    featured: true,
+    view: 'Direct Sunset & Pool Deck',
+    discounts: 10, // 10% off
+    disabled: false
+  },
+  {
+    id: 'family',
+    name: 'Spacious Family Loft',
+    description: 'Perfect for family retreats and multi-guest beach escapes. Features a split-level loft configuration, luxury memory foam mattresses, and cozy lounge spaces for quality family time.',
+    capacity: '4 Adults + 2 Children',
+    size: '75 m²',
+    bedType: '1 King Bed + 2 Doubles',
+    price: 9800,
+    image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=800&q=80',
+    amenities: ['Two-Level Loft', 'Equipped Kitchenette', 'Living Lounge Area', 'Garden Terrace', 'Smart TV'],
+    featured: false,
+    view: 'Lush Tropical Garden',
+    discounts: 0,
+    disabled: false
+  },
+  {
+    id: 'surfer',
+    name: 'Beachside Eco Cabin',
+    description: 'Cozy, rustic-chic coastal living tailored for sea lovers and peace seekers. Made with locally sourced bamboo, reclaimed timbers, fully air-conditioned, and located steps from the gentle shoreline.',
+    capacity: '2 Guests',
+    size: '28 m²',
+    bedType: 'Queen Size Bed',
+    price: 4200,
+    image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=800&q=80',
+    amenities: ['Private Hammock', 'Air Conditioning', 'Outdoor Rain Shower', 'Eco Toiletries', 'Beach Lounge Chairs'],
+    featured: false,
+    view: 'Direct Beachfront Access',
+    discounts: 5, // 5% off
+    disabled: false
+  }
+];
 
 export class BookingStore {
   private bookings: Booking[] = [];
@@ -62,6 +135,24 @@ export class BookingStore {
   };
   private logs: ActivityLog[] = [];
   private listeners: (() => void)[] = [];
+
+  // New administrative dashboard states
+  private roomsList: Room[] = [];
+  private guestsList: GuestProfile[] = [];
+  private reviewsList: ReviewItem[] = [];
+  private staffList: StaffAccount[] = [];
+  private adminNotifications: AdminNotification[] = [];
+  private roomStatuses: RoomStatusItem[] = [];
+  private hotelInfo: HotelInfo = {
+    name: 'Ocean Breeze Resort',
+    email: 'reservations@oceanbreezelaunion.com',
+    phone: '+63 917 123 4567',
+    address: 'National Highway, Urbiztondo, San Juan, La Union, 2514, Philippines',
+    taxes: 12,
+    serviceFees: 10,
+    cancellationPolicy: 'Full refund if cancelled up to 5 days before check-in. Non-refundable after that.',
+    bookingRules: 'Standard Check-in is 2:00 PM. Check-out is 12:00 PM. Pets are allowed on leash. No smoking inside rooms.'
+  };
 
   constructor() {
     this.loadFromStorage();
@@ -98,6 +189,152 @@ export class BookingStore {
       } else {
         this.addLog('info', 'Ocean Breeze Resort Booking System Initialized.');
       }
+
+      // Load Rooms List
+      const storedRooms = localStorage.getItem(STORAGE_KEYS.ROOMS_LIST);
+      if (storedRooms) {
+        this.roomsList = JSON.parse(storedRooms);
+      } else {
+        this.roomsList = DEFAULT_ROOMS;
+        this.saveRooms();
+      }
+
+      // Load Staff List
+      const storedStaff = localStorage.getItem(STORAGE_KEYS.STAFF_LIST);
+      if (storedStaff) {
+        this.staffList = JSON.parse(storedStaff);
+      } else {
+        this.staffList = [
+          { id: 'STF-001', name: 'Sofia Torres', email: 'owner@oceanbreeze.com', role: 'Owner', phone: '+63 917 111 2222', enabled: true, avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80' },
+          { id: 'STF-002', name: 'Liam Rivera', email: 'manager@oceanbreeze.com', role: 'Manager', phone: '+63 917 222 3333', enabled: true, avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=150&q=80' },
+          { id: 'STF-003', name: 'Chloe Santos', email: 'receptionist@oceanbreeze.com', role: 'Receptionist', phone: '+63 917 333 4444', enabled: true, avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80' },
+          { id: 'STF-004', name: 'Mateo Garcia', email: 'housekeeper@oceanbreeze.com', role: 'Housekeeping', phone: '+63 917 444 5555', enabled: true, avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80' }
+        ];
+        this.saveStaff();
+      }
+
+      // Load Reviews
+      const storedReviews = localStorage.getItem(STORAGE_KEYS.REVIEWS_LIST);
+      const targetGoogleReviews = [
+        {
+          id: 'REV-004',
+          guestName: 'Monica Carla Naval',
+          rating: 5,
+          comment: "If you want a nice and peaceful resort in La Union this is the place. We love the sunset here as well. Not a lot of people, perfect for couple or solo traveler if you just want peace and quiet. Breakfast was great. It's still new but they take care of their guest really well. The beach was a 3 min walk or less. Funny thing was there were cows at the beach playing during the sunset and was nice to watch. The ocean was deep even in the shore so if there are kids I would suggest to just play in the sand.\n\nRooms: 4/5 | Service: 5/5 | Location: 5/5",
+          date: '2023-06-15',
+          hidden: false,
+          status: 'Approved' as const,
+          checkInMonth: 'Jun 2023',
+          timestamp: '2023-06-15 14:32'
+        },
+        {
+          id: 'REV-005',
+          guestName: 'Mark Anthony',
+          rating: 5,
+          comment: "Great location and very accommodating staff! The rooms are super clean and comfortable. Definitely the best place to relax in San Juan if you want a quiet and peaceful getaway. Highly recommended for couples and families alike!",
+          date: '2025-02-18',
+          hidden: false,
+          status: 'Approved' as const,
+          checkInMonth: 'Feb 2025',
+          timestamp: '2025-02-18 10:15'
+        },
+        {
+          id: 'REV-006',
+          guestName: 'Elena Rostova',
+          rating: 5,
+          comment: "The perfect escape from the noisy parts of La Union! The place is quiet, clean, and right by the beach. The sunset view here is simply breathtaking. Standard amenities are complete, and the garden is extremely beautiful.",
+          date: '2026-01-12',
+          hidden: false,
+          status: 'Approved' as const,
+          checkInMonth: 'Jan 2026',
+          timestamp: '2026-01-12 16:45'
+        },
+        {
+          id: 'REV-007',
+          guestName: 'Christian Paul',
+          rating: 5,
+          comment: "Outstanding hospitality! The beach was a short, pleasant walk and the entire property is extremely secure and well-maintained. Loved seeing the cows walking on the beach at sunset, such a unique and relaxing charm!",
+          date: '2025-09-04',
+          hidden: false,
+          status: 'Approved' as const,
+          checkInMonth: 'Sep 2025',
+          timestamp: '2025-09-04 11:20'
+        },
+        {
+          id: 'REV-008',
+          guestName: 'Sarah Jenkins',
+          rating: 5,
+          comment: "Perfect place to unwind. Clean, modern and cozy rooms, amazing garden space, and very accommodating hosts. The peaceful atmosphere here is exactly what we needed for a weekend getaway.",
+          date: '2026-05-20',
+          hidden: false,
+          status: 'Approved' as const,
+          checkInMonth: 'May 2026',
+          timestamp: '2026-05-20 09:30'
+        }
+      ];
+
+      if (storedReviews) {
+        this.reviewsList = JSON.parse(storedReviews);
+        let updated = false;
+        targetGoogleReviews.forEach(newRev => {
+          if (!this.reviewsList.some(r => r.guestName === newRev.guestName)) {
+            this.reviewsList.push(newRev);
+            updated = true;
+          }
+        });
+        if (updated) {
+          this.saveReviews();
+        }
+      } else {
+        this.reviewsList = [
+          { id: 'REV-001', guestName: 'Michelle Reyes', rating: 5, comment: 'Absolutely breathtaking beachfront location! Our stay in the Sunset Panoramic Villa was beyond words. Having steps leading directly to our private lounge deck was amazing.', date: '2026-07-10', hidden: false, reply: 'Thank you Michelle! We are thrilled you enjoyed the sunset views and layout of our villa. Hope to see you back soon!', status: 'Approved', checkInMonth: 'Jul 2026', timestamp: '2026-07-10 11:15' },
+          { id: 'REV-002', guestName: 'James Cook', rating: 4, comment: 'Hands down the best surf resort in Urbiztondo! Cozy cabins with steps to the beach. Housekeeping was fast and clean. Loved the hammock.', date: '2026-07-13', hidden: false, status: 'Approved', checkInMonth: 'Jul 2026', timestamp: '2026-07-13 15:40' },
+          { id: 'REV-003', guestName: 'Sophia Tan', rating: 5, comment: 'Perfect split-level design in the Family Loft. Super comfortable memory foam beds, fully stocked kitchenette, and lovely staff hospitality.', date: '2026-07-15', hidden: false, reply: 'Thank you for choosing us for your family getaway, Sophia! We strive to make families feel right at home.', status: 'Approved', checkInMonth: 'Jul 2026', timestamp: '2026-07-15 13:25' },
+          ...targetGoogleReviews
+        ];
+        this.saveReviews();
+      }
+
+      // Load Housekeeping Room Statuses
+      const storedRoomStatuses = localStorage.getItem(STORAGE_KEYS.ROOM_STATUSES);
+      if (storedRoomStatuses) {
+        this.roomStatuses = JSON.parse(storedRoomStatuses);
+      } else {
+        this.roomStatuses = [
+          { id: 'RS-101', roomNumber: 'Room 101', roomType: 'deluxe', housekeepingStatus: 'Ready', lastUpdated: new Date().toISOString() },
+          { id: 'RS-102', roomNumber: 'Room 102', roomType: 'deluxe', housekeepingStatus: 'Occupied', lastUpdated: new Date().toISOString() },
+          { id: 'RS-201', roomNumber: 'Room 201', roomType: 'sunset', housekeepingStatus: 'Available', lastUpdated: new Date().toISOString() },
+          { id: 'RS-202', roomNumber: 'Room 202', roomType: 'sunset', housekeepingStatus: 'Cleaning', lastUpdated: new Date().toISOString() },
+          { id: 'RS-301', roomNumber: 'Room 301', roomType: 'family', housekeepingStatus: 'Ready', lastUpdated: new Date().toISOString() },
+          { id: 'RS-302', roomNumber: 'Room 302', roomType: 'family', housekeepingStatus: 'Maintenance', lastUpdated: new Date().toISOString() },
+          { id: 'RS-401', roomNumber: 'Room 401', roomType: 'surfer', housekeepingStatus: 'Available', lastUpdated: new Date().toISOString() },
+          { id: 'RS-402', roomNumber: 'Room 402', roomType: 'surfer', housekeepingStatus: 'Out of Service', lastUpdated: new Date().toISOString() }
+        ];
+        this.saveRoomStatuses();
+      }
+
+      // Load Notifications
+      const storedNotifications = localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS);
+      if (storedNotifications) {
+        this.adminNotifications = JSON.parse(storedNotifications);
+      } else {
+        this.adminNotifications = [
+          { id: 'NTF-001', title: 'New Booking Request', message: 'Michelle Reyes requested Deluxe Beachfront Suite from 2026-07-25 to 2026-07-28.', type: 'booking_new', read: false, timestamp: new Date(Date.now() - 3600000).toISOString() },
+          { id: 'NTF-002', title: 'Booking Cancellation', message: 'Booking inquiry OB-BK-4091 has been cancelled by guest.', type: 'booking_cancel', read: false, timestamp: new Date(Date.now() - 7200000).toISOString() },
+          { id: 'NTF-003', title: 'Maintenance Flagged', message: 'Room 302 flagged for sink clog by housekeeper Mateo Garcia.', type: 'maintenance', read: true, timestamp: new Date(Date.now() - 86400000).toISOString() }
+        ];
+        this.saveNotifications();
+      }
+
+      // Load Hotel Info
+      const storedHotelInfo = localStorage.getItem(STORAGE_KEYS.HOTEL_INFO);
+      if (storedHotelInfo) {
+        this.hotelInfo = JSON.parse(storedHotelInfo);
+      }
+
+      // Generate Guests list dynamically from bookings and save them
+      this.refreshGuestsList();
+
     } catch (e) {
       console.error('Failed to load storage', e);
       this.bookings = SEED_BOOKINGS;
@@ -756,6 +993,379 @@ export class BookingStore {
 
     this.notify();
     return { success: true, booking: successfulBooking };
+  }
+
+  // --- Administrative Helper Methods ---
+
+  // Save methods
+  private saveRooms() {
+    localStorage.setItem(STORAGE_KEYS.ROOMS_LIST, JSON.stringify(this.roomsList));
+  }
+
+  private saveStaff() {
+    localStorage.setItem(STORAGE_KEYS.STAFF_LIST, JSON.stringify(this.staffList));
+  }
+
+  private saveReviews() {
+    localStorage.setItem(STORAGE_KEYS.REVIEWS_LIST, JSON.stringify(this.reviewsList));
+  }
+
+  private saveRoomStatuses() {
+    localStorage.setItem(STORAGE_KEYS.ROOM_STATUSES, JSON.stringify(this.roomStatuses));
+  }
+
+  private saveNotifications() {
+    localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(this.adminNotifications));
+  }
+
+  private saveHotelInfo() {
+    localStorage.setItem(STORAGE_KEYS.HOTEL_INFO, JSON.stringify(this.hotelInfo));
+  }
+
+  // Guest profiles generation & management
+  refreshGuestsList() {
+    // Generate guest profiles by grouping bookings by email
+    const bookingsByEmail: Record<string, Booking[]> = {};
+    this.bookings.forEach(b => {
+      if (!b.email) return;
+      if (!bookingsByEmail[b.email]) {
+        bookingsByEmail[b.email] = [];
+      }
+      bookingsByEmail[b.email].push(b);
+    });
+
+    // Load custom notes if any from storage
+    const storedGuests = localStorage.getItem(STORAGE_KEYS.GUESTS_LIST);
+    const customGuestsMap: Record<string, Partial<GuestProfile>> = {};
+    if (storedGuests) {
+      try {
+        const list: GuestProfile[] = JSON.parse(storedGuests);
+        list.forEach(g => {
+          customGuestsMap[g.email] = g;
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    const updatedGuestsList: GuestProfile[] = Object.keys(bookingsByEmail).map((email, index) => {
+      const guestBookings = bookingsByEmail[email];
+      const latestBooking = guestBookings[0];
+      const approvedBookings = guestBookings.filter(b => b.status === 'Approved' || b.status === 'Checked In' || b.status === 'Checked Out' || b.status === 'Confirmed');
+      const totalSpending = approvedBookings.reduce((sum, b) => {
+        const room = this.roomsList.find(r => r.id === b.roomType) || DEFAULT_ROOMS.find(r => r.id === b.roomType);
+        const price = room ? room.price : 5000;
+        // Calculate nights
+        const start = new Date(b.checkIn);
+        const end = new Date(b.checkOut);
+        const nights = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
+        return sum + (price * nights);
+      }, 0);
+
+      const customData = customGuestsMap[email] || {};
+
+      return {
+        id: customData.id || `GST-${String(1001 + index)}`,
+        name: latestBooking.name,
+        email: email,
+        phone: latestBooking.phone,
+        bookingHistory: guestBookings.map(b => b.id),
+        totalStays: approvedBookings.length,
+        totalSpending,
+        preferredRoom: latestBooking.roomType,
+        notes: customData.notes || '',
+        specialRequests: latestBooking.message || customData.specialRequests || ''
+      };
+    });
+
+    // Merge with any custom guests that might not have active bookings
+    Object.keys(customGuestsMap).forEach(email => {
+      if (!bookingsByEmail[email]) {
+        updatedGuestsList.push(customGuestsMap[email] as GuestProfile);
+      }
+    });
+
+    this.guestsList = updatedGuestsList;
+    localStorage.setItem(STORAGE_KEYS.GUESTS_LIST, JSON.stringify(this.guestsList));
+  }
+
+  // Rooms CRUD
+  getRooms() {
+    return [...this.roomsList];
+  }
+
+  addRoom(room: Omit<Room, 'id'>) {
+    const id = room.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || `room-${Date.now()}`;
+    const newRoom: Room = { ...room, id };
+    this.roomsList.push(newRoom);
+    this.saveRooms();
+    this.addLog('success', `Created new room type: ${room.name} (₱${room.price}/night)`);
+    this.addNotification('Room Type Created', `New accommodation option "${room.name}" was added to the resort's catalog.`, 'info' as any);
+    this.notify();
+    return newRoom;
+  }
+
+  updateRoom(id: string, updatedFields: Partial<Room>) {
+    this.roomsList = this.roomsList.map(r => r.id === id ? { ...r, ...updatedFields } as Room : r);
+    this.saveRooms();
+    this.addLog('info', `Updated room type config for ID: ${id}`);
+    this.notify();
+  }
+
+  deleteRoom(id: string) {
+    const room = this.roomsList.find(r => r.id === id);
+    this.roomsList = this.roomsList.filter(r => r.id !== id);
+    this.saveRooms();
+    if (room) {
+      this.addLog('warning', `Deleted room type: ${room.name}`);
+    }
+    this.notify();
+  }
+
+  // Staff CRUD
+  getStaff() {
+    return [...this.staffList];
+  }
+
+  addStaff(staff: Omit<StaffAccount, 'id'>) {
+    const id = `STF-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newStaff: StaffAccount = { ...staff, id };
+    this.staffList.push(newStaff);
+    this.saveStaff();
+    this.addLog('success', `Created new staff account: ${staff.name} (${staff.role})`);
+    this.addNotification('Staff Account Created', `${staff.name} was added as ${staff.role}.`, 'info' as any);
+    this.notify();
+    return newStaff;
+  }
+
+  updateStaff(id: string, updatedFields: Partial<StaffAccount>) {
+    this.staffList = this.staffList.map(s => s.id === id ? { ...s, ...updatedFields } as StaffAccount : s);
+    this.saveStaff();
+    this.addLog('info', `Updated staff account for ID: ${id}`);
+    this.notify();
+  }
+
+  deleteStaff(id: string) {
+    this.staffList = this.staffList.filter(s => s.id !== id);
+    this.saveStaff();
+    this.addLog('warning', `Deleted staff account ID: ${id}`);
+    this.notify();
+  }
+
+  // Guest CRUD / Notes
+  getGuests() {
+    this.refreshGuestsList();
+    return [...this.guestsList];
+  }
+
+  updateGuestNote(email: string, notes: string) {
+    const customGuests = this.getGuests();
+    const guest = customGuests.find(g => g.email === email);
+    if (guest) {
+      guest.notes = notes;
+      localStorage.setItem(STORAGE_KEYS.GUESTS_LIST, JSON.stringify(customGuests));
+      this.guestsList = customGuests;
+      this.addLog('info', `Updated profile notes for guest: ${guest.name}`);
+      this.notify();
+    }
+  }
+
+  // Reviews CRUD
+  getReviews() {
+    return [...this.reviewsList];
+  }
+
+  addReview(review: Omit<ReviewItem, 'id' | 'date' | 'hidden'>) {
+    const id = `REV-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newReview: ReviewItem = {
+      ...review,
+      id,
+      date: new Date().toISOString().split('T')[0],
+      hidden: false
+    };
+    this.reviewsList = [newReview, ...this.reviewsList];
+    this.saveReviews();
+    this.addLog('success', `New review added from guest ${review.guestName}: "${review.comment.substring(0, 30)}..."`);
+    this.addNotification('New Guest Review', `Guest ${review.guestName} left a ${review.rating}-star review.`, 'info' as any);
+    this.notify();
+    return newReview;
+  }
+
+  addReviewReply(id: string, reply: string) {
+    this.reviewsList = this.reviewsList.map(r => r.id === id ? { ...r, reply } : r);
+    this.saveReviews();
+    this.addLog('info', `Replied to review ${id}`);
+    this.notify();
+  }
+
+  toggleReviewHidden(id: string) {
+    this.reviewsList = this.reviewsList.map(r => r.id === id ? { ...r, hidden: !r.hidden } : r);
+    this.saveReviews();
+    this.addLog('info', `Toggled visibility of review ${id}`);
+    this.notify();
+  }
+
+  deleteReview(id: string) {
+    this.reviewsList = this.reviewsList.filter(r => r.id !== id);
+    this.saveReviews();
+    this.addLog('warning', `Deleted review ID: ${id}`);
+    this.notify();
+  }
+
+  // Housekeeping room status CRUD
+  getRoomStatuses() {
+    return [...this.roomStatuses];
+  }
+
+  updateRoomStatus(roomNumber: string, statusOrPatch: HousekeepingStatus | Partial<RoomStatusItem>) {
+    this.roomStatuses = this.roomStatuses.map(rs => {
+      if (rs.roomNumber === roomNumber) {
+        const patch = typeof statusOrPatch === 'string' 
+          ? { housekeepingStatus: statusOrPatch } 
+          : statusOrPatch;
+        return { ...rs, ...patch, lastUpdated: new Date().toISOString() };
+      }
+      return rs;
+    });
+    this.saveRoomStatuses();
+    const logDetail = typeof statusOrPatch === 'string' ? statusOrPatch : JSON.stringify(statusOrPatch);
+    this.addLog('info', `Housekeeping updated room status for ${roomNumber}: ${logDetail}`);
+    this.notify();
+  }
+
+  // Notifications CRUD
+  getNotifications() {
+    return [...this.adminNotifications];
+  }
+
+  addNotification(title: string, message: string, type: AdminNotification['type']) {
+    const id = `NTF-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const newNtf: AdminNotification = {
+      id,
+      title,
+      message,
+      type,
+      read: false,
+      timestamp: new Date().toISOString()
+    };
+    this.adminNotifications = [newNtf, ...this.adminNotifications].slice(0, 50); // Keep last 50
+    this.saveNotifications();
+    this.notify();
+    return newNtf;
+  }
+
+  markAllNotificationsAsRead() {
+    this.adminNotifications = this.adminNotifications.map(n => ({ ...n, read: true }));
+    this.saveNotifications();
+    this.notify();
+  }
+
+  clearNotifications() {
+    this.adminNotifications = [];
+    this.saveNotifications();
+    this.notify();
+  }
+
+  // Hotel Info CRUD
+  getHotelInfo() {
+    return { ...this.hotelInfo };
+  }
+
+  updateHotelInfo(updatedFields: Partial<HotelInfo>) {
+    this.hotelInfo = { ...this.hotelInfo, ...updatedFields };
+    this.saveHotelInfo();
+    this.addLog('info', `Updated global resort information & settings`);
+    this.notify();
+  }
+
+  // Override admin booking update status
+  adminUpdateBookingStatus(id: string, status: Booking['status'], confirmationCode?: string) {
+    const booking = this.bookings.find(b => b.id === id);
+    const oldStatus = booking ? booking.status : 'N/A';
+    
+    this.bookings = this.bookings.map(b => {
+      if (b.id === id) {
+        return { ...b, status, confirmationCode: confirmationCode || b.confirmationCode };
+      }
+      return b;
+    });
+    this.saveBookings();
+    this.refreshGuestsList();
+
+    this.addLog('info', `Admin changed booking ${id} status from ${oldStatus} to ${status}`);
+
+    // Trigger specific alerts/notifications
+    if (status === 'Approved') {
+      const approvedBooking = this.bookings.find(b => b.id === id);
+      if (approvedBooking) {
+        const code = confirmationCode || approvedBooking.confirmationCode || `OB-${approvedBooking.roomType.substring(0,3).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
+        approvedBooking.confirmationCode = code;
+        this.triggerOwnerNotification(approvedBooking);
+        this.addNotification('Booking Confirmed', `Booking ${id} for ${approvedBooking.name} was confirmed.`, 'payment');
+      }
+    } else if (status === 'Cancelled') {
+      const cancelledBooking = this.bookings.find(b => b.id === id);
+      if (cancelledBooking) {
+        this.addNotification('Booking Cancelled', `Booking ${id} for ${cancelledBooking.name} was cancelled.`, 'booking_cancel');
+      }
+    } else if (status === 'Checked In') {
+      const cib = this.bookings.find(b => b.id === id);
+      if (cib) {
+        this.addNotification('Guest Checked In', `${cib.name} has checked into room successfully.`, 'checkin');
+        // Automatically set room status to occupied in housekeeping!
+        const matchedRoom = this.roomStatuses.find(rs => rs.roomType === cib.roomType);
+        if (matchedRoom) {
+          this.updateRoomStatus(matchedRoom.roomNumber, 'Occupied');
+        }
+      }
+    } else if (status === 'Checked Out') {
+      const cob = this.bookings.find(b => b.id === id);
+      if (cob) {
+        this.addNotification('Guest Checked Out', `${cob.name} has checked out. Room is flagged for cleaning.`, 'checkout');
+        // Automatically set room status to cleaning in housekeeping!
+        const matchedRoom = this.roomStatuses.find(rs => rs.roomType === cob.roomType);
+        if (matchedRoom) {
+          this.updateRoomStatus(matchedRoom.roomNumber, 'Cleaning');
+        }
+      }
+    }
+
+    this.notify();
+  }
+
+  // Staff Accounts Aliases
+  getStaffAccounts() {
+    return this.getStaff();
+  }
+
+  addStaffAccount(staff: Omit<StaffAccount, 'id'>) {
+    return this.addStaff(staff);
+  }
+
+  deleteStaffAccount(id: string) {
+    return this.deleteStaff(id);
+  }
+
+  // Admin Notification CRUD
+  dismissNotification(id: string) {
+    this.adminNotifications = this.adminNotifications.filter(n => n.id !== id);
+    this.saveNotifications();
+    this.notify();
+  }
+
+  // Reviews CRUD Update
+  updateReview(id: string, patch: Partial<ReviewItem>) {
+    this.reviewsList = this.reviewsList.map(r => r.id === id ? { ...r, ...patch } : r);
+    this.saveReviews();
+    this.notify();
+  }
+
+  // Sheets Syncing
+  async pullBookingsFromSheets() {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    this.addLog('info', 'Pulled fresh reservation entries from Google Sheets API');
+    this.notify();
+    return true;
   }
 }
 

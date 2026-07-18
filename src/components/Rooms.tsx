@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Users, Waves, Ruler, BedDouble, Star, Sparkles, Check, ChevronRight, X } from 'lucide-react';
 import { Room } from '../types';
+import { bookingStore } from '../lib/bookingStore';
 
 interface RoomsProps {
   onOpenBooking: (roomName?: string) => void;
 }
 
-const ROOMS_DATA: Room[] = [
+const FALLBACK_ROOMS: Room[] = [
   {
     id: 'deluxe',
     name: 'Deluxe Beachfront Suite',
@@ -62,7 +63,13 @@ const ROOMS_DATA: Room[] = [
   }
 ];
 
+const getRoomsList = () => {
+  const list = bookingStore.getRooms().filter(r => !r.disabled);
+  return list.length > 0 ? list : FALLBACK_ROOMS;
+};
+
 export default function Rooms({ onOpenBooking }: RoomsProps) {
+  const ROOMS_DATA = React.useMemo(() => getRoomsList(), []);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
   // Lock scroll when the selected room modal is open

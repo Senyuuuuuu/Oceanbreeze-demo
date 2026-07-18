@@ -26,6 +26,9 @@ import AboutStory from './components/AboutStory';
 import { motion, AnimatePresence } from 'motion/react';
 import Lenis from 'lenis';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import AdminDashboard from './components/admin/AdminDashboard';
+import AdminLogin from './components/admin/AdminLogin';
+import { StaffAccount } from './types';
 
 interface SEOConfig {
   title: string;
@@ -114,6 +117,7 @@ const SEO_METADATA: Record<string, SEOConfig> = {
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [activePage, setActivePage] = useState<string>('home');
+  const [adminUser, setAdminUser] = useState<StaffAccount | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [preSelectedRoom, setPreSelectedRoom] = useState<string>('');
   const [initialCheckIn, setInitialCheckIn] = useState<string>('');
@@ -440,6 +444,22 @@ export default function App() {
   };
 
   const seo = SEO_METADATA[activePage] || SEO_METADATA.home;
+
+  if (activePage === 'admin') {
+    return (
+      <HelmetProvider>
+        <Helmet>
+          <title>Staff Backoffice Portal | Ocean Breeze Resort</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
+        {adminUser ? (
+          <AdminDashboard user={adminUser} onLogout={() => setAdminUser(null)} />
+        ) : (
+          <AdminLogin onLoginSuccess={(u) => setAdminUser(u)} onBackToHome={() => setActivePage('home')} />
+        )}
+      </HelmetProvider>
+    );
+  }
 
   return (
     <HelmetProvider>

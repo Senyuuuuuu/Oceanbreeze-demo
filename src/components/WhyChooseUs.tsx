@@ -66,36 +66,53 @@ const FEATURE_CARDS: FeatureCard[] = [
 const TESTIMONIALS_DATA: (Testimonial & { role: string; stayType: string })[] = [
   {
     id: 'review-1',
-    name: 'Sophia Gomez',
-    location: 'Manila, Philippines',
-    role: 'Creative Director at Studio Manila',
-    stayType: 'Sunset Panoramic Villa',
+    name: 'Monica Carla Naval',
+    location: 'La Union, Philippines',
+    role: 'Local Guide',
+    stayType: 'Vacation | Couple',
     rating: 5,
-    comment: 'Staying here was pure coastal magic. The beachfront view from our Sunset Villa is completely unmatched, and watching the sun set while sipping fresh coconut water is a memory our family will cherish forever. The attention to detail and premium Filipino hospitality made us feel truly cared for.',
-    date: 'June 2026',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80'
+    comment: "If you want a nice and peaceful resort in La Union this is the place. We love the sunset here as well. Not a lot of people, perfect for couple or solo traveler if you just want peace and quiet. Breakfast was great. It's still new but they take care of their guest really well. The beach was a 3 min walk or less. Funny thing was there were cows at the beach playing during the sunset and was nice to watch. The ocean was deep even in the shore so if there are kids I would suggest to just play in the sand.",
+    date: '3 years ago'
   },
   {
     id: 'review-2',
-    name: 'David Chen',
-    location: 'Digital Nomad',
-    role: 'Senior Software Engineer & Surfer',
-    stayType: 'Beachside Eco Cabin',
+    name: 'Mark Anthony',
+    location: 'San Juan, La Union',
+    role: 'Local Guide • 18 reviews',
+    stayType: 'Vacation | Solo',
     rating: 5,
-    comment: 'This is the perfect spot for remote working and early morning beach sessions. The fiber Wi-Fi was blazing fast and solid throughout the property, the rooms are beautifully clean and cool, and you literally step onto the sand from your door. Best stay in La Union by far.',
-    date: 'May 2026',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80'
+    comment: "Great location and very accommodating staff! The rooms are super clean and comfortable. Definitely the best place to relax in San Juan if you want a quiet and peaceful getaway. Highly recommended!",
+    date: '1 year ago'
   },
   {
     id: 'review-3',
-    name: 'Maria Santos',
-    location: 'Quezon City, Philippines',
-    role: 'Mother of Two & Travel Blogger',
-    stayType: 'Spacious Family Loft',
+    name: 'Elena Rostova',
+    location: 'Manila, Philippines',
+    role: 'Verified Guest',
+    stayType: 'Holiday | Couple',
     rating: 5,
-    comment: 'Our family had the absolute best beachfront vacation here. The Spacious Family Loft was extremely comfortable, and the shallow beachfront wading space is perfectly clean and safe. The resort staff went above and beyond to organize surf sessions and custom meals for the kids.',
-    date: 'April 2026',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80'
+    comment: "The perfect escape from the noisy parts of La Union! The place is quiet, clean, and right by the beach. The sunset view here is simply breathtaking. Will definitely return!",
+    date: '6 months ago'
+  },
+  {
+    id: 'review-4',
+    name: 'Christian Paul',
+    location: 'Pangasinan, Philippines',
+    role: 'Local Guide • 45 reviews',
+    stayType: 'Vacation | Couple',
+    rating: 5,
+    comment: "Outstanding hospitality! The beach was a short, pleasant walk and the entire property is extremely secure and well-maintained. Loved seeing the cows walking on the beach at sunset, such a unique charm!",
+    date: '10 months ago'
+  },
+  {
+    id: 'review-5',
+    name: 'Sarah Jenkins',
+    location: 'Sydney, Australia',
+    role: 'International Traveler',
+    stayType: 'Vacation | Friends',
+    rating: 5,
+    comment: "Perfect place to unwind. Clean, modern and cozy rooms, amazing garden space, and very accommodating hosts. The peaceful atmosphere here is exactly what we needed.",
+    date: '2 months ago'
   }
 ];
 
@@ -286,14 +303,11 @@ export default function WhyChooseUs() {
                     <div className="lg:col-span-4 flex flex-col items-center lg:items-end justify-center">
                       <div className="flex flex-col items-center text-center lg:text-right space-y-4">
                         
-                        {/* Avatar frame */}
+                        {/* Avatar initials frame (no images/photos used) */}
                         <div className="relative">
-                          <img
-                            src={TESTIMONIALS_DATA[activeIndex].avatar}
-                            alt={TESTIMONIALS_DATA[activeIndex].name}
-                            referrerPolicy="no-referrer"
-                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-4 border-sunset/40 shadow-xl"
-                          />
+                          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-sunset/10 border-4 border-sunset/40 flex items-center justify-center shadow-xl font-serif text-xl sm:text-2xl font-bold text-sunset">
+                            {TESTIMONIALS_DATA[activeIndex].name.split(' ').map(n => n[0]).join('')}
+                          </div>
                           <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-white rounded-full p-1 border-2 border-charcoal" title="Verified Customer">
                             <CheckCircle2 className="w-3.5 h-3.5 fill-emerald-500 text-white" />
                           </div>

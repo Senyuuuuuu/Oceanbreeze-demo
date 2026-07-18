@@ -20,12 +20,17 @@ interface BookingInquiryModalProps {
   }) => void;
 }
 
-const ROOM_OPTIONS = [
+const FALLBACK_ROOM_OPTIONS = [
   { id: 'deluxe', name: 'Deluxe Beachfront Suite' },
   { id: 'sunset', name: 'Sunset Panoramic Villa' },
   { id: 'family', name: 'Spacious Family Loft' },
   { id: 'surfer', name: 'Beachside Eco Cabin' }
 ];
+
+const getRoomOptions = () => {
+  const rooms = bookingStore.getRooms().filter(r => !r.disabled);
+  return rooms.length > 0 ? rooms.map(r => ({ id: r.id, name: r.name })) : FALLBACK_ROOM_OPTIONS;
+};
 
 const getDemandLevel = (roomType: string, checkIn: string, checkOut: string, bookings: Booking[]) => {
   if (!checkIn || !checkOut) return null;
@@ -113,6 +118,8 @@ export default function BookingInquiryModal({
   onDatesGuestsChange,
   onSuccess
 }: BookingInquiryModalProps) {
+  const ROOM_OPTIONS = React.useMemo(() => getRoomOptions(), []);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
