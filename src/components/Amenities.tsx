@@ -205,7 +205,7 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center max-w-2xl mx-auto mb-16"
         >
-          <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset mb-2 inline-flex items-center gap-1">
+          <span className="text-xs font-seasons font-bold uppercase tracking-[0.25em] text-sunset mb-2 inline-flex items-center gap-1">
             <Sparkles className="w-3.5 h-3.5 text-coral" /> Leisure & Living
           </span>
           <h3 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-charcoal tracking-tight">

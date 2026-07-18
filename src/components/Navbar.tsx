@@ -76,7 +76,7 @@ export default function Navbar({ onOpenBooking, activePage, onChangePage }: Navb
                   Ocean Breeze
                 </span>
                 <span
-                  className={`font-sans text-[10px] font-semibold tracking-[0.2em] uppercase mt-0.5 transition-colors duration-300 ${
+                  className={`font-seasons text-[10px] font-semibold tracking-[0.2em] uppercase mt-0.5 transition-colors duration-300 ${
                     isSolid ? 'text-sunset' : 'text-sand'
                   }`}
                 >

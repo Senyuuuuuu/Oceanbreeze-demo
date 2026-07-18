@@ -148,7 +148,7 @@ export default function WhyChooseUs() {
             ========================================= */}
         <div className="mb-28">
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset inline-flex items-center gap-1.5">
+            <span className="text-xs font-seasons font-bold uppercase tracking-[0.25em] text-sunset inline-flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-coral" /> The Advantage
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-charcoal tracking-tight leading-tight">
@@ -253,7 +253,7 @@ export default function WhyChooseUs() {
           {/* Testimonial Editorial / Magazine Layout */}
           <div className="max-w-5xl mx-auto">
             <div className="text-center max-w-xl mx-auto mb-12">
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset inline-flex items-center gap-1.5">
+              <span className="text-xs font-seasons font-bold uppercase tracking-[0.25em] text-sunset inline-flex items-center gap-1.5">
                 <MessageSquare className="w-3.5 h-3.5 text-coral" /> Editorial Stories
               </span>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-charcoal">

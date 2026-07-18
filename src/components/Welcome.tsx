@@ -101,7 +101,7 @@ export default function Welcome({ onOpenBooking, onChangePage }: WelcomeProps) {
             className="lg:col-span-6 flex flex-col justify-center space-y-6"
           >
             <div>
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset mb-2.5 inline-flex items-center gap-1.5">
+              <span className="text-xs font-seasons font-bold uppercase tracking-[0.25em] text-sunset mb-2.5 inline-flex items-center gap-1.5">
                 <Compass className="w-4 h-4 animate-spin-slow text-coral" /> Discover Ocean Breeze
               </span>
               <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-charcoal tracking-tight leading-tight">

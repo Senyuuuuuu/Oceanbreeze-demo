@@ -116,7 +116,13 @@ const SEO_METADATA: Record<string, SEOConfig> = {
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
-  const [activePage, setActivePage] = useState<string>('home');
+  const [activePage, setActivePage] = useState<string>(() => {
+    const path = window.location.pathname.toLowerCase();
+    if (path === '/adminlogin' || path === '/adminlogin/' || path === '/admin' || path === '/admin/') {
+      return 'admin';
+    }
+    return 'home';
+  });
   const [adminUser, setAdminUser] = useState<StaffAccount | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [preSelectedRoom, setPreSelectedRoom] = useState<string>('');
@@ -205,14 +211,20 @@ export default function App() {
   };
 
   const handleIntroComplete = () => {
-    setPendingPage('home');
+    setPendingPage(activePage);
     setTriggerWave(true);
   };
 
   const handleWaveMidpoint = () => {
     if (isLoading) {
       setIsLoading(false);
-      setActivePage('home');
+      if (pendingPage) {
+        setActivePage(pendingPage);
+      } else if (activePage === 'admin') {
+        setActivePage('admin');
+      } else {
+        setActivePage('home');
+      }
     } else if (pendingPage) {
       setActivePage(pendingPage);
     }
@@ -231,6 +243,36 @@ export default function App() {
       (window as any).lenis.scrollTo(0, { immediate: true });
     } else {
       window.scrollTo(0, 0);
+    }
+  }, [activePage, isLoading]);
+
+  // Listen for browser navigation back/forward (popstate)
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.toLowerCase();
+      if (path === '/adminlogin' || path === '/adminlogin/' || path === '/admin' || path === '/admin/') {
+        setActivePage('admin');
+      } else {
+        setActivePage('home');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Sync browser URL with the active page state
+  useEffect(() => {
+    if (isLoading) return;
+    const path = window.location.pathname.toLowerCase();
+    if (activePage === 'admin') {
+      if (path !== '/adminlogin' && path !== '/admin') {
+        window.history.pushState(null, '', '/adminlogin');
+      }
+    } else {
+      if (path === '/adminlogin' || path === '/adminlogin/' || path === '/admin' || path === '/admin/') {
+        window.history.pushState(null, '', '/');
+      }
     }
   }, [activePage, isLoading]);
 

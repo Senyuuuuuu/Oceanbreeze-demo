@@ -159,14 +159,6 @@ export default function Footer({ onOpenBooking, onChangePage }: FooterProps) {
             >
               Automation & API Hub
             </a>
-            <span className="hidden sm:inline text-white/10">•</span>
-            <span
-              onClick={() => onChangePage('admin')}
-              className="text-gray-500 hover:text-gray-300 transition-colors text-[11px] font-sans font-light cursor-pointer select-none"
-              title="Staff Login"
-            >
-              Staff Portal
-            </span>
           </div>
           <p className="text-gray-500 font-sans text-[10px] flex items-center gap-1 justify-center font-light">
             Made with <Heart className="w-3 h-3 text-red-500 fill-red-500" /> on the shores of San Juan, La Union.

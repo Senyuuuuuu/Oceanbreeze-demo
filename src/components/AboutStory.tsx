@@ -94,7 +94,7 @@ export default function AboutStory({ onOpenBooking }: AboutStoryProps) {
                 transition={{ duration: 0.8 }}
                 className="space-y-4"
               >
-                <span className="text-xs font-bold uppercase tracking-[0.3em] text-sunset inline-flex items-center gap-1.5">
+                <span className="text-xs font-seasons font-bold uppercase tracking-[0.3em] text-sunset inline-flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-coral" /> Our Heritage
                 </span>
                 <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-charcoal tracking-tight">
@@ -235,7 +235,7 @@ export default function AboutStory({ onOpenBooking }: AboutStoryProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset inline-flex items-center gap-1.5">
+            <span className="text-xs font-seasons font-bold uppercase tracking-[0.25em] text-sunset inline-flex items-center gap-1.5">
               <Target className="w-3.5 h-3.5 text-coral" /> Core Values
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-charcoal leading-tight">
