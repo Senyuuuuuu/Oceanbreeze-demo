@@ -7,6 +7,8 @@ interface PageHeaderProps {
   subtitle: string;
   category?: string;
   backgroundImageUrl?: string;
+  imageOpacity?: string;
+  objectPosition?: string;
   onHomeClick?: () => void;
 }
 
@@ -15,6 +17,8 @@ export default function PageHeader({
   subtitle,
   category = 'Resort',
   backgroundImageUrl = 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1920&q=80',
+  imageOpacity = 'opacity-65',
+  objectPosition = 'object-center',
   onHomeClick
 }: PageHeaderProps) {
   return (
@@ -25,7 +29,7 @@ export default function PageHeader({
           src={backgroundImageUrl}
           alt={title}
           referrerPolicy="no-referrer"
-          className="w-full h-full object-cover opacity-35 scale-105"
+          className={`w-full h-full object-cover ${objectPosition} ${imageOpacity} scale-105 transition-all duration-700`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/40 to-transparent z-10" />
         <div className="absolute inset-0 bg-gradient-to-r from-charcoal/30 to-charcoal/30 z-10" />

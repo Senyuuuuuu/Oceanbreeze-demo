@@ -158,8 +158,8 @@ export default function AboutStory({ onOpenBooking }: AboutStoryProps) {
                 className="absolute top-0 right-0 w-[82%] h-[70%] rounded-3xl overflow-hidden shadow-2xl border-4 border-white"
               >
                 <img
-                  src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=80"
-                  alt="Seaside Resort Layout"
+                  src="https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/480742956_122140595558567801_6324144565661516274_n.jpg"
+                  alt="Ocean Breeze Beachfront Boutique Experience"
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
@@ -174,8 +174,8 @@ export default function AboutStory({ onOpenBooking }: AboutStoryProps) {
                 className="absolute bottom-0 left-0 w-[62%] h-[55%] rounded-3xl overflow-hidden shadow-3xl border-4 border-white z-10"
               >
                 <img
-                  src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=800&q=80"
-                  alt="Beachfront Sunset Vistas"
+                  src="https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnba8TV3KcqjQaF6CAMgBtNHtTLkT681aHEkjBUe8V8w2bfazTVLUogWdRK9RsI08igPTHiF46tAszorl72TGm0FSj9DUmvobzWR-McG5eXvyS37nvgqxSun7vTgfp7QsC4aiU=s1360-w1360-h1020-rw"
+                  alt="La Union Surfer Lifestyle"
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />

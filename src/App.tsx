@@ -8,6 +8,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Welcome from './components/Welcome';
 import Rooms from './components/Rooms';
+import RoomDetails from './components/RoomDetails';
 import Amenities from './components/Amenities';
 import Gallery from './components/Gallery';
 import WhyChooseUs from './components/WhyChooseUs';
@@ -129,6 +130,7 @@ export default function App() {
   const [initialCheckIn, setInitialCheckIn] = useState<string>('');
   const [initialCheckOut, setInitialCheckOut] = useState<string>('');
   const [initialGuests, setInitialGuests] = useState<string>('2');
+  const [selectedRoomId, setSelectedRoomId] = useState<string>('deluxe');
 
   // Page wave transition states
   const [triggerWave, setTriggerWave] = useState(false);
@@ -311,10 +313,39 @@ export default function App() {
               title="Suites & Villas"
               subtitle="Explore our handpicked sea-facing sanctuaries styled with premium linens, local bamboo accents, and panoramic coastal views."
               category="Accommodations"
-              backgroundImageUrl="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1920&q=80"
+              backgroundImageUrl="https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/480290635_122139108338567801_2577860041803326842_n.jpg"
+              imageOpacity="opacity-70"
+              objectPosition="object-[center_65%]"
               onHomeClick={() => handlePageChange('home')}
             />
-            <Rooms onOpenBooking={handleOpenBooking} />
+            <Rooms
+              onOpenBooking={handleOpenBooking}
+              onSelectRoom={(id) => {
+                setSelectedRoomId(id);
+                handlePageChange('room-details');
+              }}
+            />
+          </motion.div>
+        );
+      case 'room-details':
+        return (
+          <motion.div
+            key="room-details"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+          >
+            <RoomDetails
+              roomId={selectedRoomId}
+              onBackToRooms={() => handlePageChange('rooms')}
+              onSuccess={(details) => {
+                setToastData({
+                  isOpen: true,
+                  ...details
+                });
+              }}
+            />
           </motion.div>
         );
       case 'amenities':
@@ -330,7 +361,9 @@ export default function App() {
               title="Resort Experiences"
               subtitle="Indulge in beachfront wellness, yoga packages, sunset lounges, and revitalizing seaside dining."
               category="Facilities & Amenities"
-              backgroundImageUrl="https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=1920&q=80"
+              backgroundImageUrl="https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/475899825_122136399272567801_2235547433093645147_n.jpg"
+              imageOpacity="opacity-70"
+              objectPosition="object-[center_65%]"
               onHomeClick={() => handlePageChange('home')}
             />
             <Amenities onChangePage={handlePageChange} />
@@ -467,7 +500,13 @@ export default function App() {
             <Welcome onOpenBooking={handleOpenBooking} onChangePage={handlePageChange} />
 
             {/* Accommodation Collections Preview */}
-            <Rooms onOpenBooking={handleOpenBooking} />
+            <Rooms
+              onOpenBooking={handleOpenBooking}
+              onSelectRoom={(id) => {
+                setSelectedRoomId(id);
+                handlePageChange('room-details');
+              }}
+            />
 
             {/* Curated Resort Amenities Preview */}
             <Amenities />

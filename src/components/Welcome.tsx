@@ -66,7 +66,7 @@ export default function Welcome({ onOpenBooking, onChangePage }: WelcomeProps) {
               className="absolute bottom-0 left-0 w-[55%] h-[55%] rounded-[32px] overflow-hidden shadow-2xl border-4 border-white z-10"
             >
               <img
-                src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=600&q=80"
+                src="https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnba8TV3KcqjQaF6CAMgBtNHtTLkT681aHEkjBUe8V8w2bfazTVLUogWdRK9RsI08igPTHiF46tAszorl72TGm0FSj9DUmvobzWR-McG5eXvyS37nvgqxSun7vTgfp7QsC4aiU=s1360-w1360-h1020-rw"
                 alt="La Union Surfer Lifestyle"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"

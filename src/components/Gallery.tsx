@@ -5,74 +5,88 @@ import { GalleryItem } from '../types';
 
 const GALLERY_ITEMS: GalleryItem[] = [
   {
-    id: 'room-1',
-    url: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80',
-    category: 'rooms',
-    title: 'Deluxe Beachfront Suite',
-    description: 'Bask in premium linens and direct sea panoramas.'
-  },
-  {
     id: 'beach-1',
-    url: 'https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=800&q=80',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/500016309_122160869408567801_3523801660810124387_n.jpg',
     category: 'beach',
-    title: 'Serene Coastal Horizon',
-    description: 'La Union\'s beautiful and calm coastal tides right outside our door.'
-  },
-  {
-    id: 'pool-1',
-    url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=800&q=80',
-    category: 'pool',
-    title: 'Horizon Infinity Pool',
-    description: 'Unwind at our ocean-facing swimming pool decks.'
+    title: 'Pristine Beachfront Escape',
+    description: 'Soft white sand meeting the legendary waves of San Juan, La Union.'
   },
   {
     id: 'sunset-1',
-    url: 'https://images.unsplash.com/photo-1495954484750-af469f2f9be5?auto=format&fit=crop&w=800&q=80',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/499882580_122160869432567801_4746683546836728535_n.jpg',
     category: 'sunset',
-    title: 'Dramatic Coastline Sunset',
-    description: 'Behold the incredible orange and pink skies of San Juan.'
+    title: 'Breathtaking Coastal View',
+    description: 'Witness the iconic golden hour transitions painting the La Union horizon.'
   },
   {
-    id: 'room-2',
-    url: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80',
-    category: 'rooms',
-    title: 'Sunset Villa Deck',
-    description: 'Private villa deck leading straight into refreshing waters.'
-  },
-  {
-    id: 'events-1',
-    url: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80',
-    category: 'events',
-    title: 'Seaside Canopy Dinner',
-    description: 'Memorable private catering under romantic beach lanterns.'
-  },
-  {
-    id: 'beach-2',
-    url: 'https://images.unsplash.com/photo-1473116763269-255ea7604bb6?auto=format&fit=crop&w=800&q=80',
-    category: 'beach',
-    title: 'Pristine Sand Sights',
-    description: 'A secluded sanctuary of warm sand and soft ocean breezes.'
+    id: 'pool-1',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/499548270_122160869378567801_3422192562523644746_n.jpg',
+    category: 'pool',
+    title: 'Luxurious Tropical Lounge',
+    description: 'Soak up the warm sun on our elegant lakeside and beachside poolside loungers.'
   },
   {
     id: 'pool-2',
-    url: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800&q=80',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/476117653_122136096512567801_2787783767455324059_n.jpg',
     category: 'pool',
-    title: 'Poolside Cabana Lounging',
-    description: 'Relax with artisanal cocktails under tropical palm leaf shade.'
+    title: 'Peaceful Sanctuary Poolside',
+    description: 'An oasis of pure relaxation designed with local tropical flora.'
   },
   {
-    id: 'events-2',
-    url: 'https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=800&q=80',
-    category: 'events',
-    title: 'Tropical Beachfront Nuptials',
-    description: 'Bespoke weddings crafted along the sunset horizon.'
+    id: 'rooms-1',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/476183028_122136399722567801_208159314301597754_n.jpg',
+    category: 'rooms',
+    title: 'Eco-Luxury Pavilions',
+    description: 'Intimate custom architectures celebrating native coastal building crafts.'
   },
   {
     id: 'sunset-2',
-    url: 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=800&q=80',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/480743406_122140595966567801_8029553201407761439_n.jpg',
     category: 'sunset',
-    title: 'Palm-Framed Sundown',
-    description: 'Golden hour silhouette relaxation at Ocean Breeze.'
+    title: 'Aura of Serenity',
+    description: 'Warm evening skies casting a cinematic glow across the private beachfront.'
+  },
+  {
+    id: 'beach-2',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/480742956_122140595558567801_6324144565661516274_n.jpg',
+    category: 'beach',
+    title: 'Ocean Breeze Shoreline',
+    description: 'Step directly from your private suite onto the warm sands of the surfing capital.'
+  },
+  {
+    id: 'rooms-2',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/470662967_122126767028567801_4838850329032995563_n.jpg',
+    category: 'rooms',
+    title: 'Oceanfront Balcony Suite',
+    description: 'Breathtaking beachfront terrace designed for ultimate relaxation and seaside views.'
+  },
+  {
+    id: 'pool-3',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/470806685_122126767124567801_8236105001071069558_n.jpg',
+    category: 'pool',
+    title: 'Poolside Sanctuary',
+    description: 'Immerse yourself in tranquil poolside settings framed by native palms.'
+  },
+  {
+    id: 'beach-3',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/471160471_122126766680567801_5430804506911404527_n.jpg',
+    category: 'beach',
+    title: 'Surfside Vista',
+    description: 'Unrivaled oceanfront access to the pristine surf breaks of San Juan.'
+  },
+  {
+    id: 'rooms-3',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/471177892_122126766494567801_1319897082249495456_n.jpg',
+    category: 'rooms',
+    title: 'Artisanal Beach Cabin',
+    description: 'Elegantly constructed villas blending native aesthetics with modern luxury.'
+  },
+  {
+    id: 'sunset-3',
+    url: 'https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/471192652_122126767052567801_6471844890659586378_n.jpg',
+    category: 'sunset',
+    title: 'La Union Golden Hour',
+    description: 'Savor dramatic seaside sunsets from our exclusive sunset viewing decks.'
   }
 ];
 
