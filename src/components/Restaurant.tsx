@@ -15,1373 +15,1003 @@ import {
   Leaf,
   Sparkles,
   ArrowRight,
-  ChevronDown
+  ChevronDown,
+  Star,
+  Heart,
+  Quote,
+  ShieldCheck,
+  Award,
+  ChevronRight,
+  ChevronLeft,
+  ShoppingBag,
+  Plus,
+  Minus,
+  X
 } from 'lucide-react';
 import PageHeader from './PageHeader';
-import MarannaLogo from './MarannaLogo';
 
 // Typings for Menu Items
 interface MenuItem {
+  id: string;
   name: string;
   price: number;
   description: string;
-  category: 'breakfast' | 'international' | 'mains' | 'vegetables' | 'pasta_noodles' | 'salads_soups' | 'addons';
-  subcategory?: 'arabic' | 'malaysian' | 'beef' | 'pork' | 'chicken' | 'seafood' | 'pasta' | 'noodles' | 'salads' | 'soups';
+  category: 'all' | 'filipino' | 'arabic' | 'malaysian' | 'mains' | 'pasta_noodles' | 'salads_soups' | 'drinks';
   tags?: string[];
+  rating: number;
   image: string;
+  isPopular?: boolean;
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  // BREAKFAST
+  // POPULAR / FEATURED DISHES
   {
-    name: 'Tocilog',
-    price: 250,
-    description: 'Sweet Filipino cured pork served with garlic fried rice, sunny-side-up egg, and unlimited Barako coffee.',
-    category: 'breakfast',
-    tags: ['Filipino Classic', 'Breakfast', 'Includes Coffee'],
-    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=600&q=80'
+    id: 'p1',
+    name: 'Seafood Carbonara',
+    price: 320,
+    description: 'Creamy reduction sauce of farm egg yolk, garlic, crisp bacon, sautéed squid, and coastal shrimps.',
+    category: 'pasta_noodles',
+    rating: 5,
+    tags: ['Pasta', 'Seafood', 'Popular'],
+    image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&fit=crop&w=600&q=80',
+    isPopular: true
   },
   {
-    name: 'Cornsilog',
-    price: 250,
-    description: 'Savory corned beef sautéed with onions, served with garlic fried rice, farm egg, and unlimited Barako coffee.',
-    category: 'breakfast',
-    tags: ['Filipino Classic', 'Breakfast', 'Includes Coffee'],
-    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'
+    id: 'p2',
+    name: 'Chicken Shawarma Wrap',
+    price: 260,
+    description: 'Perfectly spiced shaved chicken with garlic toum sauce, pickles, wrapped in flatbread with golden fries.',
+    category: 'arabic',
+    rating: 4.9,
+    tags: ['Arabic', 'Wrap', 'Popular'],
+    image: 'https://images.unsplash.com/photo-1642821373181-696a54913e93?auto=format&fit=crop&w=600&q=80',
+    isPopular: true
   },
   {
-    name: 'Hamsilog',
-    price: 250,
-    description: 'Premium grilled ham slices served with garlic fried rice, sunny-side-up egg, and unlimited Barako coffee.',
-    category: 'breakfast',
-    tags: ['Breakfast', 'Includes Coffee'],
-    image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=600&q=80'
+    id: 'p3',
+    name: 'Rendang Beef',
+    price: 340,
+    description: 'Iconic caramelized beef rendang, slow-cooked for 6 hours in rich kerisik coconut spices.',
+    category: 'malaysian',
+    rating: 5,
+    tags: ['Malaysian', 'Spicy', 'Signature'],
+    image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=600&q=80',
+    isPopular: true
   },
   {
-    name: 'Longsilog',
-    price: 250,
-    description: 'Local sweet & garlicky sausage (longganisa) served with garlic fried rice, egg, and unlimited Barako coffee.',
-    category: 'breakfast',
-    tags: ['Filipino Classic', 'Local Specialty', 'Breakfast', 'Includes Coffee'],
-    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Bangsilog',
-    price: 250,
-    description: 'Golden pan-fried marinated milkfish (bangus) served with garlic fried rice, egg, and unlimited Barako coffee.',
-    category: 'breakfast',
-    tags: ['Filipino Classic', 'Seafood', 'Breakfast', 'Includes Coffee'],
-    image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80'
+    id: 'p4',
+    name: 'Coastal Pompano Grill',
+    price: 380,
+    description: 'Fresh local Pompano fish stuffed with herbs and charcoal-grilled, served with soy-calamansi dip.',
+    category: 'filipino',
+    rating: 4.8,
+    tags: ['Filipino', 'Seafood', 'Fresh'],
+    image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80',
+    isPopular: true
   },
 
-  // INTERNATIONAL - ARABIC
+  // REGULAR MENU ITEMS
   {
-    name: 'Biryani Chicken',
+    id: 'm1',
+    name: 'Tocilog Breakfast',
+    price: 250,
+    description: 'Sweet Filipino cured pork served with garlic fried rice, sunny-side-up egg, and unlimited Barako coffee.',
+    category: 'filipino',
+    rating: 4.9,
+    tags: ['Filipino Classic', 'Includes Coffee'],
+    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 'm2',
+    name: 'Bangsilog Delight',
+    price: 250,
+    description: 'Golden pan-fried marinated milkfish served with garlic fried rice, egg, and unlimited Barako coffee.',
+    category: 'filipino',
+    rating: 4.8,
+    tags: ['Filipino Classic', 'Seafood'],
+    image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 'm3',
+    name: 'Biryani Chicken Special',
     price: 290,
     description: 'Aromatic basmati rice layered with tender spiced chicken, saffron, and fresh herbs.',
-    category: 'international',
-    subcategory: 'arabic',
-    tags: ['Arabic', 'Spicy', 'Popular'],
+    category: 'arabic',
+    rating: 5,
+    tags: ['Arabic', 'Spicy'],
     image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80'
   },
   {
-    name: 'Biryani Beef',
+    id: 'm4',
+    name: 'Kabsa Beef Feast',
     price: 320,
-    description: 'Luxurious saffron basmati rice layered with slow-braised tender beef and middle-eastern spices.',
-    category: 'international',
-    subcategory: 'arabic',
-    tags: ['Arabic', 'Spicy', 'Beef'],
-    image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Kabsa Chicken',
-    price: 290,
-    description: 'Traditional Arab rice dish cooked with roasted chicken, raisins, almonds, and intensive cardamom blend.',
-    category: 'international',
-    subcategory: 'arabic',
-    tags: ['Arabic', 'Signature'],
-    image: 'https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Kabsa Beef',
-    price: 320,
-    description: 'Saffron spiced kabsa rice topped with melt-in-the-mouth simmered beef flank, dried limes, and nuts.',
-    category: 'international',
-    subcategory: 'arabic',
+    description: 'Saffron spiced kabsa rice topped with melt-in-the-mouth simmered beef flank, dried limes, and roasted nuts.',
+    category: 'arabic',
+    rating: 4.9,
     tags: ['Arabic', 'Beef'],
     image: 'https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=600&q=80'
   },
   {
-    name: 'Mandi Chicken',
-    price: 290,
-    description: 'Yemeni spiced rice dish with exceptionally tender chicken, cooked slowly in charcoal smoke infusion.',
-    category: 'international',
-    subcategory: 'arabic',
-    tags: ['Arabic', 'Smoky'],
-    image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Mandi Beef',
-    price: 320,
-    description: 'Yemeni smoked basmati rice served with smoked beef chuck roast and house garlic sauce.',
-    category: 'international',
-    subcategory: 'arabic',
-    tags: ['Arabic', 'Beef', 'Smoky'],
-    image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Shawarma Chicken',
-    price: 165,
-    description: 'Perfectly spiced shaved chicken wraps with garlic toum sauce, pickles, wrapped in flatbread, served with fries.',
-    category: 'international',
-    subcategory: 'arabic',
-    tags: ['Arabic', 'Wrap', 'Served with Fries'],
-    image: 'https://images.unsplash.com/photo-1642821373181-696a54913e93?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Shawarma Beef',
-    price: 210,
-    description: 'Spiced shaved beef, tahini dressing, grilled onions and tomatoes wrapped in flatbread, served with fries.',
-    category: 'international',
-    subcategory: 'arabic',
-    tags: ['Arabic', 'Wrap', 'Beef', 'Served with Fries'],
-    image: 'https://images.unsplash.com/photo-1642821373181-696a54913e93?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Shish Tawook Chicken',
-    price: 250,
-    description: 'Skewers of grilled chicken cubes marinated in garlic, lemon, and yogurt, served with rice, fries or bread.',
-    category: 'international',
-    subcategory: 'arabic',
-    tags: ['Arabic', 'Grilled'],
-    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Shish Tawook Beef',
-    price: 290,
-    description: 'Charcoal grilled beef skewers heavily marinated in premium spices, served with rice, fries or bread.',
-    category: 'international',
-    subcategory: 'arabic',
-    tags: ['Arabic', 'Grilled', 'Beef'],
-    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Kofta Kebab Beef',
-    price: 240,
-    description: 'Savory minced beef with onions, parsley, and traditional spices, grilled on charcoal skewers. Served with rice, fries or bread.',
-    category: 'international',
-    subcategory: 'arabic',
-    tags: ['Arabic', 'Grilled', 'Beef'],
-    image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Hummus Duo',
-    price: 120,
-    description: 'Smooth purée of local chickpeas, tahini, lemon juice, and virgin olive oil. Custom add-ons: Grilled Tomatoes (+25) or Grilled Peppers (+45).',
-    category: 'international',
-    subcategory: 'arabic',
-    tags: ['Arabic', 'Vegetarian', 'Dip'],
+    id: 'm5',
+    name: 'Hummus Duo & Flatbread',
+    price: 180,
+    description: 'Smooth purée of local chickpeas, tahini, lemon juice, virgin olive oil, and warm oven-baked pita.',
+    category: 'arabic',
+    rating: 4.7,
+    tags: ['Arabic', 'Vegetarian'],
     image: 'https://images.unsplash.com/photo-1577906096429-f73ae2c31243?auto=format&fit=crop&w=600&q=80'
   },
-
-  // INTERNATIONAL - MALAYSIAN
   {
-    name: 'Rendang Chicken',
-    price: 280,
-    description: 'Authentic Malaysian slow-cooked chicken in coconut milk, lemongrass, ginger, and rich kerisik (toasted coconut paste).',
-    category: 'international',
-    subcategory: 'malaysian',
-    tags: ['Malaysian', 'Spicy', 'Curry'],
-    image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Rendang Beef',
-    price: 310,
-    description: 'Iconic caramelized beef rendang, slow-cooked for hours until incredibly tender and saturated with coconut dry curry.',
-    category: 'international',
-    subcategory: 'malaysian',
-    tags: ['Malaysian', 'Spicy', 'Beef', 'Signature'],
-    image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Satay Chicken with Rice',
-    price: 150,
-    description: 'Grilled spiced chicken skewers served with savory sweet-spicy peanut sauce and steamed rice.',
-    category: 'international',
-    subcategory: 'malaysian',
-    tags: ['Malaysian', 'Grilled', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Satay Beef with Rice',
-    price: 195,
-    description: 'Marinated tender beef skewers charcoal-grilled, served with authentic peanut dip and steamed rice.',
-    category: 'international',
-    subcategory: 'malaysian',
-    tags: ['Malaysian', 'Grilled', 'Beef', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&w=600&q=80'
-  },
-  {
+    id: 'm6',
     name: 'Nasi Lemak Special',
     price: 310,
-    description: 'Malaysia’s national dish—fragrant rice cooked in coconut milk & pandan, served with fresh prawns, squid, boiled egg, peanuts, and rich sambal.',
-    category: 'international',
-    subcategory: 'malaysian',
-    tags: ['Malaysian', 'Seafood', 'Spicy', 'Popular'],
+    description: 'Fragrant pandan-coconut rice with fresh prawns, squid, boiled egg, roasted peanuts, and spicy sambal.',
+    category: 'malaysian',
+    rating: 5,
+    tags: ['Malaysian', 'Seafood', 'Spicy'],
     image: 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?auto=format&fit=crop&w=600&q=80'
   },
   {
-    name: 'Nasi Goreng',
-    price: 280,
-    description: 'Indonesian-Malaysian style aromatic fried rice tossed with egg, mixed garden vegetables, tofu, and sautéed prawns.',
-    category: 'international',
-    subcategory: 'malaysian',
-    tags: ['Malaysian', 'Seafood', 'Rice'],
-    image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=600&q=80'
-  },
-
-  // MAINS - BEEF
-  {
-    name: 'Chilli Con Carne',
-    price: 310,
-    description: 'Spicy ground beef slow-simmered with red kidney beans, tomatoes, and chili peppers, served with chips or mashed potatoes.',
-    category: 'mains',
-    subcategory: 'beef',
-    tags: ['Beef', 'Spicy'],
-    image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80'
+    id: 'm7',
+    name: 'Chicken Satay Skewers',
+    price: 220,
+    description: 'Grilled spiced chicken skewers served with rich house-made sweet & savory peanut dipping sauce.',
+    category: 'malaysian',
+    rating: 4.8,
+    tags: ['Malaysian', 'Grilled'],
+    image: 'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&w=600&q=80'
   },
   {
-    name: 'Beef Steak Tagalog',
-    price: 290,
-    description: 'Filipino "Bistek"—thinly sliced beef steak simmered in soy sauce, fresh calamansi juice, garlic, and lots of caramelized onion rings. Served with rice.',
-    category: 'mains',
-    subcategory: 'beef',
-    tags: ['Filipino Classic', 'Beef', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Beef Caldereta',
-    price: 290,
-    description: 'Comforting beef stew with tomato paste, liver spread, bell peppers, carrots, cheese, and olives. Served with rice.',
-    category: 'mains',
-    subcategory: 'beef',
-    tags: ['Filipino Classic', 'Beef', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Bulalo Feast',
-    price: 540,
-    description: 'Comforting bone-in beef shank soup with tender marrow, sweet native corn, cabbage, and green beans. Good for 2 (no rice).',
-    category: 'mains',
-    subcategory: 'beef',
-    tags: ['Filipino Classic', 'Soup', 'Beef', 'Good for 2'],
-    image: 'https://images.unsplash.com/photo-1608500218900-8afa1350a601?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Pinapaitan',
-    price: 420,
-    description: 'Acclaimed authentic Ilocano bitter-savory beef innards soup cooked with bile, ginger, chilies, and local citrus. Good for 2 (no rice).',
-    category: 'mains',
-    subcategory: 'beef',
-    tags: ['Filipino Classic', 'Local Specialty', 'Spicy', 'Good for 2'],
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80'
-  },
-
-  // MAINS - PORK
-  {
+    id: 'm8',
     name: 'Honey-Glazed Pork Chop',
-    price: 480,
-    description: 'Brined and pan-seared thick pork chop drizzled with aromatic honey-garlic glaze, served with chips or mashed potatoes.',
+    price: 450,
+    description: 'Brined and pan-seared thick pork chop drizzled with honey-garlic glaze, served with potato mash.',
     category: 'mains',
-    subcategory: 'pork',
-    tags: ['Pork'],
+    rating: 4.9,
+    tags: ['Mains', 'Pork'],
     image: 'https://images.unsplash.com/photo-1432139548538-84b271175759?auto=format&fit=crop&w=600&q=80'
   },
   {
-    name: 'Sweet and Sour Pork',
-    price: 320,
-    description: 'Crispy deep-fried pork nuggets tossed in a perfect sweet & tangy glaze with bell peppers, onions, and sweet pineapples.',
-    category: 'mains',
-    subcategory: 'pork',
-    tags: ['Pork'],
-    image: 'https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Pork Adobo Classic',
-    price: 280,
-    description: 'Slow-braised pork belly chunks in naturally fermented coconut vinegar, premium soy sauce, garlic, and bay leaves.',
-    category: 'mains',
-    subcategory: 'pork',
-    tags: ['Filipino Classic', 'Pork'],
-    image: 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Pork Inihaw (300g)',
-    price: 380,
-    description: 'Charcoal-grilled thick pork chop or marinated liempo (pork belly) served with local vinegar dipping sauce.',
-    category: 'mains',
-    subcategory: 'pork',
-    tags: ['Filipino Classic', 'Grilled', 'Pork'],
-    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80'
-  },
-
-  // MAINS - CHICKEN
-  {
-    name: 'Sweet and Sour Chicken',
-    price: 290,
-    description: 'Battered tender chicken breast chunks wok-fried and coated with sweet & sour glaze, pineapple and peppers. Served with rice.',
-    category: 'mains',
-    subcategory: 'chicken',
-    tags: ['Chicken', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Chicken Adobo',
-    price: 270,
-    description: 'Traditional slow-cooked chicken pieces in garlic, peppercorns, soy sauce, and vinegar reduction. Served with rice.',
-    category: 'mains',
-    subcategory: 'chicken',
-    tags: ['Filipino Classic', 'Chicken', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Menudo Special',
-    price: 270,
-    description: 'Hearty pork and chicken stew with finely diced potatoes, carrots, bell peppers, and sweet raisins in tomato gravy. Served with rice.',
-    category: 'mains',
-    subcategory: 'chicken',
-    tags: ['Filipino Classic', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Tinola Chicken',
-    price: 250,
-    description: 'Sustenance chicken soup flavored with sliced ginger, green papaya wedges, and fresh chili leaves. Served with rice.',
-    category: 'mains',
-    subcategory: 'chicken',
-    tags: ['Filipino Classic', 'Soup', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80'
-  },
-
-  // MAINS - SEAFOOD
-  {
-    name: 'Kilawin (250g)',
+    id: 'm9',
+    name: 'Inihaw na Pusit (Grilled Squid)',
     price: 390,
-    description: 'Fresh coastal raw Tuna or Tangigue cubes instantly cured in premium local vinegar, calamansi, ginger, red onions, and bird’s eye chili. Served with rice.',
+    description: 'Succulent charcoal-grilled squid stuffed with chopped onions and ripe tomatoes, with soy-calamansi dip.',
     category: 'mains',
-    subcategory: 'seafood',
-    tags: ['Filipino Classic', 'Seafood', 'Spicy', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Inihaw na Pusit (200-250g)',
-    price: 390,
-    description: 'Succulent charcoal-grilled squid stuffed with chopped onions and ripe tomatoes, basted with native sweet soy-lemon glaze. Served with rice.',
-    category: 'mains',
-    subcategory: 'seafood',
-    tags: ['Filipino Classic', 'Seafood', 'Grilled', 'Served with Rice'],
+    rating: 4.9,
+    tags: ['Filipino', 'Seafood', 'Grilled'],
     image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80'
   },
   {
-    name: 'Inihaw na Isda (Pompano)',
-    price: 380,
-    description: 'Fresh local Pompano (200-250g) stuffed with herbs and charcoal-grilled, served with soy-calamansi dip and rice.',
-    category: 'mains',
-    subcategory: 'seafood',
-    tags: ['Filipino Classic', 'Seafood', 'Grilled', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Inihaw na Isda (Bangus)',
-    price: 320,
-    description: 'Fresh stuffed local milkfish (300-350g) stuffed with onions, ginger and tomatoes, grilled on charcoal, served with rice.',
-    category: 'mains',
-    subcategory: 'seafood',
-    tags: ['Filipino Classic', 'Seafood', 'Grilled', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Buttered Mussels (500g)',
-    price: 350,
-    description: 'Plump seasonal local mussels sautéed in white wine garlic-butter broth, served with rice.',
-    category: 'mains',
-    subcategory: 'seafood',
-    tags: ['Seafood', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Buttered Shrimps (250g)',
+    id: 'm10',
+    name: 'Buttered Garlic Shrimps',
     price: 390,
-    description: 'Wild caught sweet coastal shrimps sautéed in garlic-infused real butter and parsley, served with rice.',
+    description: 'Wild-caught coastal shrimps sautéed in garlic-infused real butter, white wine reduction, and parsley.',
     category: 'mains',
-    subcategory: 'seafood',
-    tags: ['Seafood', 'Served with Rice', 'Popular'],
+    rating: 5,
+    tags: ['Seafood', 'Popular'],
     image: 'https://images.unsplash.com/photo-1559715745-e1b33a271c8f?auto=format&fit=crop&w=600&q=80'
   },
   {
-    name: 'Steamed Prawns (250g)',
-    price: 390,
-    description: 'Plump fresh prawns delicately steamed with ginger sprigs and scallions, served with calamansi dipping sauce and rice.',
-    category: 'mains',
-    subcategory: 'seafood',
-    tags: ['Seafood', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1559715745-e1b33a271c8f?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Grilled Tuna with Butter Garlic Lemon',
-    price: 450,
-    description: 'Sizzling seared local Yellowfin tuna steak glazed in rich garlic lemon butter, served with mashed potato.',
-    category: 'mains',
-    subcategory: 'seafood',
-    tags: ['Seafood', 'Grilled', 'Signature'],
-    image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Fried Fish with Chinese Sauce',
-    price: 390,
-    description: 'Crispy fried local catch filet (200-250g) drizzled with Chinese sweet-savory ginger soy glaze. Served with rice.',
-    category: 'mains',
-    subcategory: 'seafood',
-    tags: ['Seafood', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Steamed Fish',
-    price: 390,
-    description: 'Steamed daily catch fish (200-250g) prepared with sesame-scented soy broth, ginger silvers, and cilantro. Served with rice.',
-    category: 'mains',
-    subcategory: 'seafood',
-    tags: ['Seafood', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Sinigang Catch',
-    price: 420,
-    description: 'The national classic—sour tamarind broth with fresh fish or plump prawns, garden radish, string beans, and water spinach. Good for 2, served with rice.',
-    category: 'mains',
-    subcategory: 'seafood',
-    tags: ['Filipino Classic', 'Seafood', 'Soup', 'Good for 2', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80'
-  },
-
-  // VEGETABLES
-  {
-    name: 'Chopseuy',
-    price: 260,
-    description: 'A colorful medley of wok-fried local garden vegetables (cauliflower, carrots, cabbage, baby corn) in a savory oyster-garlic glaze.',
-    category: 'vegetables',
-    tags: ['Vegetarian', 'Healthy'],
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Pinakbet Ilocano',
-    price: 230,
-    description: 'Authentic northern specialty of squash, eggplant, okra, string beans, and bitter melon sautéed with rich shrimp paste (bagoong).',
-    category: 'vegetables',
-    tags: ['Filipino Classic', 'Local Specialty'],
-    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Dinengdeng',
-    price: 230,
-    description: 'Traditional native clear broth simmered with grilled fish steak, string beans, eggplant, squash blossoms, and savory bagoong.',
-    category: 'vegetables',
-    tags: ['Filipino Classic', 'Local Specialty', 'Soup'],
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Buridibod',
-    price: 250,
-    description: 'Traditional Ilocano soup cooked with sweet potato (kamote) mashed in broth, seasonal greens, and pan-fried fish flakes.',
-    category: 'vegetables',
-    tags: ['Filipino Classic', 'Local Specialty', 'Soup'],
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Mixed Local Vegetables (Steamed)',
-    price: 250,
-    description: 'Fresh local farm harvest delicately steamed to retain crispness and natural nutrients. Served with native dips.',
-    category: 'vegetables',
-    tags: ['Vegetarian', 'Healthy'],
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Blanched Kangkong with Bagoong',
-    price: 120,
-    description: 'Crispy river spinach lightly blanched, served with a separate side of aromatic sautéed shrimp paste.',
-    category: 'vegetables',
-    tags: ['Local Specialty'],
-    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Stir-fried Kangkong',
-    price: 120,
-    description: 'River spinach (water spinach) quickly sautéed in a blazing wok with minced garlic, soy sauce, and sesame hints.',
-    category: 'vegetables',
-    tags: ['Vegetarian', 'Healthy'],
-    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Laing served with Rice',
-    price: 190,
-    description: 'Shredded taro leaves slow-cooked in rich coconut milk, ginger, shrimp paste, and bird’s eye chili. Served with rice.',
-    category: 'vegetables',
-    tags: ['Filipino Classic', 'Spicy', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Ginataang Kalabasa with Sitaw',
-    price: 190,
-    description: 'Native sweet squash and crisp string beans cooked in slow-simmered rich coconut cream. Served with rice.',
-    category: 'vegetables',
-    tags: ['Filipino Classic', 'Vegetarian Friendly', 'Served with Rice'],
-    image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=600&q=80'
-  },
-
-  // PASTA AND NOODLES
-  {
+    id: 'm11',
     name: 'Spaghetti Bolognese',
-    price: 320,
-    description: 'Slow-simmered minced lean beef and herb-tomato ragout over spaghetti, topped with parmesan. Served with toasted garlic bread.',
+    price: 310,
+    description: 'Slow-simmered minced lean beef and herb-tomato ragout over pasta with parmesan and garlic toast.',
     category: 'pasta_noodles',
-    subcategory: 'pasta',
-    tags: ['Pasta', 'Served with Garlic Bread'],
+    rating: 4.7,
+    tags: ['Pasta', 'Classic'],
     image: 'https://images.unsplash.com/photo-1516100882582-76c9a1a5d629?auto=format&fit=crop&w=600&q=80'
   },
   {
-    name: 'Seafood Carbonara',
-    price: 320,
-    description: 'Creamy reduction sauce of farm egg yolk, garlic, crisp bacon bits, sautéed squid, and coastal shrimps with toasted garlic bread.',
-    category: 'pasta_noodles',
-    subcategory: 'pasta',
-    tags: ['Pasta', 'Seafood', 'Served with Garlic Bread', 'Popular'],
-    image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Seafood Alfredo',
-    price: 320,
-    description: 'Indulgent butter, heavy cream and parmesan sauce with pan-seared plump scallops, calamari, and shrimps. Served with toasted garlic bread.',
-    category: 'pasta_noodles',
-    subcategory: 'pasta',
-    tags: ['Pasta', 'Seafood', 'Served with Garlic Bread'],
-    image: 'https://images.unsplash.com/photo-1645112411341-6c4fd023714a?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Baked Pasta Penne',
-    price: 290,
-    description: 'Penne pasta tossed in rich meat marinara sauce, baked under a thick, golden blanket of bubbly mozzarella and cheddar. Served with garlic bread.',
-    category: 'pasta_noodles',
-    subcategory: 'pasta',
-    tags: ['Pasta', 'Served with Garlic Bread'],
-    image: 'https://images.unsplash.com/photo-1563379971899-660589a01cc3?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Fresh Basil Pesto Pasta',
-    price: 290,
-    description: 'Spaghetti coated in an aromatic emerald sauce of pounded fresh sweet basil, garlic, pine nuts, parmesan, and extra virgin olive oil. Served with garlic bread.',
-    category: 'pasta_noodles',
-    subcategory: 'pasta',
-    tags: ['Pasta', 'Vegetarian', 'Served with Garlic Bread'],
-    image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Stir-fried Spicy Pasta',
-    price: 280,
-    description: 'Wok-tossed spaghetti in olive oil, toasted garlic, bird’s eye chili flakes, fresh cherry tomatoes, and bell peppers. Served with garlic bread.',
-    category: 'pasta_noodles',
-    subcategory: 'pasta',
-    tags: ['Pasta', 'Spicy', 'Served with Garlic Bread'],
-    image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=600&q=80'
-  },
-  {
+    id: 'm12',
     name: 'Pansit Bihon Feast',
-    price: 250,
-    description: 'Traditional thin rice vermicelli noodles stir-fried with sautéed chicken, shrimps, wood ear mushrooms, and shredded vegetables. Good for 2.',
+    price: 260,
+    description: 'Traditional thin rice vermicelli noodles stir-fried with chicken, shrimps, wood ear mushrooms, and veggies.',
     category: 'pasta_noodles',
-    subcategory: 'noodles',
-    tags: ['Filipino Classic', 'Noodles', 'Good for 2'],
+    rating: 4.8,
+    tags: ['Filipino', 'Noodles'],
     image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=600&q=80'
   },
   {
-    name: 'Pansit Canton',
-    price: 250,
-    description: 'Savory thick egg noodles stir-fried in garlic-soy seasoning with pork slices, small shrimps, cabbage, carrots, and sweet peas. Good for 2.',
-    category: 'pasta_noodles',
-    subcategory: 'noodles',
-    tags: ['Filipino Classic', 'Noodles', 'Good for 2'],
-    image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Pansit Sotanghon',
-    price: 250,
-    description: 'Delicate clear bean thread cellophane glass noodles stir-fried with shredded chicken, toasted garlic, and wood ear mushrooms. Good for 2.',
-    category: 'pasta_noodles',
-    subcategory: 'noodles',
-    tags: ['Filipino Classic', 'Noodles', 'Good for 2'],
-    image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Mixed Pansit (Bihon & Canton)',
-    price: 250,
-    description: 'The best of both worlds—fine rice vermicelli and thick egg noodles stir-fried together with meats, seafood, and crispy vegetables. Good for 2.',
-    category: 'pasta_noodles',
-    subcategory: 'noodles',
-    tags: ['Filipino Classic', 'Noodles', 'Good for 2', 'Popular'],
-    image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=600&q=80'
-  },
-
-  // SALADS AND SOUPS
-  {
-    name: 'Pasta with Balsamic Vinegar',
+    id: 'm13',
+    name: 'Shrimp & Avocado Cobb Salad',
     price: 320,
-    description: 'Chilled penne pasta salad tossed with fresh cherry tomatoes, baby arugula, sweet basil, and a generous splash of balsamic glaze.',
+    description: 'Grilled Cajun shrimps, creamy avocado wedges, sweet corn, bacon bits, and field greens with citrus vinaigrette.',
     category: 'salads_soups',
-    subcategory: 'salads',
-    tags: ['Salad', 'Vegetarian', 'Healthy'],
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Shrimp, Cobb, and Avocado Salad',
-    price: 320,
-    description: 'Plump grilled Cajun shrimps, creamy avocado wedges, sweet corn kernels, crispy bacon, boiled egg, and field greens with dressing.',
-    category: 'salads_soups',
-    subcategory: 'salads',
-    tags: ['Salad', 'Seafood', 'Healthy', 'Popular'],
+    rating: 4.9,
+    tags: ['Salad', 'Healthy', 'Fresh'],
     image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'
   },
   {
-    name: 'Greens with Tuna',
-    price: 290,
-    description: 'Mixed field baby greens topped with premium flaked chunk tuna, olives, thin cucumber ribbons, and calamansi vinaigrette.',
-    category: 'salads_soups',
-    subcategory: 'salads',
-    tags: ['Salad', 'Seafood', 'Healthy'],
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Greens with Grilled Chicken Breast',
-    price: 290,
-    description: 'Crisp field greens and sliced premium grilled chicken breast, fresh cucumbers, tomatoes, and house herb vinaigrette.',
-    category: 'salads_soups',
-    subcategory: 'salads',
-    tags: ['Salad', 'Healthy', 'Chicken'],
-    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Ranch House Salad',
-    price: 310,
-    description: 'Crispy chopped romaine lettuce, cherry tomatoes, bacon bits, and sourdough croutons drenched in creamy ranch sauce.',
-    category: 'salads_soups',
-    subcategory: 'salads',
-    tags: ['Salad'],
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Lentil Soup',
-    price: 150,
-    description: 'Comforting, protein-rich brown lentils slow-simmered with onions, carrots, and Mediterranean spices, finished with olive oil.',
-    category: 'salads_soups',
-    subcategory: 'soups',
-    tags: ['Soup', 'Vegetarian', 'Healthy'],
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Pumpkin Cream Soup',
-    price: 150,
-    description: 'Velvety soup of roasted local sweet pumpkins puréed with cream and fresh sage, served warm with a hint of toasted seeds.',
-    category: 'salads_soups',
-    subcategory: 'soups',
-    tags: ['Soup', 'Vegetarian'],
-    image: 'https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    name: 'Tomato Basil Soup',
-    price: 150,
-    description: 'Comforting roasted vine-ripened tomatoes puréed with fresh basil leaves, cream, and garlic olive oil. Served with a toasted bread wedge.',
-    category: 'salads_soups',
-    subcategory: 'soups',
-    tags: ['Soup', 'Vegetarian'],
-    image: 'https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?auto=format&fit=crop&w=600&q=80'
-  },
-
-  // ADDONS
-  {
-    name: 'Plain Rice (1 Cup)',
-    price: 35,
-    description: 'Freshly steamed premium local white jasmine rice.',
-    category: 'addons',
-    tags: ['Add-on'],
-    image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80'
+    id: 'm14',
+    name: 'Fresh Coconut Cooler',
+    price: 120,
+    description: 'Chilled young coconut water served in the shell with tender coconut meat and fresh mint leaves.',
+    category: 'drinks',
+    rating: 5,
+    tags: ['Drink', 'Refreshing'],
+    image: 'https://images.unsplash.com/photo-1546171753-97d7676e4186?auto=format&fit=crop&w=600&q=80'
   }
 ];
 
-const CATEGORIES = [
-  { id: 'all', name: 'Full Menu', icon: Utensils },
-  { id: 'breakfast', name: 'Breakfasts', icon: Coffee },
-  { id: 'international', name: 'International', icon: Globe },
-  { id: 'mains', name: 'Main Courses', icon: Sparkles },
-  { id: 'vegetables', name: 'Vegetables', icon: Leaf },
-  { id: 'pasta_noodles', name: 'Pasta & Noodles', icon: Utensils },
-  { id: 'salads_soups', name: 'Salads & Soups', icon: Soup },
-  { id: 'addons', name: 'Add-ons', icon: Sparkles }
+const MENU_CATEGORIES = [
+  { id: 'all', label: 'All Foods' },
+  { id: 'filipino', label: 'Filipino' },
+  { id: 'arabic', label: 'Arabic' },
+  { id: 'malaysian', label: 'Malaysian' },
+  { id: 'mains', label: 'Mains & Seafood' },
+  { id: 'pasta_noodles', label: 'Pasta & Noodles' },
+  { id: 'salads_soups', label: 'Salads & Soups' },
+  { id: 'drinks', label: 'Drinks & Desserts' }
+];
+
+const SIDE_HERO_TAGS = [
+  { id: 'all', label: 'Dishes', icon: Utensils },
+  { id: 'salads_soups', label: 'Dessert', icon: Sparkles },
+  { id: 'drinks', label: 'Drinks', icon: Coffee },
+  { id: 'mains', label: 'Platter', icon: ShieldCheck },
+  { id: 'arabic', label: 'Snacks', icon: Leaf }
+];
+
+const TESTIMONIALS = [
+  {
+    id: 't1',
+    name: 'Savannah Nguyen',
+    role: 'Verified Guest',
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
+    comment: 'This place is great! Atmosphere is chilled and cool, the staff is extremely friendly. They know what they are doing and what they are talking about. OpenTable reservations made it so easy.',
+    rating: 5
+  },
+  {
+    id: 't2',
+    name: 'Esther Howard',
+    role: 'Food Enthusiast',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+    comment: 'The Beef Rendang and Seafood Carbonara were absolute masterpieces. Having dinner right by the La Union sunset was the highlight of our holiday retreat.',
+    rating: 5
+  },
+  {
+    id: 't3',
+    name: 'Albert Flores',
+    role: 'Resort Guest',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
+    comment: 'Incredible flavor fusion! The Arabic Biryani and fresh grilled pompano tasted straight from a world-class restaurant. Highly recommended!',
+    rating: 5
+  }
 ];
 
 export default function Restaurant() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeSubcategory, setActiveSubcategory] = useState<'all' | 'arabic' | 'malaysian' | 'beef' | 'pork' | 'chicken' | 'seafood' | 'pasta' | 'noodles' | 'salads' | 'soups'>('all');
+  
+  // Order / Cart Modal State
+  const [orderDish, setOrderDish] = useState<MenuItem | null>(null);
+  const [orderQuantity, setOrderQuantity] = useState(1);
+  const [orderNotes, setOrderNotes] = useState('');
+  const [isOrderSubmitted, setIsOrderSubmitted] = useState(false);
 
-  // Reservation Form State
-  const [reservationName, setReservationName] = useState('');
-  const [reservationEmail, setReservationEmail] = useState('');
-  const [reservationDate, setReservationDate] = useState('');
-  const [reservationTime, setReservationTime] = useState('');
-  const [reservationGuests, setReservationGuests] = useState('2');
-  const [reservationSeating, setReservationSeating] = useState('Sunset Deck (Beachfront)');
-  const [reservationOccasion, setReservationOccasion] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
+  // Table Reservation State
+  const [resName, setResName] = useState('');
+  const [resEmail, setResEmail] = useState('');
+  const [resDate, setResDate] = useState('');
+  const [resTime, setResTime] = useState('');
+  const [resGuests, setResGuests] = useState('2 Guests');
+  const [resSeating, setResSeating] = useState('Sunset Deck (Beachfront)');
+  const [isResSubmitting, setIsResSubmitting] = useState(false);
+  const [isResSuccess, setIsResSuccess] = useState(false);
 
-  // Filter items based on category, subcategory and search query
-  const filteredItems = useMemo(() => {
+  // Popular Dishes Carousel Index
+  const [popularIndex, setPopularIndex] = useState(0);
+
+  const popularDishes = useMemo(() => MENU_ITEMS.filter(item => item.isPopular), []);
+
+  const handleNextPopular = () => {
+    setPopularIndex((prev) => (prev + 1) % popularDishes.length);
+  };
+
+  const handlePrevPopular = () => {
+    setPopularIndex((prev) => (prev - 1 + popularDishes.length) % popularDishes.length);
+  };
+
+  // Filter regular menu items
+  const filteredMenuItems = useMemo(() => {
     return MENU_ITEMS.filter(item => {
-      // Category filter
-      if (selectedCategory !== 'all' && item.category !== selectedCategory) {
-        return false;
-      }
-      // Subcategory filter (inside International, Mains, Pasta, Salads/Soups)
-      if (
-        selectedCategory === 'international' && 
-        activeSubcategory !== 'all' && 
-        item.subcategory !== activeSubcategory
-      ) {
-        return false;
-      }
-      if (
-        selectedCategory === 'mains' && 
-        activeSubcategory !== 'all' && 
-        item.subcategory !== activeSubcategory
-      ) {
-        return false;
-      }
-      if (
-        selectedCategory === 'pasta_noodles' && 
-        activeSubcategory !== 'all' && 
-        item.subcategory !== activeSubcategory
-      ) {
-        return false;
-      }
-      if (
-        selectedCategory === 'salads_soups' && 
-        activeSubcategory !== 'all' && 
-        item.subcategory !== activeSubcategory
-      ) {
-        return false;
-      }
-
-      // Search query filter
-      if (searchQuery.trim() !== '') {
-        const query = searchQuery.toLowerCase();
-        const matchesName = item.name.toLowerCase().includes(query);
-        const matchesDesc = item.description.toLowerCase().includes(query);
-        const matchesTags = item.tags?.some(tag => tag.toLowerCase().includes(query));
-        return matchesName || matchesDesc || matchesTags;
-      }
-
-      return true;
+      const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+      const matchesSearch = searchQuery.trim() === '' || 
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, activeSubcategory, searchQuery]);
+  }, [selectedCategory, searchQuery]);
 
-  // Handle category changes and reset subcategories
-  const handleCategorySelect = (categoryId: string) => {
-    setSelectedCategory(categoryId);
-    setActiveSubcategory('all');
+  const handleOrderSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsOrderSubmitted(true);
+    setTimeout(() => {
+      setIsOrderSubmitted(false);
+      setOrderDish(null);
+      setOrderQuantity(1);
+      setOrderNotes('');
+    }, 2000);
   };
 
   const handleReservationSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    // Simulate API reservation request
+    setIsResSubmitting(true);
     setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubmitSuccess(true);
-      // Reset form
-      setReservationName('');
-      setReservationEmail('');
-      setReservationDate('');
-      setReservationTime('');
-      setReservationGuests('2');
-      setReservationOccasion('');
-    }, 1500);
+      setIsResSubmitting(false);
+      setIsResSuccess(true);
+    }, 1200);
   };
 
   return (
-    <div className="bg-white min-h-screen">
-      {/* Premium Header */}
+    <div className="bg-[#FAF8F5] min-h-screen text-slate-800 font-sans selection:bg-[#E5BF71] selection:text-[#0B1E36]">
+      
+      {/* 1. MASTER PAGE HEADER */}
       <PageHeader
-        title="Maranna Restaurant"
-        subtitle="Experience world-class culinary mastery blending rich coastal Filipino flavors, traditional Arabic classics, and authentic Malaysian cuisine."
-        category="Dining & Lounge"
+        title="Maranna Dining & Lounge"
+        subtitle="We Serve The Taste You Love — Experience world-class culinary mastery blending rich coastal Filipino flavors, traditional Arabic classics, and authentic Malaysian cuisine."
+        category="Gourmet Oceanfront Restaurant"
         backgroundImageUrl="https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/473748832_122132546324567801_2877340831206792826_n.jpg"
         imageOpacity="opacity-85"
         objectPosition="object-[center_25%]"
       />
 
-      {/* Brand & Narrative Block */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.15 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
-      >
-        <div className="lg:col-span-5 flex justify-center bg-[#0B1E36] rounded-3xl p-8 shadow-2xl border border-white/10 relative overflow-hidden">
-          {/* Subtle gold sparks inside the logo card */}
-          <div className="absolute top-4 right-4 text-[#E5BF71]/35 animate-pulse">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <MarannaLogo size="xl" withText={true} inverse={true} />
-        </div>
-        
-        <div className="lg:col-span-7 space-y-6">
-          <span className="font-sans text-xs uppercase font-bold tracking-[0.25em] text-sunset">
-            Ocean Breeze Culinary Sanctuary
-          </span>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-charcoal leading-tight">
-            Traditional Heritage <br />
-            <span className="text-coral">With An International Accent</span>
-          </h2>
-          <div className="h-1 w-20 bg-sunset rounded-full"></div>
+      {/* ========================================================================= */}
+      {/* 2. HERO SECTION ("WE SERVE THE TASTE YOU LOVE" LAYOUT) */}
+      {/* ========================================================================= */}
+      <section className="relative pt-12 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           
-          <p className="font-sans text-sm md:text-base text-gray-600 leading-relaxed">
-            Welcome to <strong className="text-charcoal font-semibold">Maranna</strong>, a seaside culinary destination curated to serve resort guests and local connoisseurs alike. Overlooking the legendary La Union sunset, our kitchen prepares a rare convergence of three worlds: comforting northern Filipino delicacies, authentic fragrant Malaysian satays & curries, and sophisticated Arabic spiced rice dishes.
-          </p>
-          <p className="font-sans text-sm md:text-base text-gray-600 leading-relaxed">
-            Every dish is prepared using fresh ocean catches pulled from San Juan’s coastlines, organic local vegetables, and genuine imported culinary spices. Start your day with our signature Silog breakfasts paired with <strong className="text-charcoal font-semibold">unlimited local Barako coffee</strong>, or dine in the breeze with a shared seafood platter as the sunset stains the beach.
-          </p>
+          {/* Left Hero Content */}
+          <motion.div 
+            initial={{ opacity: 0, x: -25 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7 }}
+            className="lg:col-span-7 space-y-6 text-center lg:text-left"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0B1E36]/10 text-[#0B1E36] font-sans text-xs font-bold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-[#E5BF71]" />
+              Authentic Flavors & Coastal Elegance
+            </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-4">
-            <motion.div 
-              whileHover={{ y: -6, scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-              className="bg-slate-50/50 hover:bg-white p-5 rounded-3xl border border-slate-100 hover:border-sand hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
-            >
-              <div className="w-10 h-10 rounded-2xl bg-orange-500/10 flex items-center justify-center text-sunset mb-2 group-hover:scale-110 transition-transform duration-300">
-                <Clock className="w-5 h-5" />
-              </div>
-              <span className="font-sans text-xs font-bold text-charcoal group-hover:text-sunset transition-colors">Opening Hours</span>
-              <span className="font-sans text-[10px] text-gray-500 mt-1">6:00 AM – 10:00 PM</span>
-            </motion.div>
+            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold text-[#0B1E36] leading-[1.15]">
+              We Serve The Taste <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0B1E36] via-[#1c3a60] to-[#E5BF71]">
+                You Love
+              </span> <span className="inline-block animate-bounce">😋</span>
+            </h1>
 
-            <motion.div 
-              whileHover={{ y: -6, scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-              className="bg-slate-50/50 hover:bg-white p-5 rounded-3xl border border-slate-100 hover:border-sand hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
-            >
-              <div className="w-10 h-10 rounded-2xl bg-teal-500/10 flex items-center justify-center text-teal-600 mb-2 group-hover:scale-110 transition-transform duration-300">
-                <Globe className="w-5 h-5" />
-              </div>
-              <span className="font-sans text-xs font-bold text-charcoal group-hover:text-sunset transition-colors">Cuisine Styles</span>
-              <span className="font-sans text-[10px] text-gray-500 mt-1">Filipino, Arabic, Malaysian</span>
-            </motion.div>
+            <p className="font-sans text-sm sm:text-base text-gray-600 max-w-xl leading-relaxed mx-auto lg:mx-0">
+              This is a unique resort restaurant which typically serves fresh coastal food and tropical drinks, in addition to light refreshments such as artisanal baked goods or savory snacks.
+            </p>
 
-            <motion.div 
-              whileHover={{ y: -6, scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-              className="bg-slate-50/50 hover:bg-white p-5 rounded-3xl border border-slate-100 hover:border-sand hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
-            >
-              <div className="w-10 h-10 rounded-2xl bg-sky-500/10 flex items-center justify-center text-sky-600 mb-2 group-hover:scale-110 transition-transform duration-300">
-                <MapPin className="w-5 h-5" />
-              </div>
-              <span className="font-sans text-xs font-bold text-charcoal group-hover:text-sunset transition-colors">Ambience</span>
-              <span className="font-sans text-[10px] text-gray-500 mt-1">Al-Fresco Deck & Lounge</span>
-            </motion.div>
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+              <a
+                href="#regular-menu"
+                className="px-8 py-3.5 rounded-full bg-[#E5BF71] text-[#0B1E36] hover:bg-[#ebd095] font-sans text-xs font-bold uppercase tracking-wider shadow-lg shadow-amber-500/10 active:scale-95 transition-all cursor-pointer"
+              >
+                Explore Food
+              </a>
 
-            <motion.div 
-              whileHover={{ y: -6, scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-              className="bg-slate-50/50 hover:bg-white p-5 rounded-3xl border border-slate-100 hover:border-sand hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
-            >
-              <div className="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600 mb-2 group-hover:scale-110 transition-transform duration-300">
-                <Coffee className="w-5 h-5" />
+              <a
+                href="#reserve-table"
+                className="px-8 py-3.5 rounded-full bg-white border border-slate-300 text-[#0B1E36] hover:border-[#0B1E36] font-sans text-xs font-bold uppercase tracking-wider shadow-sm active:scale-95 transition-all cursor-pointer flex items-center gap-2"
+              >
+                <Search className="w-3.5 h-3.5 text-[#0B1E36]" />
+                Search & Reserve
+              </a>
+            </div>
+          </motion.div>
+
+          {/* Right Hero Graphic with Floating Dish & Side Badges (Matching Screenshot 1 Layout) */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="lg:col-span-5 relative flex items-center justify-center"
+          >
+            {/* Background Soft Glow Circles */}
+            <div className="absolute w-80 h-80 bg-[#E5BF71]/20 rounded-full blur-3xl -z-10"></div>
+            <div className="absolute w-72 h-72 border border-[#0B1E36]/15 rounded-full -z-10 animate-spin-slow"></div>
+
+            <div className="relative flex items-center gap-6">
+              
+              {/* Central Circular Dish Plate Frame */}
+              <motion.div 
+                whileHover={{ scale: 1.02 }}
+                className="relative w-64 h-64 sm:w-80 sm:h-80 rounded-full overflow-hidden border-8 border-white shadow-2xl z-10"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80"
+                  alt="Seafood Dish"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B1E36]/40 via-transparent to-transparent"></div>
+              </motion.div>
+
+              {/* Side Floating Category Badges (Screenshot 1 Style) */}
+              <div className="flex flex-col gap-3 z-20">
+                {SIDE_HERO_TAGS.map((tag) => {
+                  const Icon = tag.icon;
+                  return (
+                    <button
+                      key={tag.id}
+                      onClick={() => {
+                        setSelectedCategory(tag.id);
+                        document.getElementById('regular-menu')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-md hover:bg-[#0B1E36] hover:text-[#E5BF71] text-[#0B1E36] text-xs font-bold transition-all duration-200 cursor-pointer group"
+                    >
+                      <div className="w-6 h-6 rounded-full bg-[#FAF8F5] group-hover:bg-[#E5BF71]/20 flex items-center justify-center">
+                        <Icon className="w-3.5 h-3.5 text-[#0B1E36] group-hover:text-[#E5BF71]" />
+                      </div>
+                      <span>{tag.label}</span>
+                    </button>
+                  );
+                })}
               </div>
-              <span className="font-sans text-xs font-bold text-charcoal group-hover:text-sunset transition-colors">Special Perk</span>
-              <span className="font-sans text-[10px] text-gray-500 mt-1">Unlimited Barako Coffee</span>
-            </motion.div>
-          </div>
+
+            </div>
+          </motion.div>
+
         </div>
-      </motion.section>
+      </section>
 
-      {/* Main Menu Section */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.05 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-slate-50/50 py-16 md:py-24 border-y border-slate-100"
-      >
+
+      {/* ========================================================================= */}
+      {/* 3. POPULAR DISHES CAROUSEL / GRID SECTION */}
+      {/* ========================================================================= */}
+      <section className="py-16 bg-white border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          {/* Menu Intro */}
-          <div className="text-center max-w-3xl mx-auto space-y-4 mb-12">
-            <span className="font-sans text-xs uppercase font-bold tracking-[0.2em] text-coral">
-              Curated Dining Bill of Fare
+          {/* Section Title & Navigation Arrows */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+            <div>
+              <span className="font-sans text-xs uppercase font-bold tracking-widest text-[#0B1E36]">
+                Chef Recommended
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0B1E36] mt-1">
+                Popular Dishes
+              </h2>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handlePrevPopular}
+                className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-[#0B1E36] hover:text-[#E5BF71] transition-all cursor-pointer shadow-sm"
+                aria-label="Previous Dish"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleNextPopular}
+                className="w-10 h-10 rounded-full bg-[#E5BF71] text-[#0B1E36] flex items-center justify-center hover:bg-[#dcae5b] transition-all cursor-pointer shadow-sm"
+                aria-label="Next Dish"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {popularDishes.map((dish) => (
+              <motion.div
+                key={dish.id}
+                whileHover={{ y: -6 }}
+                transition={{ duration: 0.3 }}
+                className="bg-[#FAF8F5] border border-slate-200 rounded-3xl p-5 flex flex-col items-center text-center shadow-sm hover:shadow-xl hover:border-[#E5BF71]/60 transition-all duration-300 relative group"
+              >
+                {/* Top Circular Dish Image */}
+                <div className="w-36 h-36 rounded-full overflow-hidden border-4 border-white shadow-md mb-4 group-hover:scale-105 transition-transform duration-300">
+                  <img
+                    src={dish.image}
+                    alt={dish.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                {/* Stars */}
+                <div className="flex items-center gap-1 text-amber-400 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
+                  ))}
+                </div>
+
+                {/* Dish Name */}
+                <h3 className="font-serif text-lg font-bold text-[#0B1E36]">
+                  {dish.name}
+                </h3>
+
+                {/* Description */}
+                <p className="font-sans text-xs text-gray-500 mt-1 line-clamp-2 leading-relaxed mb-4 flex-1">
+                  {dish.description}
+                </p>
+
+                {/* Price & Add Button */}
+                <div className="w-full flex items-center justify-between pt-3 border-t border-slate-200/80">
+                  <span className="font-serif text-base font-bold text-[#0B1E36]">
+                    ₱{dish.price}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setOrderDish(dish);
+                      setOrderQuantity(1);
+                    }}
+                    className="px-4 py-1.5 rounded-full bg-[#0B1E36] text-[#E5BF71] text-xs font-bold hover:bg-[#122b4c] transition-all cursor-pointer shadow-sm"
+                  >
+                    Add To Cart
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* ========================================================================= */}
+      {/* 4. HOSPITALITY & SERVICES SECTION ("WE ARE MORE THAN MULTIPLE SERVICES") */}
+      {/* (NO CHEF PHOTO AS REQUESTED BY USER) */}
+      {/* ========================================================================= */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          {/* Left Column: Delicious Food Dish Circle Collage (NO CHEF PHOTO) */}
+          <div className="lg:col-span-5 relative flex justify-center">
+            <div className="relative w-72 h-72 sm:w-88 sm:h-88">
+              {/* Outer Decorative Ring */}
+              <div className="absolute inset-0 rounded-full border-2 border-dashed border-[#E5BF71]/40 animate-spin-slow"></div>
+
+              {/* Main Food Dish Circle */}
+              <div className="w-full h-full rounded-full overflow-hidden border-8 border-white shadow-2xl">
+                <img
+                  src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=80"
+                  alt="Gourmet Dining Platter"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Floating Bottom Dish Badge */}
+              <div className="absolute -bottom-4 -left-4 w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                <img
+                  src="https://images.unsplash.com/photo-1559715745-e1b33a271c8f?auto=format&fit=crop&w=400&q=80"
+                  alt="Seafood Platter"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Floating Quality Tag */}
+              <div className="absolute -top-2 -right-2 bg-[#0B1E36] text-[#E5BF71] border border-[#E5BF71]/30 px-4 py-2 rounded-2xl shadow-xl text-left">
+                <span className="text-[10px] uppercase font-bold tracking-widest block text-blue-200">Quality Assured</span>
+                <span className="font-serif text-xs font-bold block text-[#E5BF71]">100% Organic Fresh</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: "We Are More Than Multiple Services" */}
+          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+            <span className="font-sans text-xs uppercase font-bold tracking-widest text-[#0B1E36]">
+              Excellence In Hospitality
             </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal">
-              Explore Our Menus
+
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-[#0B1E36] leading-tight">
+              We Are More Than <br className="hidden sm:block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0B1E36] via-[#1c3a60] to-[#E5BF71]">
+                Multiple Services
+              </span>
+            </h2>
+
+            <p className="font-sans text-sm text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
+              This is a type of food service which typically serves gourmet meals and drinks, in addition to light refreshments such as baked goods or coastal snacks. We prioritize luxury, cleanliness, and speed.
+            </p>
+
+            {/* Feature List Grid (Matching Icon Rows from Screenshot 1) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-[#0B1E36]/10 text-[#0B1E36] flex items-center justify-center shrink-0">
+                  <Calendar className="w-5 h-5 text-[#0B1E36]" />
+                </div>
+                <div className="text-left">
+                  <h4 className="font-serif text-sm font-bold text-[#0B1E36]">Pre-Reservation</h4>
+                  <p className="text-[11px] text-gray-500">Book table in advance online</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-[#0B1E36]/10 text-[#0B1E36] flex items-center justify-center shrink-0">
+                  <Clock className="w-5 h-5 text-[#0B1E36]" />
+                </div>
+                <div className="text-left">
+                  <h4 className="font-serif text-sm font-bold text-[#0B1E36]">24/7 Room Service</h4>
+                  <p className="text-[11px] text-gray-500">Round-the-clock dining</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-[#0B1E36]/10 text-[#0B1E36] flex items-center justify-center shrink-0">
+                  <MapPin className="w-5 h-5 text-[#0B1E36]" />
+                </div>
+                <div className="text-left">
+                  <h4 className="font-serif text-sm font-bold text-[#0B1E36]">Organized Foodie Place</h4>
+                  <p className="text-[11px] text-gray-500">Beach lounge & sunset deck</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-[#0B1E36]/10 text-[#0B1E36] flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-5 h-5 text-[#0B1E36]" />
+                </div>
+                <div className="text-left">
+                  <h4 className="font-serif text-sm font-bold text-[#0B1E36]">Clean Kitchen</h4>
+                  <p className="text-[11px] text-gray-500">5-star hygiene standard</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-3">
+              <a
+                href="#reserve-table"
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#0B1E36] text-[#E5BF71] hover:bg-[#122b4c] font-sans text-xs font-bold uppercase tracking-wider transition-all shadow-md cursor-pointer"
+              >
+                About Our Hospitality
+                <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* ========================================================================= */}
+      {/* 5. OUR REGULAR MENU PACK SECTION */}
+      {/* ========================================================================= */}
+      <section id="regular-menu" className="py-20 bg-white border-t border-slate-200 scroll-mt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Section Header */}
+          <div className="text-center max-w-2xl mx-auto space-y-3 mb-10">
+            <span className="font-sans text-xs uppercase font-bold tracking-widest text-[#0B1E36]">
+              Complete Bill Of Fare
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-[#0B1E36]">
+              Our Regular Menu Pack
             </h2>
             <p className="font-sans text-xs sm:text-sm text-gray-500">
-              Browse through local seaside breakfast collections, rich traditional curries, high-heat stir-fried noodles, and ocean delicacies cooked to pristine standards.
+              Browse our diverse menu categorized by region and ingredients, crafted with passion.
             </p>
           </div>
 
-          {/* Search and Categories Toolbar */}
-          <div className="bg-white p-4 sm:p-6 rounded-3xl shadow-md border border-slate-100 mb-8 space-y-4">
-            {/* Search Input */}
-            <div className="relative w-full max-w-lg mx-auto">
-              <Search className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search menu items (e.g., 'Rendang', 'Pusit', 'Biryani', 'Salad')..."
-                className="w-full pl-12 pr-4 py-3 rounded-full bg-slate-50 border border-slate-100 focus:outline-none focus:ring-2 focus:ring-sunset focus:bg-white text-sm transition-all text-charcoal placeholder-gray-400"
-              />
-              {searchQuery && (
-                <button 
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-sunset hover:underline"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-
-            {/* Main Category Tabs */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none justify-start md:justify-center">
-              {CATEGORIES.map(category => {
-                const Icon = category.icon;
-                const isSelected = selectedCategory === category.id;
-                return (
-                  <button
-                    key={category.id}
-                    onClick={() => handleCategorySelect(category.id)}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-sans text-xs font-bold tracking-wide transition-all whitespace-nowrap cursor-pointer ${
-                      isSelected
-                        ? 'bg-[#0B1E36] text-[#E5BF71] shadow-lg shadow-blue-900/10'
-                        : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-                    }`}
-                  >
-                    <Icon className="w-3.5 h-3.5" />
-                    {category.name}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Subcategories (Conditional rendering based on category) */}
-            <AnimatePresence mode="wait">
-              {selectedCategory === 'international' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -5 }}
-                  className="flex justify-center gap-3 pt-2 border-t border-slate-100"
-                >
-                  {(['all', 'arabic', 'malaysian'] as const).map(sub => (
-                    <button
-                      key={sub}
-                      onClick={() => setActiveSubcategory(sub)}
-                      className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer ${
-                        activeSubcategory === sub
-                          ? 'bg-sunset text-white'
-                          : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                      }`}
-                    >
-                      {sub === 'all' ? 'All Styles' : sub}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-
-              {selectedCategory === 'mains' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -5 }}
-                  className="flex justify-center gap-2 flex-wrap pt-2 border-t border-slate-100"
-                >
-                  {(['all', 'beef', 'pork', 'chicken', 'seafood'] as const).map(sub => (
-                    <button
-                      key={sub}
-                      onClick={() => setActiveSubcategory(sub)}
-                      className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer ${
-                        activeSubcategory === sub
-                          ? 'bg-sunset text-white'
-                          : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                      }`}
-                    >
-                      {sub === 'all' ? 'All Meats & Seafood' : sub}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-
-              {selectedCategory === 'pasta_noodles' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -5 }}
-                  className="flex justify-center gap-3 pt-2 border-t border-slate-100"
-                >
-                  {(['all', 'pasta', 'noodles'] as const).map(sub => (
-                    <button
-                      key={sub}
-                      onClick={() => setActiveSubcategory(sub)}
-                      className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer ${
-                        activeSubcategory === sub
-                          ? 'bg-sunset text-white'
-                          : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                      }`}
-                    >
-                      {sub === 'all' ? 'All Pasta/Noodles' : sub}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-
-              {selectedCategory === 'salads_soups' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -5 }}
-                  className="flex justify-center gap-3 pt-2 border-t border-slate-100"
-                >
-                  {(['all', 'salads', 'soups'] as const).map(sub => (
-                    <button
-                      key={sub}
-                      onClick={() => setActiveSubcategory(sub)}
-                      className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer ${
-                        activeSubcategory === sub
-                          ? 'bg-sunset text-white'
-                          : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                      }`}
-                    >
-                      {sub === 'all' ? 'All Salads & Soups' : sub}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Menu Items Grid */}
-          <motion.div 
-            layout
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-          >
-            <AnimatePresence mode="popLayout">
-              {filteredItems.map((item, idx) => (
-                <motion.div
-                  key={item.name}
-                  layout
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.3, delay: Math.min(idx * 0.04, 0.4) }}
-                  className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col"
-                >
-                  {/* Photo Frame */}
-                  <div className="relative h-48 overflow-hidden bg-slate-200">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-                    
-                    {/* Floating Price Tag */}
-                    <div className="absolute bottom-4 right-4 bg-[#0B1E36] border border-[#E5BF71]/35 px-4 py-1.5 rounded-full text-xs font-bold text-[#E5BF71] font-sans shadow-md">
-                      ₱{item.price}
-                    </div>
-
-                    {/* Category Label */}
-                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[9px] uppercase tracking-wider font-bold text-charcoal">
-                      {item.category.replace('_', ' & ')}
-                    </div>
-                  </div>
-
-                  {/* Details Frame */}
-                  <div className="p-5 flex-1 flex flex-col justify-between">
-                    <div className="space-y-2">
-                      <h3 className="font-serif text-lg font-bold text-charcoal leading-snug group-hover:text-sunset transition-colors">
-                        {item.name}
-                      </h3>
-                      <p className="font-sans text-xs text-gray-500 leading-relaxed line-clamp-3">
-                        {item.description}
-                      </p>
-                    </div>
-
-                    {/* Tags block */}
-                    <div className="flex flex-wrap gap-1.5 pt-4 border-t border-slate-50 mt-4">
-                      {item.tags?.map(tag => (
-                        <span 
-                          key={tag}
-                          className="bg-slate-50 text-slate-500 border border-slate-100 rounded-full px-2 py-0.5 text-[9px] font-medium"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-
-            {/* Empty state */}
-            {filteredItems.length === 0 && (
-              <div className="col-span-full py-16 text-center space-y-4">
-                <div className="inline-flex p-4 rounded-full bg-slate-100 text-slate-400">
-                  <Search className="w-8 h-8" />
-                </div>
-                <h3 className="font-serif text-lg font-bold text-charcoal">No Dishes Found</h3>
-                <p className="font-sans text-xs text-slate-500 max-w-sm mx-auto">
-                  We couldn't find any dishes matching "{searchQuery}". Try selecting a different category or refining your query.
-                </p>
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedCategory('all');
-                    setActiveSubcategory('all');
-                  }}
-                  className="px-5 py-2 rounded-full bg-sunset text-white text-xs font-bold uppercase tracking-wider hover:bg-sunset/90 transition-all"
-                >
-                  Reset Filters
-                </button>
-              </div>
+          {/* Search Input Bar */}
+          <div className="max-w-md mx-auto mb-8 relative">
+            <Search className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search food by name or ingredient..."
+              className="w-full pl-11 pr-10 py-2.5 rounded-full bg-[#FAF8F5] border border-slate-200 text-xs text-slate-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0B1E36]"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-[#0B1E36]"
+              >
+                Clear
+              </button>
             )}
-          </motion.div>
-          
-          {/* Note about coffee */}
-          <div className="mt-12 p-5 rounded-3xl bg-[#0B1E36]/5 border border-slate-100 max-w-2xl mx-auto flex gap-4 items-center">
-            <Coffee className="w-8 h-8 text-sunset shrink-0" />
-            <div className="font-sans text-xs text-slate-600 leading-relaxed">
-              <strong className="text-charcoal block mb-0.5 font-bold">Uncapped Local Barako Coffee</strong>
-              All breakfast orders automatically include unlimited servings of our rich, organic, locally sourced Barako drip coffee roasted in the Highlands of La Union.
-            </div>
           </div>
+
+          {/* Category Filter Pills (Matching Screenshot 1 Style) */}
+          <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-4 mb-10 scrollbar-none">
+            {MENU_CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  selectedCategory === cat.id
+                    ? 'bg-[#E5BF71] text-[#0B1E36] shadow-md font-extrabold'
+                    : 'bg-[#FAF8F5] text-gray-600 hover:bg-slate-200 border border-slate-200'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Menu Items Grid (4 columns like Screenshot 1) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredMenuItems.map((item) => (
+              <motion.div
+                key={item.id}
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="bg-[#FAF8F5] border border-slate-200 rounded-3xl p-5 flex flex-col items-center text-center shadow-sm hover:shadow-lg hover:border-[#E5BF71] transition-all duration-300 relative group"
+              >
+                {/* Top Circular Dish Image */}
+                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md mb-3 group-hover:scale-105 transition-transform duration-300">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                {/* Stars */}
+                <div className="flex items-center gap-1 text-amber-400 mb-1.5">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-amber-400" />
+                  ))}
+                </div>
+
+                {/* Item Name */}
+                <h3 className="font-serif text-base font-bold text-[#0B1E36]">
+                  {item.name}
+                </h3>
+
+                {/* Description */}
+                <p className="font-sans text-[11px] text-gray-500 mt-1 line-clamp-2 leading-relaxed mb-4 flex-1">
+                  {item.description}
+                </p>
+
+                {/* Price & Action Button */}
+                <div className="w-full flex items-center justify-between pt-3 border-t border-slate-200/80">
+                  <span className="font-serif text-base font-bold text-[#0B1E36]">
+                    ₱{item.price}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setOrderDish(item);
+                      setOrderQuantity(1);
+                    }}
+                    className="px-3.5 py-1.5 rounded-full bg-white border border-slate-300 text-[#0B1E36] text-[11px] font-bold hover:bg-[#0B1E36] hover:text-[#E5BF71] hover:border-[#0B1E36] transition-all cursor-pointer shadow-xs"
+                  >
+                    Add To Cart
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {filteredMenuItems.length === 0 && (
+            <div className="text-center py-12 text-gray-500 space-y-2">
+              <Utensils className="w-8 h-8 text-gray-300 mx-auto" />
+              <p className="text-sm font-bold text-slate-700">No dishes match your selection.</p>
+              <button
+                onClick={() => { setSelectedCategory('all'); setSearchQuery(''); }}
+                className="text-xs font-bold text-[#0B1E36] underline cursor-pointer"
+              >
+                Reset Filters
+              </button>
+            </div>
+          )}
 
         </div>
-      </motion.section>
+      </section>
 
-      {/* Reservation Section */}
-      <motion.section
-        initial={{ opacity: 0, y: 35 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.08 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 bg-[#0B1E36] rounded-[40px] overflow-hidden shadow-2xl border border-white/5 relative">
+
+      {/* ========================================================================= */}
+      {/* 6. RESERVE YOUR TABLE SECTION ("DO YOU HAVE ANY DINNER PLAN TODAY?") */}
+      {/* ========================================================================= */}
+      <section id="reserve-table" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto scroll-mt-20">
+        <div className="bg-[#0B1E36] text-white rounded-3xl p-8 sm:p-12 border border-[#E5BF71]/30 shadow-2xl relative overflow-hidden">
           
-          {/* Ambient Design Details */}
-          <div className="absolute -top-32 -left-32 w-96 h-96 bg-sunset opacity-10 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-coral opacity-10 rounded-full blur-3xl pointer-events-none"></div>
+          {/* Subtle Ambient Background Ring */}
+          <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-[#E5BF71]/10 rounded-full blur-3xl pointer-events-none"></div>
 
-          {/* Left: Interactive Reservation Summary */}
-          <div className="lg:col-span-5 p-8 sm:p-12 lg:p-16 flex flex-col justify-between text-white relative z-10">
-            <div className="space-y-6">
-              <span className="font-sans text-xs uppercase font-bold tracking-[0.25em] text-[#E5BF71]">
-                Book An Experience
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center relative z-10">
+            
+            {/* Left Content & Form */}
+            <div className="lg:col-span-7 space-y-6">
+              <span className="font-sans text-xs uppercase font-bold tracking-widest text-[#E5BF71]">
+                Table Reservation
               </span>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold leading-tight">
-                Secure Your <br />
-                <span className="text-[#E5BF71]">Sunset Deck Table</span>
+
+              <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-white">
+                Do You Have Any Dinner <br className="hidden sm:block" />
+                Plan Today? <span className="text-[#E5BF71] italic font-normal">Reserve Your Table</span>
               </h2>
-              <div className="h-1 w-16 bg-[#E5BF71] rounded-full"></div>
-              
-              <p className="font-sans text-sm text-blue-100/85 leading-relaxed">
-                Tables on our elevated beachfront deck are highly coveted, especially between 5:00 PM and 7:00 PM as the legendary San Juan sunset sets over the ocean.
+
+              <p className="font-sans text-xs sm:text-sm text-blue-100/80 leading-relaxed max-w-lg">
+                Make online reservations in seconds to secure the finest beachfront sunset view for your romantic date, family gathering, or celebration.
               </p>
 
-              <div className="space-y-4 pt-4">
-                <div className="flex gap-3 items-start">
-                  <CheckCircle className="w-4 h-4 text-[#E5BF71] shrink-0 mt-0.5" />
-                  <span className="font-sans text-xs text-blue-100/90">First-row seaside tables are prioritized for early bookings.</span>
-                </div>
-                <div className="flex gap-3 items-start">
-                  <CheckCircle className="w-4 h-4 text-[#E5BF71] shrink-0 mt-0.5" />
-                  <span className="font-sans text-xs text-blue-100/90">Special arrangements can be made for birthdays, proposals, and surf parties.</span>
-                </div>
-                <div className="flex gap-3 items-start">
-                  <CheckCircle className="w-4 h-4 text-[#E5BF71] shrink-0 mt-0.5" />
-                  <span className="font-sans text-xs text-blue-100/90">No deposit required. Table reservations will be held for 15 minutes.</span>
-                </div>
+              {/* Reservation Form */}
+              {isResSuccess ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-white/10 border border-[#E5BF71]/40 rounded-2xl p-6 text-center space-y-3"
+                >
+                  <CheckCircle className="w-10 h-10 text-[#E5BF71] mx-auto" />
+                  <h3 className="font-serif text-xl font-bold text-[#E5BF71]">Table Reserved Successfully!</h3>
+                  <p className="text-xs text-blue-100">
+                    Thank you, {resName || 'Valued Guest'}. We have saved your table at {resSeating} for {resGuests} on {resDate || 'your selected date'}.
+                  </p>
+                  <button
+                    onClick={() => setIsResSuccess(false)}
+                    className="px-6 py-2 rounded-full bg-[#E5BF71] text-[#0B1E36] text-xs font-bold uppercase tracking-wider cursor-pointer"
+                  >
+                    Reserve Another Table
+                  </button>
+                </motion.div>
+              ) : (
+                <form onSubmit={handleReservationSubmit} className="space-y-4 pt-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      required
+                      value={resName}
+                      onChange={(e) => setResName(e.target.value)}
+                      placeholder="Your Full Name"
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-xs text-white placeholder-blue-200/60 focus:outline-none focus:border-[#E5BF71]"
+                    />
+                    <input
+                      type="email"
+                      required
+                      value={resEmail}
+                      onChange={(e) => setResEmail(e.target.value)}
+                      placeholder="Email Address"
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-xs text-white placeholder-blue-200/60 focus:outline-none focus:border-[#E5BF71]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <input
+                      type="date"
+                      required
+                      value={resDate}
+                      onChange={(e) => setResDate(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-xs text-white focus:outline-none focus:border-[#E5BF71]"
+                    />
+                    <input
+                      type="time"
+                      required
+                      value={resTime}
+                      onChange={(e) => setResTime(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-xs text-white focus:outline-none focus:border-[#E5BF71]"
+                    />
+                    <select
+                      value={resGuests}
+                      onChange={(e) => setResGuests(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#142d4d] border border-white/20 text-xs text-white focus:outline-none focus:border-[#E5BF71]"
+                    >
+                      <option value="1 Guest">1 Guest</option>
+                      <option value="2 Guests">2 Guests</option>
+                      <option value="4 Guests">4 Guests</option>
+                      <option value="6+ Guests">6+ Guests Party</option>
+                    </select>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isResSubmitting}
+                    className="px-8 py-3.5 rounded-full bg-[#E5BF71] text-[#0B1E36] hover:bg-[#ebd095] font-sans text-xs font-bold uppercase tracking-wider shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    {isResSubmitting ? 'Confirming...' : 'Make Reservation'}
+                  </button>
+                </form>
+              )}
+            </div>
+
+            {/* Right Side Appetizing Circular Platter Image (Matching Screenshot 1) */}
+            <div className="lg:col-span-5 flex justify-center">
+              <div className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full overflow-hidden border-8 border-white/20 shadow-2xl">
+                <img
+                  src="https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=600&q=80"
+                  alt="Special Dinner Dish"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
 
-            <div className="pt-8 border-t border-white/10 mt-8 lg:mt-0">
-              <span className="font-sans text-[10px] text-blue-200/60 uppercase tracking-widest block">For Immediate Help</span>
-              <span className="font-sans text-md font-bold text-[#E5BF71] block mt-1">+63 917 123 4567</span>
-              <span className="font-sans text-[10px] text-blue-200/80 mt-0.5 block">dining@oceanbreezelu.com</span>
-            </div>
           </div>
+        </div>
+      </section>
 
-          {/* Right: Reservation Form */}
-          <div className="lg:col-span-7 bg-white/5 backdrop-blur-lg p-8 sm:p-12 lg:p-16 border-l border-white/5 flex flex-col justify-center relative z-10">
-            
-            <AnimatePresence mode="wait">
-              {!isSubmitSuccess ? (
-                <motion.form
-                  key="reservation-form"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onSubmit={handleReservationSubmit}
-                  className="space-y-5"
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="font-sans text-[10px] uppercase font-bold tracking-wider text-blue-200/90">Your Full Name</label>
-                      <input
-                        type="text"
-                        required
-                        value={reservationName}
-                        onChange={(e) => setReservationName(e.target.value)}
-                        placeholder="Benyamin Namt_..."
-                        className="w-full bg-white/10 border border-white/10 rounded-2xl px-4 py-3 text-white text-xs font-sans placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#E5BF71] focus:bg-white/15"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="font-sans text-[10px] uppercase font-bold tracking-wider text-blue-200/90">Email Address</label>
-                      <input
-                        type="email"
-                        required
-                        value={reservationEmail}
-                        onChange={(e) => setReservationEmail(e.target.value)}
-                        placeholder="yourname@gmail.com"
-                        className="w-full bg-white/10 border border-white/10 rounded-2xl px-4 py-3 text-white text-xs font-sans placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#E5BF71] focus:bg-white/15"
-                      />
+
+
+      {/* ========================================================================= */}
+      {/* 8. ORDER / QUICK CART MODAL */}
+      {/* ========================================================================= */}
+      <AnimatePresence>
+        {orderDish && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative border border-slate-100 space-y-5"
+            >
+              <button
+                onClick={() => setOrderDish(null)}
+                className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100 text-gray-400 hover:text-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="flex items-center gap-4">
+                <img
+                  src={orderDish.image}
+                  alt={orderDish.name}
+                  className="w-20 h-20 rounded-2xl object-cover border border-slate-200"
+                />
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#0B1E36]">
+                    Quick Order
+                  </span>
+                  <h3 className="font-serif text-lg font-bold text-[#0B1E36]">
+                    {orderDish.name}
+                  </h3>
+                  <p className="font-serif text-sm font-bold text-[#E5BF71]">
+                    ₱{orderDish.price * orderQuantity}
+                  </p>
+                </div>
+              </div>
+
+              {isOrderSubmitted ? (
+                <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center text-emerald-800 space-y-1">
+                  <CheckCircle className="w-8 h-8 text-emerald-600 mx-auto" />
+                  <h4 className="font-bold text-sm">Added to Room Order!</h4>
+                  <p className="text-xs">Our kitchen team is preparing your selection.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleOrderSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      Quantity
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setOrderQuantity(Math.max(1, orderQuantity - 1))}
+                        className="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-100"
+                      >
+                        <Minus className="w-3.5 h-3.5" />
+                      </button>
+                      <span className="font-bold text-sm text-slate-800">{orderQuantity}</span>
+                      <button
+                        type="button"
+                        onClick={() => setOrderQuantity(orderQuantity + 1)}
+                        className="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-100"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="font-sans text-[10px] uppercase font-bold tracking-wider text-blue-200/90">Choose Date</label>
-                      <input
-                        type="date"
-                        required
-                        value={reservationDate}
-                        onChange={(e) => setReservationDate(e.target.value)}
-                        className="w-full bg-white/10 border border-white/10 rounded-2xl px-4 py-3 text-white text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#E5BF71] focus:bg-white/15 color-scheme-dark"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="font-sans text-[10px] uppercase font-bold tracking-wider text-blue-200/90">Preferred Time</label>
-                      <input
-                        type="time"
-                        required
-                        value={reservationTime}
-                        onChange={(e) => setReservationTime(e.target.value)}
-                        className="w-full bg-white/10 border border-white/10 rounded-2xl px-4 py-3 text-white text-xs font-sans focus:outline-none focus:ring-2 focus:ring-[#E5BF71] focus:bg-white/15 color-scheme-dark"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="font-sans text-[10px] uppercase font-bold tracking-wider text-blue-200/90">Number of Guests</label>
-                      <div className="relative">
-                        <select
-                          value={reservationGuests}
-                          onChange={(e) => setReservationGuests(e.target.value)}
-                          className="w-full bg-white/10 border border-white/10 rounded-2xl px-4 py-3 text-white text-xs font-sans appearance-none focus:outline-none focus:ring-2 focus:ring-[#E5BF71] focus:bg-white/15 cursor-pointer"
-                        >
-                          <option value="1" className="text-charcoal bg-white">1 Guest</option>
-                          <option value="2" className="text-charcoal bg-white">2 Guests</option>
-                          <option value="4" className="text-charcoal bg-white">4 Guests</option>
-                          <option value="6" className="text-charcoal bg-white">6 Guests</option>
-                          <option value="8" className="text-charcoal bg-white">8+ Guests (Group)</option>
-                        </select>
-                        <ChevronDown className="w-4 h-4 text-white/50 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-1.5">
-                      <label className="font-sans text-[10px] uppercase font-bold tracking-wider text-blue-200/90">Seating Area</label>
-                      <div className="relative">
-                        <select
-                          value={reservationSeating}
-                          onChange={(e) => setReservationSeating(e.target.value)}
-                          className="w-full bg-white/10 border border-white/10 rounded-2xl px-4 py-3 text-white text-xs font-sans appearance-none focus:outline-none focus:ring-2 focus:ring-[#E5BF71] focus:bg-white/15 cursor-pointer"
-                        >
-                          <option value="Sunset Deck (Beachfront)" className="text-charcoal bg-white">Sunset Deck (Beachfront)</option>
-                          <option value="Poolside Terrace" className="text-charcoal bg-white">Poolside Terrace</option>
-                          <option value="Indoor AC Sanctuary" className="text-charcoal bg-white">Indoor AC Sanctuary</option>
-                        </select>
-                        <ChevronDown className="w-4 h-4 text-white/50 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="font-sans text-[10px] uppercase font-bold tracking-wider text-blue-200/90">Special Celebrations / Occasions (Optional)</label>
-                    <input
-                      type="text"
-                      value={reservationOccasion}
-                      onChange={(e) => setReservationOccasion(e.target.value)}
-                      placeholder="e.g., Honeymoon Dinner, Anniversary, Birthday cake surprise..."
-                      className="w-full bg-white/10 border border-white/10 rounded-2xl px-4 py-3 text-white text-xs font-sans placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#E5BF71] focus:bg-white/15"
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      Special Cooking Notes (Optional)
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={orderNotes}
+                      onChange={(e) => setOrderNotes(e.target.value)}
+                      placeholder="e.g. Less spicy, dressing on side..."
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#0B1E36]"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className="w-full py-3.5 rounded-2xl bg-[#E5BF71] hover:bg-[#F2D491] text-[#0B1E36] font-sans text-xs font-bold uppercase tracking-wider shadow-xl shadow-amber-900/10 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="w-full py-3 rounded-full bg-[#0B1E36] text-[#E5BF71] hover:bg-[#122b4c] font-sans text-xs font-bold uppercase tracking-wider transition-all shadow-md cursor-pointer"
                   >
-                    {isSubmitting ? (
-                      <div className="w-4 h-4 border-2 border-[#0B1E36] border-t-transparent rounded-full animate-spin" />
-                    ) : (
-                      <>
-                        Request Table Reservation
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </>
-                    )}
+                    Confirm Order (₱{orderDish.price * orderQuantity})
                   </button>
-                </motion.form>
-              ) : (
-                <motion.div
-                  key="reservation-success"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-center space-y-6 py-8"
-                >
-                  <div className="w-16 h-16 rounded-full bg-[#E5BF71]/10 border border-[#E5BF71]/30 flex items-center justify-center text-[#E5BF71] mx-auto">
-                    <Check className="w-8 h-8" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-serif text-xl sm:text-2xl font-bold text-white">Table Request Received!</h3>
-                    <p className="font-sans text-xs text-blue-100/80 max-w-sm mx-auto leading-relaxed">
-                      Thank you for choosing Maranna, our culinary concierge is verifying availability and will send a confirmation email with your reservation code shortly.
-                    </p>
-                  </div>
-
-                  <button
-                    onClick={() => setIsSubmitSuccess(false)}
-                    className="px-6 py-2.5 rounded-full border border-white/20 text-white font-sans text-[11px] font-bold uppercase tracking-wider hover:bg-white/5 transition-all cursor-pointer"
-                  >
-                    Reserve Another Table
-                  </button>
-                </motion.div>
+                </form>
               )}
-            </AnimatePresence>
 
+            </motion.div>
           </div>
-
-        </div>
-      </motion.section>
+        )}
+      </AnimatePresence>
 
     </div>
   );

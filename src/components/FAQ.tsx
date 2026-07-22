@@ -1,59 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ChevronDown, HelpCircle, Calendar, Sparkles, Check } from 'lucide-react';
-
-interface ScrollAnimateProps {
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-  duration?: number;
-  key?: React.Key;
-}
-
-// Custom Intersection Observer element to handle scroll triggered animations
-function ScrollAnimate({ children, className = '', delay = 0, duration = 650 }: ScrollAnimateProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isIntersecting, setIsIntersecting] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsIntersecting(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      {
-        threshold: 0.05,
-        rootMargin: '0px 0px -40px 0px',
-      }
-    );
-
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      className={`transform transition-all ease-out ${className} ${
-        isIntersecting 
-          ? 'opacity-100 translate-y-0' 
-          : 'opacity-0 translate-y-12'
-      }`}
-      style={{
-        transitionDelay: `${delay}ms`,
-        transitionDuration: `${duration}ms`,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ChevronDown, Sparkles, Check } from 'lucide-react';
 
 interface FAQItem {
   question: string;
@@ -110,7 +57,13 @@ export default function FAQ() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <ScrollAnimate className="text-center mb-16" duration={700}>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-16"
+        >
           <span className="text-[10px] sm:text-xs font-bold text-sunset uppercase tracking-[0.25em] bg-orange-50/70 border border-orange-100/50 rounded-full px-4 py-1.5 inline-flex items-center gap-1.5 mb-4">
             <Sparkles className="w-3.5 h-3.5 text-sunset" /> Got Questions?
           </span>
@@ -120,82 +73,102 @@ export default function FAQ() {
           <p className="text-sm text-gray-500 font-sans font-light max-w-xl mx-auto leading-relaxed">
             Everything you need to know about your coastal escape at Ocean Breeze Resort. Find details on arrival times, parking, surf access, and more.
           </p>
-        </ScrollAnimate>
+        </motion.div>
 
         {/* Accordion FAQ Cards */}
         <div className="space-y-4">
           {FAQ_ITEMS.map((item, idx) => {
             const isOpen = openIndex === idx;
             return (
-              <ScrollAnimate 
+              <motion.div 
                 key={idx} 
-                delay={idx * 80} 
-                duration={600}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ duration: 0.5, delay: idx * 0.07, ease: [0.16, 1, 0.3, 1] }}
                 className="w-full"
               >
                 <div 
                   id={`faq-card-${idx}`}
-                  className={`group rounded-2xl border transition-all duration-300 bg-white overflow-hidden ${
+                  style={{ WebkitTapHighlightColor: 'transparent' }}
+                  className={`group rounded-2xl border transition-colors duration-300 bg-white overflow-hidden select-none ${
                     isOpen 
                       ? 'border-sunset/40 shadow-lg shadow-orange-50/40' 
-                      : 'border-slate-150/70 hover:border-slate-300 hover:shadow-sm'
+                      : 'border-slate-100 hover:border-sand/60 hover:shadow-md'
                   }`}
                 >
                   {/* Clickable Header Button */}
                   <button
                     onClick={() => toggleFAQ(idx)}
-                    className="w-full text-left px-5 sm:px-6 py-5 flex items-start justify-between gap-4 cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-sunset"
+                    style={{ WebkitTapHighlightColor: 'transparent' }}
+                    className="w-full text-left px-5 sm:px-6 py-5 flex items-start justify-between gap-4 cursor-pointer outline-none focus:outline-none focus-visible:outline-none active:bg-slate-50/60 transition-colors duration-200"
                     aria-expanded={isOpen}
                   >
                     <div className="space-y-1 text-left">
                       <span className="text-[9px] uppercase font-bold tracking-widest text-sunset/80 font-sans">
                         {item.category}
                       </span>
-                      <h3 className={`font-sans text-sm sm:text-base font-semibold text-charcoal transition-colors group-hover:text-sunset ${
-                        isOpen ? 'text-sunset font-medium' : ''
+                      <h3 className={`font-sans text-sm sm:text-base font-semibold transition-colors duration-200 group-hover:text-sunset ${
+                        isOpen ? 'text-sunset font-medium' : 'text-charcoal'
                       }`}>
                         {item.question}
                       </h3>
                     </div>
                     
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all shrink-0 mt-1 ${
-                      isOpen 
-                        ? 'bg-sunset/10 border-sunset/30 text-sunset' 
-                        : 'bg-slate-50 border-slate-200 text-gray-400 group-hover:border-slate-300 group-hover:text-charcoal'
-                    }`}>
-                      <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${
-                        isOpen ? 'rotate-180' : ''
-                      }`} />
-                    </div>
+                    <motion.div 
+                      animate={{ rotate: isOpen ? 180 : 0 }}
+                      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center border shrink-0 mt-1 transition-colors duration-300 ${
+                        isOpen 
+                          ? 'bg-sunset/10 border-sunset/30 text-sunset' 
+                          : 'bg-slate-50 border-slate-200 text-gray-400 group-hover:border-slate-300 group-hover:text-charcoal'
+                      }`}
+                    >
+                      <ChevronDown className="w-4 h-4" />
+                    </motion.div>
                   </button>
 
-                  {/* Accordion Expandable Content Container */}
-                  <div 
-                    className={`transition-all duration-300 ease-in-out ${
-                      isOpen 
-                        ? 'max-h-[500px] border-t border-slate-50 opacity-100' 
-                        : 'max-h-0 opacity-0 pointer-events-none'
-                    }`}
-                  >
-                    <div className="px-5 sm:px-6 py-5 bg-slate-50/40">
-                      <p className="text-xs sm:text-sm text-slate-600 font-sans font-light leading-relaxed">
-                        {item.answer}
-                      </p>
-                      
-                      {/* Helpful Checklist Indicator */}
-                      <div className="mt-4 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600 font-sans">
-                        <Check className="w-3.5 h-3.5 stroke-[3]" /> Verified Information
-                      </div>
-                    </div>
-                  </div>
+                  {/* Accordion Expandable Content with smooth motion fade in / fade out */}
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        key={`content-${idx}`}
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ 
+                          height: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.45, ease: [0.16, 1, 0.3, 1] }
+                        }}
+                        className="overflow-hidden border-t border-slate-50"
+                      >
+                        <div className="px-5 sm:px-6 py-5 bg-slate-50/40">
+                          <p className="text-xs sm:text-sm text-slate-600 font-sans font-light leading-relaxed">
+                            {item.answer}
+                          </p>
+                          
+                          {/* Helpful Checklist Indicator */}
+                          <div className="mt-4 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600 font-sans">
+                            <Check className="w-3.5 h-3.5 stroke-[3]" /> Verified Information
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-              </ScrollAnimate>
+              </motion.div>
             );
           })}
         </div>
 
         {/* Dynamic CTA Footer card for additional assistance */}
-        <ScrollAnimate delay={400} className="mt-14" duration={600}>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-14"
+        >
           <div className="bg-slate-50 border border-slate-100 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
             <div className="space-y-1">
               <h4 className="font-sans text-sm sm:text-base font-semibold text-charcoal">
@@ -208,6 +181,7 @@ export default function FAQ() {
             
             <a
               href="#contact"
+              style={{ WebkitTapHighlightColor: 'transparent' }}
               onClick={(e) => {
                 e.preventDefault();
                 const contactSection = document.querySelector('#contact');
@@ -219,14 +193,15 @@ export default function FAQ() {
                   });
                 }
               }}
-              className="px-6 py-3 rounded-full bg-charcoal text-white hover:bg-sunset text-xs sm:text-sm font-semibold tracking-wide shadow-md hover:shadow-lg transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+              className="px-6 py-3 rounded-full bg-charcoal text-white hover:bg-sunset text-xs sm:text-sm font-semibold tracking-wide shadow-md hover:shadow-lg transition-all active:scale-95 whitespace-nowrap cursor-pointer outline-none focus:outline-none focus-visible:outline-none"
             >
               Contact Guest Hosts
             </a>
           </div>
-        </ScrollAnimate>
+        </motion.div>
 
       </div>
     </section>
   );
 }
+

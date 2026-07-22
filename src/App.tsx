@@ -514,7 +514,7 @@ export default function App() {
             <Amenities />
 
             {/* Pinterest-Style Photo Gallery */}
-            <Gallery />
+            <Gallery isHomeSection onChangePage={handlePageChange} />
 
             {/* Value Features & Guest Testimonials Slider */}
             <WhyChooseUs />
