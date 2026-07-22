@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Phone, Calendar, ArrowUpRight } from 'lucide-react';
+import { Menu, X, Phone, Calendar, ArrowUpRight, ChevronRight, Sparkles } from 'lucide-react';
 import Logo from './Logo';
 
 interface NavbarProps {
@@ -40,6 +40,31 @@ export default function Navbar({ onOpenBooking, activePage, onChangePage }: Navb
     e.preventDefault();
     setIsMobileMenuOpen(false);
     onChangePage(pageId);
+  };
+
+  // Stagger animation variants for the mobile list
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: 25 },
+    show: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 280,
+        damping: 24
+      }
+    }
   };
 
   return (
@@ -146,77 +171,110 @@ export default function Navbar({ onOpenBooking, activePage, onChangePage }: Navb
       {/* Mobile Drawer Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 z-40 lg:hidden">
+          <div className="fixed inset-0 z-50 lg:hidden overflow-hidden">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="absolute inset-0 bg-charcoal/60 backdrop-blur-xs"
+              className="absolute inset-0 bg-charcoal/50 backdrop-blur-md"
             />
 
-            {/* Drawer */}
+            {/* Slide-in Drawer */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.3 }}
-              className="absolute top-0 right-0 bottom-0 w-4/5 max-w-sm bg-white shadow-2xl flex flex-col p-6 overflow-y-auto"
+              transition={{ type: 'spring', damping: 26, stiffness: 220 }}
+              drag="x"
+              dragDirectionLock
+              dragConstraints={{ left: 0, right: 380 }}
+              dragElastic={{ left: 0.02, right: 0.6 }}
+              onDragEnd={(e, info) => {
+                // If dragged to the right by more than 80px, or with high velocity, close the menu
+                if (info.offset.x > 80 || info.velocity.x > 300) {
+                  setIsMobileMenuOpen(false);
+                }
+              }}
+              className="absolute top-0 right-0 bottom-0 w-[85%] max-w-sm bg-white shadow-2xl flex flex-col p-6 overflow-y-auto border-l border-slate-100 touch-pan-y"
             >
+              {/* Drag Handle Bar Indicator (Visual cue for touch swipe to close) */}
+              <div className="absolute left-1.5 top-1/2 -translate-y-1/2 w-1.5 h-14 bg-slate-200/80 rounded-full flex flex-col justify-between py-1 px-[1px] pointer-events-none">
+                <span className="w-0.5 h-0.5 rounded-full bg-slate-400" />
+                <span className="w-0.5 h-0.5 rounded-full bg-slate-400" />
+                <span className="w-0.5 h-0.5 rounded-full bg-slate-400" />
+              </div>
+
               {/* Header inside Drawer */}
               <div className="flex items-center justify-between border-b border-gray-100 pb-5 mb-6">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <Logo size="sm" showText={false} />
                   <div className="flex flex-col">
                     <span className="font-serif text-md font-bold text-charcoal leading-none">Ocean Breeze</span>
-                    <span className="font-sans text-[9px] font-semibold tracking-wider text-sunset uppercase">Resort</span>
+                    <span className="font-sans text-[9px] font-bold tracking-[0.2em] text-sunset uppercase mt-0.5">Resort</span>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-1 rounded-md text-charcoal hover:bg-slate-100"
+                  className="p-1.5 rounded-xl text-charcoal hover:bg-slate-150 transition-colors focus:outline-none"
+                  aria-label="Close menu"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              {/* Navigation Links inside Drawer */}
-              <nav className="flex flex-col gap-4">
+              {/* Navigation Links inside Drawer with staggered animations */}
+              <motion.nav 
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                className="flex flex-col gap-2.5"
+              >
                 {NAV_LINKS.map(link => {
                   const isActive = activePage === link.id;
                   return (
-                    <a
-                      key={link.name}
-                      href={`#${link.id}`}
-                      onClick={(e) => handleLinkClick(e, link.id)}
-                      className={`font-sans text-sm font-semibold tracking-wide py-2.5 px-4 rounded-xl transition-colors flex items-center justify-between ${
-                        isActive
-                          ? 'bg-sand/30 text-sunset'
-                          : 'text-charcoal/80 hover:bg-slate-50'
-                      }`}
-                    >
-                      {link.name}
-                      {isActive && <span className="w-1.5 h-1.5 rounded-full bg-sunset" />}
-                    </a>
+                    <motion.div key={link.id} variants={itemVariants}>
+                      <a
+                        href={`#${link.id}`}
+                        onClick={(e) => handleLinkClick(e, link.id)}
+                        className={`group font-sans text-xs uppercase font-bold tracking-wider py-3 px-4 rounded-xl transition-all flex items-center justify-between border ${
+                          isActive
+                            ? 'bg-sunset/10 text-sunset border-sunset/20 shadow-xs'
+                            : 'text-charcoal/80 hover:bg-slate-50 border-transparent hover:text-charcoal'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2.5">
+                          <span className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                            isActive ? 'bg-sunset scale-125' : 'bg-transparent group-hover:bg-slate-300'
+                          }`} />
+                          {link.name}
+                        </span>
+                        <ChevronRight className={`w-4 h-4 transition-transform duration-300 ${
+                          isActive ? 'text-sunset translate-x-0.5' : 'text-gray-300 group-hover:text-charcoal group-hover:translate-x-0.5'
+                        }`} />
+                      </a>
+                    </motion.div>
                   );
                 })}
-              </nav>
+              </motion.nav>
+
+
 
               {/* Action Buttons inside Drawer */}
               <div className="mt-auto border-t border-gray-100 pt-6 space-y-4">
                 <div className="flex items-center justify-center gap-2 text-xs text-charcoal/70">
-                  <Phone className="w-4 h-4 text-sunset" />
-                  <a href="tel:+639171234567" className="hover:underline font-medium">+63 917 123 4567</a>
+                  <Phone className="w-4 h-4 text-sunset shrink-0" />
+                  <a href="tel:+639171234567" className="hover:underline font-semibold font-sans">+63 917 123 4567</a>
                 </div>
                 <button
                   onClick={() => {
                     setIsMobileMenuOpen(false);
                     onOpenBooking();
                   }}
-                  className="w-full py-3 rounded-full bg-sunset hover:bg-sunset/95 text-white font-sans text-xs font-bold uppercase tracking-wider shadow-lg shadow-sunset/15 text-center flex items-center justify-center gap-2 active:scale-95 transition-all"
+                  className="w-full py-3.5 rounded-full bg-sunset hover:bg-sunset/95 text-white font-sans text-xs font-bold uppercase tracking-wider shadow-lg shadow-sunset/20 text-center flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
                 >
-                  <Calendar className="w-4 h-4" /> Book Your Stay
+                  <Calendar className="w-4 h-4 shrink-0" /> Book Your Stay
                 </button>
               </div>
             </motion.div>

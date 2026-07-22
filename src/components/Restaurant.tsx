@@ -823,8 +823,8 @@ export default function Restaurant() {
         subtitle="Experience world-class culinary mastery blending rich coastal Filipino flavors, traditional Arabic classics, and authentic Malaysian cuisine."
         category="Dining & Lounge"
         backgroundImageUrl="https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/473748832_122132546324567801_2877340831206792826_n.jpg"
-        imageOpacity="opacity-70"
-        objectPosition="object-[center_65%]"
+        imageOpacity="opacity-85"
+        objectPosition="object-[center_25%]"
       />
 
       {/* Brand & Narrative Block */}

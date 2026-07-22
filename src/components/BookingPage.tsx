@@ -674,51 +674,28 @@ export default function BookingPage({
 
               {/* Dates Selection & Custom Popover */}
               <div className="relative">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-charcoal/70 mb-2 flex items-center gap-2 font-sans">
-                      <Calendar className="w-4 h-4 text-sunset" /> Check-In Date
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => setShowCalendarOverlay(!showCalendarOverlay)}
-                      className={`w-full text-left px-4 py-3 rounded-xl border text-sm text-charcoal bg-gray-50/50 hover:bg-slate-100/50 hover:border-slate-300 transition-all cursor-pointer flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-ocean ${
-                        selectedDatesOverlap ? 'border-red-400 ring-1 ring-red-400 bg-red-50/20' : 'border-gray-200'
-                      }`}
-                    >
-                      <span className="font-sans font-medium">
-                        {formData.checkIn ? formatDateString(formData.checkIn) : 'Select Check-In'}
-                      </span>
-                      <Calendar className="w-4.5 h-4.5 text-gray-400 shrink-0" />
-                    </button>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-charcoal/70 mb-2 flex items-center gap-2 font-sans">
-                      <Calendar className="w-4 h-4 text-sunset" /> Check-Out Date
-                    </label>
-                    <button
-                      type="button"
-                      disabled={!formData.checkIn}
-                      onClick={() => {
-                        if (formData.checkIn) {
-                          setShowCalendarOverlay(true);
-                        }
-                      }}
-                      className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all cursor-pointer flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-ocean ${
-                        !formData.checkIn 
-                          ? 'opacity-60 cursor-not-allowed border-gray-150 bg-gray-150/30 text-gray-400' 
-                          : selectedDatesOverlap 
-                            ? 'border-red-400 ring-1 ring-red-400 bg-red-50/20 text-charcoal' 
-                            : 'border-gray-200 bg-gray-50/50 hover:bg-slate-100/50 hover:border-slate-300 text-charcoal'
-                      }`}
-                    >
-                      <span className="font-sans font-medium">
-                        {formData.checkOut ? formatDateString(formData.checkOut) : 'Select Check-Out'}
-                      </span>
-                      <Calendar className="w-4.5 h-4.5 text-gray-400 shrink-0" />
-                    </button>
-                  </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-charcoal/70 mb-2 flex items-center gap-2 font-sans">
+                    <Calendar className="w-4 h-4 text-sunset" /> Select Dates (Check-In / Check-Out)
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowCalendarOverlay(!showCalendarOverlay)}
+                    className={`w-full text-left px-4 py-3 rounded-xl border text-sm text-charcoal bg-gray-50/50 hover:bg-slate-100/50 hover:border-slate-300 transition-all cursor-pointer flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-ocean ${
+                      selectedDatesOverlap ? 'border-red-400 ring-1 ring-red-400 bg-red-50/20' : 'border-gray-200'
+                    }`}
+                  >
+                    <span className="font-sans font-medium">
+                      {formData.checkIn && formData.checkOut ? (
+                        `${formatDateString(formData.checkIn)} — ${formatDateString(formData.checkOut)}`
+                      ) : formData.checkIn ? (
+                        `${formatDateString(formData.checkIn)} — Select Check-Out`
+                      ) : (
+                        'Select Check-In / Check-Out'
+                      )}
+                    </span>
+                    <Calendar className="w-4.5 h-4.5 text-gray-400 shrink-0" />
+                  </button>
                 </div>
 
                 {/* Mini Visual Legend for stay dates and slashes */}
@@ -739,14 +716,25 @@ export default function BookingPage({
                 </div>
 
                 {/* Popover Custom Calendar Overlay */}
-                {showCalendarOverlay && (
-                  <>
-                    <div 
-                      className="fixed inset-0 z-[1001] cursor-default" 
-                      onClick={() => setShowCalendarOverlay(false)} 
-                    />
-                    
-                    <div className="absolute left-0 right-0 mt-2 p-5 bg-white border border-slate-200/80 shadow-2xl rounded-2xl z-[1002] animate-in fade-in slide-in-from-top-3 duration-200 w-full max-w-md mx-auto">
+                <AnimatePresence>
+                  {showCalendarOverlay && (
+                    <>
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                        className="fixed inset-0 z-[1001] cursor-default bg-black/5" 
+                        onClick={() => setShowCalendarOverlay(false)} 
+                      />
+                      
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="absolute left-0 right-0 top-full mt-2 p-5 bg-white border border-slate-200/80 shadow-2xl rounded-2xl z-[1002] w-full max-w-md mx-auto origin-top"
+                      >
                       <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4.5 h-4.5 text-sunset" />
@@ -891,11 +879,12 @@ export default function BookingPage({
                           >
                             Apply Dates
                           </button>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </>
-                )}
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
               </div>
 
               {selectedDatesOverlap && (

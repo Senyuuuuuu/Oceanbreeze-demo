@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Users, Waves, Ruler, BedDouble, Star, Sparkles, Check, ChevronRight, X, Bookmark } from 'lucide-react';
 import { Room } from '../types';
@@ -73,19 +73,50 @@ interface RoomCardProps {
   key?: any;
   room: Room;
   onSelect: () => void;
+  index: number;
 }
 
-function RoomCard({ room, onSelect }: RoomCardProps) {
+function RoomCard({ room, onSelect, index }: RoomCardProps) {
   const [bookmarked, setBookmarked] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [isIntersecting, setIsIntersecting] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsIntersecting(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      {
+        threshold: 0.05,
+        rootMargin: '0px 0px -40px 0px',
+      }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 35 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-      whileHover={{ y: -6 }}
+      ref={cardRef}
+      initial={{ opacity: 0, y: 40 }}
+      animate={isIntersecting ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+      transition={{ 
+        duration: 0.8, 
+        ease: [0.16, 1, 0.3, 1],
+        delay: (index % 2) * 0.15 // stagger items on a 2-column grid
+      }}
+      whileHover={{ y: -8, scale: 1.015 }}
       onClick={onSelect}
-      className="group relative h-[320px] sm:h-[380px] md:h-[420px] rounded-[32px] overflow-hidden shadow-lg hover:shadow-2xl cursor-pointer transition-all duration-500 border border-slate-100/50"
+      className="group relative h-[320px] sm:h-[380px] md:h-[420px] rounded-[32px] overflow-hidden shadow-lg hover:shadow-2xl cursor-pointer transition-shadow duration-500 border border-slate-100/50"
     >
       {/* Full-bleed Card Image */}
       <div className="absolute inset-0 w-full h-full overflow-hidden">
@@ -253,10 +284,11 @@ export default function Rooms({ onOpenBooking, onSelectRoom }: RoomsProps) {
 
         {/* Rooms Grid Layout (Screenshot 1-styled) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-          {ROOMS_DATA.map((room) => (
+          {ROOMS_DATA.map((room, idx) => (
             <RoomCard
               key={room.id}
               room={room}
+              index={idx}
               onSelect={() => {
                 if (onSelectRoom) {
                   onSelectRoom(room.id);

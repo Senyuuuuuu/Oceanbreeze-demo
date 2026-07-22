@@ -147,7 +147,13 @@ export default function WhyChooseUs() {
             PART A: THE OCEAN BREEZE ADVANTAGE (Bento Grid)
             ========================================= */}
         <div className="mb-28">
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="text-center max-w-3xl mx-auto mb-16 space-y-4"
+          >
             <span className="text-xs font-seasons font-bold uppercase tracking-[0.25em] text-sunset inline-flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-coral" /> The Advantage
             </span>
@@ -160,7 +166,7 @@ export default function WhyChooseUs() {
             <p className="text-gray-400 font-sans text-sm sm:text-base leading-relaxed font-light">
               We curate a refined, organic beachfront retreat that values local culture, genuine safety, and slow living, offering an experience that generic hotels simply cannot replicate.
             </p>
-          </div>
+          </motion.div>
 
           {/* Asymmetric Bento Grid of advantages */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -169,11 +175,11 @@ export default function WhyChooseUs() {
               return (
                 <motion.div
                   key={card.id}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 35 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.15 }}
-                  transition={{ duration: 0.6, delay: idx * 0.08 }}
-                  whileHover={{ y: -6, scale: 1.015 }}
+                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: (idx % 3) * 0.12 }}
+                  whileHover={{ y: -8, scale: 1.015 }}
                   className={`p-6 sm:p-8 rounded-3xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-sand hover:shadow-xl transition-all duration-300 flex flex-col justify-between h-full relative group`}
                 >
                   <div>
@@ -209,10 +215,10 @@ export default function WhyChooseUs() {
           {/* Trust Board / Credibility Metrics at the Top */}
           <div className="max-w-4xl mx-auto mb-16">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="p-6 md:p-8 rounded-3xl bg-slate-50 border border-slate-100/80 shadow-md flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left"
             >
               <div className="space-y-2">

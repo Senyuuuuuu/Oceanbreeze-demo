@@ -24,6 +24,7 @@ import AutomationHub from './components/AutomationHub';
 import BookingPage from './components/BookingPage';
 import WavePageTransition from './components/WavePageTransition';
 import AboutStory from './components/AboutStory';
+import FAQ from './components/FAQ';
 import { motion, AnimatePresence } from 'motion/react';
 import Lenis from 'lenis';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
@@ -314,8 +315,8 @@ export default function App() {
               subtitle="Explore our handpicked sea-facing sanctuaries styled with premium linens, local bamboo accents, and panoramic coastal views."
               category="Accommodations"
               backgroundImageUrl="https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/480290635_122139108338567801_2577860041803326842_n.jpg"
-              imageOpacity="opacity-70"
-              objectPosition="object-[center_65%]"
+              imageOpacity="opacity-85"
+              objectPosition="object-[center_25%]"
               onHomeClick={() => handlePageChange('home')}
             />
             <Rooms
@@ -339,6 +340,7 @@ export default function App() {
             <RoomDetails
               roomId={selectedRoomId}
               onBackToRooms={() => handlePageChange('rooms')}
+              onOpenBooking={handleOpenBooking}
               onSuccess={(details) => {
                 setToastData({
                   isOpen: true,
@@ -362,8 +364,8 @@ export default function App() {
               subtitle="Indulge in beachfront wellness, yoga packages, sunset lounges, and revitalizing seaside dining."
               category="Facilities & Amenities"
               backgroundImageUrl="https://pyfjjniwiaqvalpwqkzg.supabase.co/storage/v1/object/public/Assets/475899825_122136399272567801_2235547433093645147_n.jpg"
-              imageOpacity="opacity-70"
-              objectPosition="object-[center_65%]"
+              imageOpacity="opacity-85"
+              objectPosition="object-[center_25%]"
               onHomeClick={() => handlePageChange('home')}
             />
             <Amenities onChangePage={handlePageChange} />
@@ -516,6 +518,9 @@ export default function App() {
 
             {/* Value Features & Guest Testimonials Slider */}
             <WhyChooseUs />
+
+            {/* Frequently Asked Questions */}
+            <FAQ />
 
             {/* Embedded Map, Coordinates & Quick Forms */}
             <Location onOpenBooking={handleOpenBooking} />

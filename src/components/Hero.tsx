@@ -96,6 +96,33 @@ export default function Hero({
   const [showCalendarOverlay, setShowCalendarOverlay] = useState(false);
   const [blockedDates, setBlockedDates] = useState<string[]>([]);
 
+  // Mobile swipe gesture tracking states
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  const minSwipeDistance = 50;
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    if (isLeftSwipe) {
+      handleNextMonth();
+    } else if (isRightSwipe) {
+      handlePrevMonth();
+    }
+  };
+
   // Fetch general blocked dates to style the interactive calendar accurately
   useEffect(() => {
     setBlockedDates(bookingStore.getBlockedDates(''));
@@ -420,198 +447,298 @@ export default function Hero({
                 className="glass-panel p-5 md:p-6 rounded-3xl shadow-xl border border-white/35 grid grid-cols-1 md:grid-cols-4 xl:grid-cols-1 gap-4 items-end"
               >
                 <div className={`md:col-span-2 xl:col-span-1 relative ${showCalendarOverlay ? 'z-[1000]' : 'z-10'}`}>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-charcoal/70 mb-1.5 flex items-center gap-1.5 font-sans">
-                        <Calendar className="w-3.5 h-3.5 text-sunset" /> Check-In
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => setShowCalendarOverlay(!showCalendarOverlay)}
-                        className="w-full text-left px-3 py-2.5 rounded-xl border border-gray-200/50 bg-white/70 hover:bg-white text-charcoal text-xs transition-all cursor-pointer flex items-center justify-between focus:outline-none"
-                      >
-                        <span className="truncate">{checkIn ? formatDateString(checkIn) : 'Select'}</span>
-                        <Calendar className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                      </button>
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-charcoal/70 mb-1.5 flex items-center gap-1.5 font-sans">
-                        <Calendar className="w-3.5 h-3.5 text-sunset" /> Check-Out
-                      </label>
-                      <button
-                        type="button"
-                        disabled={!checkIn}
-                        onClick={() => {
-                          if (checkIn) {
-                            setShowCalendarOverlay(true);
-                          }
-                        }}
-                        className={`w-full text-left px-3 py-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between focus:outline-none ${
-                          !checkIn 
-                            ? 'opacity-60 cursor-not-allowed border-gray-200/30 bg-gray-200/20 text-gray-400' 
-                            : 'border-gray-200/50 bg-white/70 hover:bg-white text-charcoal text-xs'
-                        }`}
-                      >
-                        <span className="truncate">{checkOut ? formatDateString(checkOut) : 'Select'}</span>
-                        <Calendar className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                      </button>
-                    </div>
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-charcoal/70 mb-1.5 flex items-center gap-1.5 font-sans">
+                      <Calendar className="w-3.5 h-3.5 text-sunset" /> Select Dates (Check-In / Check-Out)
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowCalendarOverlay(!showCalendarOverlay)}
+                      className="w-full text-left px-3 py-2.5 rounded-xl border border-gray-200/50 bg-white/70 hover:bg-white text-charcoal text-xs transition-all cursor-pointer flex items-center justify-between focus:outline-none"
+                    >
+                      <span className="truncate">
+                        {checkIn && checkOut ? (
+                          `${formatDateString(checkIn)} — ${formatDateString(checkOut)}`
+                        ) : checkIn ? (
+                          `${formatDateString(checkIn)} — Select Check-Out`
+                        ) : (
+                          'Select Check-In / Check-Out'
+                        )}
+                      </span>
+                      <Calendar className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    </button>
                   </div>
 
                   {/* Popover Custom Calendar Overlay */}
-                  {showCalendarOverlay && (
-                    <>
-                      {/* Backdrop clicking allows closing */}
-                      <div 
-                        className="fixed inset-0 z-[1001] cursor-default" 
-                        onClick={() => setShowCalendarOverlay(false)} 
-                      />
-                      
-                      <div className="absolute bottom-full mb-3 left-0 right-0 xl:bottom-auto xl:top-full xl:mt-2 xl:left-auto xl:right-0 xl:w-[320px] p-4 bg-white border border-slate-200/80 shadow-2xl rounded-2xl z-[1002] animate-in fade-in slide-in-from-top-3 duration-200 text-charcoal">
-                        <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
-                          <div className="flex items-center gap-1.5">
-                            <Calendar className="w-4 h-4 text-sunset" />
-                            <span className="text-[10px] font-bold text-charcoal uppercase tracking-wider font-sans">
-                              Interactive Stay Calendar
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <button
-                              type="button"
-                              onClick={handlePrevMonth}
-                              className="p-1 rounded hover:bg-slate-150 text-charcoal transition-colors cursor-pointer text-xs font-bold"
-                            >
-                              &larr;
-                            </button>
-                            <span className="text-[10px] font-bold text-charcoal min-w-[70px] text-center font-serif">
-                              {MONTHS[calendarMonth]} {calendarYear}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={handleNextMonth}
-                              className="p-1 rounded hover:bg-slate-150 text-charcoal transition-colors cursor-pointer text-xs font-bold"
-                            >
-                              &rarr;
-                            </button>
-                          </div>
-                        </div>
+                  <AnimatePresence>
+                    {showCalendarOverlay && (() => {
+                      const nextMonth = calendarMonth === 11 ? 0 : calendarMonth + 1;
+                      const nextMonthYear = calendarMonth === 11 ? calendarYear + 1 : calendarYear;
+                      const nextMonthDays = getDaysInMonth(nextMonthYear, nextMonth);
 
-                        {/* Weekday headers */}
-                        <div className="grid grid-cols-7 gap-0.5 text-center mb-1">
-                          {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
-                            <span key={day} className="text-[9px] font-bold text-gray-400 uppercase tracking-widest py-0.5 font-sans">
-                              {day}
-                            </span>
-                          ))}
-                        </div>
-
-                        {/* Days grid */}
-                        <div className="grid grid-cols-7 gap-0.5">
-                          {calendarDays.map((cell, idx) => {
-                            const { isPast, isBlocked: rawIsBlocked, isCheckIn, isCheckOut, isInRange } = getDayStatus(cell.dateString);
-                            const isCurrentMonth = cell.isCurrentMonth;
-                            
-                            // Fetch/query Google Sheet booked dates status inside the calendar rendering loop
-                            const querySheetBookedDates = (dateStr: string): boolean => {
-                              if (!dateStr || !isCurrentMonth) return false;
-                              return rawIsBlocked || blockedDates.includes(dateStr);
-                            };
-                            
-                            const isBlocked = querySheetBookedDates(cell.dateString);
-                            
-                            let cellClass = "aspect-square rounded-lg flex flex-col items-center justify-center text-[10px] font-medium relative transition-all duration-200 ";
-                            
-                            if (!isCurrentMonth) {
-                              cellClass += "text-gray-300 pointer-events-none";
-                            } else if (isBlocked) {
-                              cellClass += "bg-red-50 text-red-500 line-through cursor-not-allowed border border-red-200/50";
-                            } else if (isPast) {
-                              cellClass += "text-gray-300 cursor-not-allowed";
-                            } else if (isCheckIn || isCheckOut) {
-                              cellClass += "bg-gradient-to-br from-sunset to-coral text-white font-bold shadow-lg shadow-sunset/20 scale-110 z-10 cursor-pointer ring-2 ring-sunset ring-offset-1 border border-white";
-                            } else if (isInRange) {
-                              cellClass += "bg-sunset/15 text-sunset font-semibold cursor-pointer border border-sunset/20";
-                            } else {
-                              cellClass += "bg-white hover:bg-sunset/10 hover:text-sunset hover:scale-105 text-charcoal cursor-pointer shadow-sm border border-slate-100";
-                            }
-
-                            return (
-                              <button
-                                key={idx}
-                                type="button"
-                                disabled={!isCurrentMonth || isBlocked || isPast}
-                                onClick={() => handleDayClick(cell.dateString)}
-                                className={cellClass}
-                                title={isBlocked ? "Fully Booked" : cell.dateString}
-                              >
-                                <span>{cell.day}</span>
-                                
-                                {isBlocked && isCurrentMonth && (
-                                  <div className="diagonal-slash-overlay" />
-                                )}
-                                
-                                {isCheckIn && isCurrentMonth && (
-                                  <span className="absolute bottom-0 text-[5px] text-white uppercase tracking-tighter scale-90">
-                                    In
-                                  </span>
-                                )}
-                                {isCheckOut && isCurrentMonth && (
-                                  <span className="absolute bottom-0 text-[5px] text-white uppercase tracking-tighter scale-90">
-                                    Out
-                                  </span>
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
-
-                        {/* Legend & Controls */}
-                        <div className="mt-2.5 pt-2 border-t border-slate-100">
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[8px] mb-2 text-gray-500 font-sans">
-                            <div className="flex items-center gap-1">
-                              <span className="w-2.5 h-2.5 rounded bg-white border border-slate-200 shrink-0" />
-                              <span>Available</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <span className="w-2.5 h-2.5 rounded bg-gradient-to-br from-sunset to-coral shrink-0" />
-                              <span>Stay Dates</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <span className="w-2.5 h-2.5 rounded bg-sunset/15 border border-sunset/20 shrink-0" />
-                              <span>Range</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <span className="w-2.5 h-2.5 rounded bg-red-50 border border-red-200/50 relative overflow-hidden shrink-0">
-                                <span className="absolute inset-0 bg-red-300 transform -rotate-45 h-[1px] top-1/2" />
+                      return (
+                        <>
+                          {/* Backdrop clicking allows closing */}
+                          <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.15 }}
+                            className="fixed inset-0 z-[1001] cursor-default bg-black/5" 
+                            onClick={() => setShowCalendarOverlay(false)} 
+                          />
+                          
+                          <motion.div 
+                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                            transition={{ duration: 0.2, ease: "easeOut" }}
+                            className="absolute bottom-full mb-3 left-0 right-0 xl:bottom-auto xl:top-full xl:mt-2 xl:left-auto xl:right-0 w-full max-w-sm md:max-w-3xl md:w-[640px] p-4 bg-white border border-slate-200/80 shadow-2xl rounded-2xl z-[1002] text-charcoal origin-top"
+                            onTouchStart={handleTouchStart}
+                            onTouchMove={handleTouchMove}
+                            onTouchEnd={handleTouchEnd}
+                          >
+                          {/* Calendar Header */}
+                          <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+                            <div className="flex items-center gap-1.5">
+                              <Calendar className="w-4 h-4 text-sunset" />
+                              <span className="text-[10px] font-bold text-charcoal uppercase tracking-wider font-sans">
+                                Stay Calendar (Swipe to Change)
                               </span>
-                              <span>Booked</span>
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={handlePrevMonth}
+                                className="p-1 rounded border border-slate-200 hover:bg-slate-100 text-charcoal transition-colors cursor-pointer text-xs font-bold"
+                                title="Previous Month"
+                              >
+                                &larr;
+                              </button>
+                              
+                              <div className="flex items-center gap-3 text-[10px] font-bold text-charcoal uppercase tracking-wider font-sans">
+                                <span className="font-serif normal-case text-xs font-bold">
+                                  {MONTHS[calendarMonth]} {calendarYear}
+                                </span>
+                                <span className="hidden md:inline text-slate-300">|</span>
+                                <span className="hidden md:inline font-serif normal-case text-xs font-bold">
+                                  {MONTHS[nextMonth]} {nextMonthYear}
+                                </span>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={handleNextMonth}
+                                className="p-1 rounded border border-slate-200 hover:bg-slate-100 text-charcoal transition-colors cursor-pointer text-xs font-bold"
+                                title="Next Month"
+                              >
+                                &rarr;
+                              </button>
                             </div>
                           </div>
 
-                          <div className="flex items-center justify-between gap-2 pt-1">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setCheckIn('');
-                                setCheckOut('');
-                              }}
-                              className="px-2 py-1 rounded border border-gray-200 hover:bg-slate-50 text-gray-600 font-semibold text-[8px] uppercase tracking-wider transition-colors cursor-pointer"
-                            >
-                              Clear
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setShowCalendarOverlay(false)}
-                              className="px-3 py-1 rounded bg-sunset hover:bg-sunset/90 text-white font-semibold text-[8px] uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
-                            >
-                              Apply
-                            </button>
+                          {/* Month Grids (Side by side on desktop) */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Current Month */}
+                            <div className="space-y-2">
+                              <div className="md:hidden text-center text-[10px] font-bold text-sunset uppercase tracking-wider mb-1 font-serif">
+                                {MONTHS[calendarMonth]} {calendarYear}
+                              </div>
+                              
+                              {/* Weekday headers */}
+                              <div className="grid grid-cols-7 gap-0.5 text-center mb-1">
+                                {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+                                  <span key={day} className="text-[9px] font-bold text-gray-400 uppercase tracking-widest py-0.5 font-sans">
+                                    {day}
+                                  </span>
+                                ))}
+                              </div>
+
+                              {/* Days grid */}
+                              <div className="grid grid-cols-7 gap-0.5">
+                                {calendarDays.map((cell, idx) => {
+                                  const { isPast, isBlocked: rawIsBlocked, isCheckIn, isCheckOut, isInRange } = getDayStatus(cell.dateString);
+                                  const isCurrentMonth = cell.isCurrentMonth;
+                                  
+                                  const querySheetBookedDates = (dateStr: string): boolean => {
+                                    if (!dateStr || !isCurrentMonth) return false;
+                                    return rawIsBlocked || blockedDates.includes(dateStr);
+                                  };
+                                  
+                                  const isBlocked = querySheetBookedDates(cell.dateString);
+                                  
+                                  let cellClass = "aspect-square rounded-lg flex flex-col items-center justify-center text-[10px] font-medium relative transition-all duration-200 ";
+                                  
+                                  if (!isCurrentMonth) {
+                                    cellClass += "text-gray-300 pointer-events-none";
+                                  } else if (isBlocked) {
+                                    cellClass += "bg-red-50 text-red-500 line-through cursor-not-allowed border border-red-200/50";
+                                  } else if (isPast) {
+                                    cellClass += "text-gray-300 cursor-not-allowed";
+                                  } else if (isCheckIn || isCheckOut) {
+                                    cellClass += "bg-gradient-to-br from-sunset to-coral text-white font-bold shadow-lg shadow-sunset/20 scale-110 z-10 cursor-pointer ring-2 ring-sunset ring-offset-1 border border-white";
+                                  } else if (isInRange) {
+                                    cellClass += "bg-sunset/15 text-sunset font-semibold cursor-pointer border border-sunset/20";
+                                  } else {
+                                    cellClass += "bg-white hover:bg-sunset/10 hover:text-sunset hover:scale-105 text-charcoal cursor-pointer shadow-sm border border-slate-100";
+                                  }
+
+                                  return (
+                                    <button
+                                      key={idx}
+                                      type="button"
+                                      disabled={!isCurrentMonth || isBlocked || isPast}
+                                      onClick={() => handleDayClick(cell.dateString)}
+                                      className={cellClass}
+                                      title={isBlocked ? "Fully Booked" : cell.dateString}
+                                    >
+                                      <span>{cell.day}</span>
+                                      
+                                      {isBlocked && isCurrentMonth && (
+                                        <div className="diagonal-slash-overlay" />
+                                      )}
+                                      
+                                      {isCheckIn && isCurrentMonth && (
+                                        <span className="absolute bottom-0 text-[5px] text-white uppercase tracking-tighter scale-90">
+                                          In
+                                        </span>
+                                      )}
+                                      {isCheckOut && isCurrentMonth && (
+                                        <span className="absolute bottom-0 text-[5px] text-white uppercase tracking-tighter scale-90">
+                                          Out
+                                        </span>
+                                      )}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
+                            {/* Upcoming Month (Next Month) */}
+                            <div className="hidden md:block space-y-2">
+                              <div className="text-center text-[10px] font-bold text-sunset uppercase tracking-wider mb-1 font-serif">
+                                {MONTHS[nextMonth]} {nextMonthYear}
+                              </div>
+                              
+                              {/* Weekday headers */}
+                              <div className="grid grid-cols-7 gap-0.5 text-center mb-1">
+                                {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+                                  <span key={day} className="text-[9px] font-bold text-gray-400 uppercase tracking-widest py-0.5 font-sans">
+                                    {day}
+                                  </span>
+                                ))}
+                              </div>
+
+                              {/* Days grid */}
+                              <div className="grid grid-cols-7 gap-0.5">
+                                {nextMonthDays.map((cell, idx) => {
+                                  const { isPast, isBlocked: rawIsBlocked, isCheckIn, isCheckOut, isInRange } = getDayStatus(cell.dateString);
+                                  const isCurrentMonth = cell.isCurrentMonth;
+                                  
+                                  const querySheetBookedDates = (dateStr: string): boolean => {
+                                    if (!dateStr || !isCurrentMonth) return false;
+                                    return rawIsBlocked || blockedDates.includes(dateStr);
+                                  };
+                                  
+                                  const isBlocked = querySheetBookedDates(cell.dateString);
+                                  
+                                  let cellClass = "aspect-square rounded-lg flex flex-col items-center justify-center text-[10px] font-medium relative transition-all duration-200 ";
+                                  
+                                  if (!isCurrentMonth) {
+                                    cellClass += "text-gray-300 pointer-events-none";
+                                  } else if (isBlocked) {
+                                    cellClass += "bg-red-50 text-red-500 line-through cursor-not-allowed border border-red-200/50";
+                                  } else if (isPast) {
+                                    cellClass += "text-gray-300 cursor-not-allowed";
+                                  } else if (isCheckIn || isCheckOut) {
+                                    cellClass += "bg-gradient-to-br from-sunset to-coral text-white font-bold shadow-lg shadow-sunset/20 scale-110 z-10 cursor-pointer ring-2 ring-sunset ring-offset-1 border border-white";
+                                  } else if (isInRange) {
+                                    cellClass += "bg-sunset/15 text-sunset font-semibold cursor-pointer border border-sunset/20";
+                                  } else {
+                                    cellClass += "bg-white hover:bg-sunset/10 hover:text-sunset hover:scale-105 text-charcoal cursor-pointer shadow-sm border border-slate-100";
+                                  }
+
+                                  return (
+                                    <button
+                                      key={idx}
+                                      type="button"
+                                      disabled={!isCurrentMonth || isBlocked || isPast}
+                                      onClick={() => handleDayClick(cell.dateString)}
+                                      className={cellClass}
+                                      title={isBlocked ? "Fully Booked" : cell.dateString}
+                                    >
+                                      <span>{cell.day}</span>
+                                      
+                                      {isBlocked && isCurrentMonth && (
+                                        <div className="diagonal-slash-overlay" />
+                                      )}
+                                      
+                                      {isCheckIn && isCurrentMonth && (
+                                        <span className="absolute bottom-0 text-[5px] text-white uppercase tracking-tighter scale-90">
+                                          In
+                                        </span>
+                                      )}
+                                      {isCheckOut && isCurrentMonth && (
+                                        <span className="absolute bottom-0 text-[5px] text-white uppercase tracking-tighter scale-90">
+                                          Out
+                                        </span>
+                                      )}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
+
+                          {/* Legend & Controls */}
+                          <div className="mt-4 pt-3 border-t border-slate-100">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[8px] mb-2.5 text-gray-500 font-sans">
+                              <div className="flex items-center gap-1">
+                                <span className="w-2.5 h-2.5 rounded bg-white border border-slate-200 shrink-0" />
+                                <span>Available</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <span className="w-2.5 h-2.5 rounded bg-gradient-to-br from-sunset to-coral shrink-0" />
+                                <span>Stay Dates</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <span className="w-2.5 h-2.5 rounded bg-sunset/15 border border-sunset/20 shrink-0" />
+                                <span>Range</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <span className="w-2.5 h-2.5 rounded bg-red-50 border border-red-200/50 relative overflow-hidden shrink-0">
+                                  <span className="absolute inset-0 bg-red-300 transform -rotate-45 h-[1px] top-1/2" />
+                                </span>
+                                <span>Booked</span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-2 pt-1">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setCheckIn('');
+                                  setCheckOut('');
+                                }}
+                                className="px-2 py-1 rounded border border-gray-200 hover:bg-slate-50 text-gray-600 font-semibold text-[8px] uppercase tracking-wider transition-colors cursor-pointer"
+                              >
+                                Clear Dates
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setShowCalendarOverlay(false)}
+                                className="px-3 py-1 rounded bg-sunset hover:bg-sunset/90 text-white font-semibold text-[8px] uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                              >
+                                Apply Dates
+                              </button>
+                            </div>
+                          </div>
+                          </motion.div>
+                        </>
+                      );
+                    })()}
+                  </AnimatePresence>
                 </div>
  
                 <div className="md:col-span-1 xl:col-span-1">

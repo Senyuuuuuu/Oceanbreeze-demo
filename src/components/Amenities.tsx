@@ -243,7 +243,13 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {/* Highlight 1: Ideal location */}
-            <div className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.05 }}
+              className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300"
+            >
               <div className="relative mb-4">
                 <div className="w-12 h-12 rounded-xl bg-sky-100/70 flex items-center justify-center text-rose-500">
                   <MapPin className="w-6 h-6" />
@@ -256,10 +262,16 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
               <p className="text-gray-400 font-sans text-xs italic mt-2 font-light leading-relaxed">
                 "7mins from san juan (surfing capital ng ELyU)."
               </p>
-            </div>
+            </motion.div>
 
             {/* Highlight 2: Sparkling clean */}
-            <div className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.12 }}
+              className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300"
+            >
               <div className="relative mb-4">
                 <div className="w-12 h-12 rounded-xl bg-sky-100/70 flex items-center justify-center text-teal-500">
                   <Sparkles className="w-6 h-6" />
@@ -272,10 +284,16 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
               <p className="text-gray-400 font-sans text-xs italic mt-2 font-light leading-relaxed">
                 "Malinis ang room."
               </p>
-            </div>
+            </motion.div>
 
             {/* Highlight 3: Air conditioning */}
-            <div className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.19 }}
+              className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300"
+            >
               <div className="mb-4">
                 <div className="w-12 h-12 rounded-xl bg-sky-100/70 flex items-center justify-center text-sky-600">
                   <Wind className="w-6 h-6 animate-pulse" style={{ animationDuration: '4s' }} />
@@ -285,10 +303,16 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
               <p className="text-gray-400 font-sans text-xs mt-2 font-light leading-relaxed">
                 Fully climate controlled suites and common spaces.
               </p>
-            </div>
+            </motion.div>
 
             {/* Highlight 4: Breakfast [free] */}
-            <div className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.26 }}
+              className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300"
+            >
               <div className="mb-4">
                 <div className="w-12 h-12 rounded-xl bg-sky-100/70 flex items-center justify-center text-amber-600">
                   <Coffee className="w-6 h-6" />
@@ -298,10 +322,16 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
               <p className="text-gray-400 font-sans text-xs mt-2 font-light leading-relaxed">
                 Complimentary fresh local breakfasts included with every stay.
               </p>
-            </div>
+            </motion.div>
 
             {/* Highlight 5: Car park */}
-            <div className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.33 }}
+              className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300"
+            >
               <div className="mb-4">
                 <div className="w-12 h-12 rounded-xl bg-sky-100/70 flex items-center justify-center text-slate-600">
                   <Car className="w-6 h-6" />
@@ -311,7 +341,7 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
               <p className="text-gray-400 font-sans text-xs mt-2 font-light leading-relaxed">
                 Secure, gated on-site guest parking with 24/7 monitoring.
               </p>
-            </div>
+            </motion.div>
           </div>
         </motion.div>
 
@@ -519,7 +549,14 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
               else if (cat.title === 'Safety and security features') CatIcon = Info;
 
               return (
-                <div key={idx} className="flex flex-col">
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={{ duration: 0.5, delay: (idx % 4) * 0.08 }}
+                  className="flex flex-col"
+                >
                   <div className="flex items-center gap-2 mb-4 border-b border-slate-100 pb-2">
                     <CatIcon className="w-4 h-4 text-sky-600 shrink-0" />
                     <h4 className="font-sans font-bold text-slate-800 text-xs sm:text-sm tracking-wide uppercase">
@@ -536,7 +573,7 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </motion.div>
               );
             })}
           </div>
@@ -616,6 +653,59 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
                 />
               </svg>
             </div>
+
+            {/* Elegant Modern Sailboat floating in place with the Waves */}
+            <motion.div
+              animate={{
+                y: [0, -5, 1, -6, 0],
+                rotate: [-4, 4, -4],
+              }}
+              transition={{
+                duration: 6,
+                ease: "easeInOut",
+                repeat: Infinity,
+              }}
+              className="absolute right-[10%] sm:right-[16%] md:right-[22%] bottom-[22px] sm:bottom-[28px] md:bottom-[32px] w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 z-10 text-white pointer-events-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.15)]"
+            >
+              <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Modern Yacht/Sailboat */}
+                {/* Boat Hull */}
+                <path 
+                  d="M 18 64 Q 45 67, 82 61 L 76 72 Q 45 75, 24 72 Z" 
+                  fill="rgba(255, 255, 255, 0.95)" 
+                />
+                {/* Mast */}
+                <path 
+                  d="M 46 22 L 46 63" 
+                  stroke="rgba(255, 255, 255, 0.9)" 
+                  strokeWidth="2.5" 
+                  strokeLinecap="round" 
+                />
+                {/* Main Sail (Sleek minimalist curve) */}
+                <path 
+                  d="M 48 24 C 62 38, 68 48, 72 58 L 48 58 Z" 
+                  fill="rgba(255, 255, 255, 0.85)" 
+                />
+                {/* Jib Fore-sail */}
+                <path 
+                  d="M 44 26 C 36 38, 30 48, 25 58 L 44 58 Z" 
+                  fill="rgba(255, 255, 255, 0.65)" 
+                />
+                {/* Small Coral-colored Sunset Accent Flag */}
+                <path 
+                  d="M 46 22 L 53 25 L 46 28 Z" 
+                  fill="#FF8A65" 
+                />
+                {/* Glowing wave ripple under boat */}
+                <ellipse 
+                  cx="50" 
+                  cy="74" 
+                  rx="30" 
+                  ry="1.5" 
+                  fill="rgba(255, 255, 255, 0.3)" 
+                />
+              </svg>
+            </motion.div>
           </div>
 
           <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
