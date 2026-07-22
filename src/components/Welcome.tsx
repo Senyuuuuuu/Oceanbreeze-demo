@@ -122,26 +122,42 @@ export default function Welcome({ onOpenBooking, onChangePage }: WelcomeProps) {
             </div>
 
             {/* Custom styled highlights row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 pb-6">
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100/50 flex gap-3.5 items-start">
-                <div className="w-9 h-9 rounded-xl bg-orange-100/80 text-sunset flex items-center justify-center shrink-0">
-                  <Heart className="w-4.5 h-4.5" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 pb-6">
+              <motion.div 
+                animate={{ y: [0, -5, 0] }}
+                whileHover={{ y: -10, scale: 1.015 }}
+                transition={{ 
+                  y: { duration: 4.2, repeat: Infinity, ease: 'easeInOut' },
+                  default: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+                }}
+                className="p-6 rounded-3xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-sand hover:shadow-xl transition-all duration-300 flex items-start gap-4 sm:gap-5 cursor-pointer group"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-orange-500 text-white flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-md shadow-orange-500/20">
+                  <Heart className="w-6 h-6 fill-current text-white" />
                 </div>
                 <div>
-                  <h4 className="font-sans text-xs font-bold text-charcoal">Filipino Hospitality</h4>
-                  <p className="text-[10px] text-gray-400 mt-0.5 leading-relaxed">Genuine care, personalized details, and warm local hosting.</p>
+                  <h4 className="font-serif text-base sm:text-lg font-bold text-charcoal group-hover:text-sunset transition-colors mb-1">Filipino Hospitality</h4>
+                  <p className="text-xs sm:text-sm text-gray-400 font-sans font-light leading-relaxed">We embrace the traditional spirit of Bayanihan and personalized care, ensuring every traveler feels like an honored family member returning home.</p>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100/50 flex gap-3.5 items-start">
-                <div className="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
-                  <Waves className="w-4.5 h-4.5" />
+              <motion.div 
+                animate={{ y: [0, -5, 0] }}
+                whileHover={{ y: -10, scale: 1.015 }}
+                transition={{ 
+                  y: { duration: 4.8, repeat: Infinity, ease: 'easeInOut', delay: 0.8 },
+                  default: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+                }}
+                className="p-6 rounded-3xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-sand hover:shadow-xl transition-all duration-300 flex items-start gap-4 sm:gap-5 cursor-pointer group"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-teal-500 text-white flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-md shadow-teal-500/20">
+                  <Waves className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-sans text-xs font-bold text-charcoal">Luxurious Serenity</h4>
-                  <p className="text-[10px] text-gray-400 mt-0.5 leading-relaxed">Secluded sunlounges, high privacy walls, and quiet garden walks.</p>
+                  <h4 className="font-serif text-base sm:text-lg font-bold text-charcoal group-hover:text-sunset transition-colors mb-1">Eco-Conscious Sanctuary</h4>
+                  <p className="text-xs sm:text-sm text-gray-400 font-sans font-light leading-relaxed">Designed in harmony with the environment, we use sustainably sourced local bamboo, reclaimed wood, solar energy elements, and support local beach conservancy groups.</p>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
             {/* Handcrafted action buttons */}

@@ -255,15 +255,19 @@ export default function AboutStory({ onOpenBooking }: AboutStoryProps) {
                   key={val.id}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
+                  animate={{ y: [0, -5, 0] }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.7, delay: idx * 0.1 }}
-                  whileHover={{ y: -6, scale: 1.012 }}
-                  className="p-8 rounded-3xl bg-slate-50/50 border border-slate-100/80 shadow-md hover:bg-white hover:border-sand hover:shadow-xl transition-all duration-300 flex gap-6 items-start group"
+                  whileHover={{ y: -10, scale: 1.015 }}
+                  transition={{ 
+                    y: { duration: 4.2 + (idx % 2) * 0.8, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.5 },
+                    default: { duration: 0.7, delay: idx * 0.1 }
+                  }}
+                  className="p-6 sm:p-8 rounded-3xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-sand hover:shadow-xl transition-all duration-300 flex items-start gap-5 cursor-pointer group"
                 >
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${val.color} flex items-center justify-center shrink-0 text-white shadow-md group-hover:rotate-6 transition-transform duration-300`}>
+                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${val.color} flex items-center justify-center shrink-0 text-white shadow-md group-hover:scale-110 transition-transform duration-300`}>
                     <IconComponent className="w-6 h-6" />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <h4 className="font-serif text-lg font-bold text-charcoal group-hover:text-sunset transition-colors leading-snug">
                       {val.title}
                     </h4>

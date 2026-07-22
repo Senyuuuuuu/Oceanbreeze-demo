@@ -99,12 +99,16 @@ export default function Location({ onOpenBooking }: LocationProps) {
             {/* Quick Contact Coordinates & Direct Messenger Actions */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Info Block */}
-              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 space-y-4">
-                <h4 className="font-serif text-lg font-bold text-charcoal">Resort Coordinates</h4>
+              <motion.div 
+                whileHover={{ y: -6, scale: 1.015 }}
+                transition={{ duration: 0.3 }}
+                className="p-6 rounded-3xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-sand hover:shadow-xl transition-all duration-300 space-y-4 group cursor-pointer"
+              >
+                <h4 className="font-serif text-lg font-bold text-charcoal group-hover:text-sunset transition-colors">Resort Coordinates</h4>
                 
                 <div className="space-y-3.5 text-xs text-slate-600 font-medium">
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-sunset shrink-0 mt-0.5" />
+                    <MapPin className="w-5 h-5 text-sunset shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                     <span>National Highway, Urbiztondo, San Juan, La Union, 2514, Philippines</span>
                   </div>
                   <div className="flex items-center gap-3">
@@ -131,12 +135,16 @@ export default function Location({ onOpenBooking }: LocationProps) {
                     </a>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Multi-Channel Quick Call Actions */}
-              <div className="p-6 rounded-2xl bg-sand/15 border border-sand/40 flex flex-col justify-between">
+              <motion.div 
+                whileHover={{ y: -6, scale: 1.015 }}
+                transition={{ duration: 0.3 }}
+                className="p-6 rounded-3xl bg-sand/15 border border-sand/40 hover:border-sand hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+              >
                 <div>
-                  <h4 className="font-serif text-lg font-bold text-charcoal">Direct Inquiries</h4>
+                  <h4 className="font-serif text-lg font-bold text-charcoal group-hover:text-sunset transition-colors">Direct Inquiries</h4>
                   <p className="text-xs text-gray-500 font-light leading-relaxed mt-2">
                     Looking to book immediately or speak to a front desk agent? Connect directly using our official channels.
                   </p>
@@ -158,7 +166,7 @@ export default function Location({ onOpenBooking }: LocationProps) {
                     <MessageSquare className="w-4 h-4 text-white" /> Message On Messenger
                   </a>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
           </motion.div>

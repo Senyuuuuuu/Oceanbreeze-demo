@@ -861,26 +861,53 @@ export default function Restaurant() {
           </p>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-4">
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col items-center text-center">
-              <Clock className="w-5 h-5 text-sunset mb-2" />
-              <span className="font-sans text-xs font-bold text-charcoal">Opening Hours</span>
+            <motion.div 
+              whileHover={{ y: -6, scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+              className="bg-slate-50/50 hover:bg-white p-5 rounded-3xl border border-slate-100 hover:border-sand hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
+            >
+              <div className="w-10 h-10 rounded-2xl bg-orange-500/10 flex items-center justify-center text-sunset mb-2 group-hover:scale-110 transition-transform duration-300">
+                <Clock className="w-5 h-5" />
+              </div>
+              <span className="font-sans text-xs font-bold text-charcoal group-hover:text-sunset transition-colors">Opening Hours</span>
               <span className="font-sans text-[10px] text-gray-500 mt-1">6:00 AM – 10:00 PM</span>
-            </div>
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col items-center text-center">
-              <Globe className="w-5 h-5 text-sunset mb-2" />
-              <span className="font-sans text-xs font-bold text-charcoal">Cuisine Styles</span>
+            </motion.div>
+
+            <motion.div 
+              whileHover={{ y: -6, scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+              className="bg-slate-50/50 hover:bg-white p-5 rounded-3xl border border-slate-100 hover:border-sand hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
+            >
+              <div className="w-10 h-10 rounded-2xl bg-teal-500/10 flex items-center justify-center text-teal-600 mb-2 group-hover:scale-110 transition-transform duration-300">
+                <Globe className="w-5 h-5" />
+              </div>
+              <span className="font-sans text-xs font-bold text-charcoal group-hover:text-sunset transition-colors">Cuisine Styles</span>
               <span className="font-sans text-[10px] text-gray-500 mt-1">Filipino, Arabic, Malaysian</span>
-            </div>
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col items-center text-center">
-              <MapPin className="w-5 h-5 text-sunset mb-2" />
-              <span className="font-sans text-xs font-bold text-charcoal">Ambience</span>
+            </motion.div>
+
+            <motion.div 
+              whileHover={{ y: -6, scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+              className="bg-slate-50/50 hover:bg-white p-5 rounded-3xl border border-slate-100 hover:border-sand hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
+            >
+              <div className="w-10 h-10 rounded-2xl bg-sky-500/10 flex items-center justify-center text-sky-600 mb-2 group-hover:scale-110 transition-transform duration-300">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <span className="font-sans text-xs font-bold text-charcoal group-hover:text-sunset transition-colors">Ambience</span>
               <span className="font-sans text-[10px] text-gray-500 mt-1">Al-Fresco Deck & Lounge</span>
-            </div>
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col items-center text-center">
-              <Coffee className="w-5 h-5 text-sunset mb-2" />
-              <span className="font-sans text-xs font-bold text-charcoal">Special Perk</span>
+            </motion.div>
+
+            <motion.div 
+              whileHover={{ y: -6, scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+              className="bg-slate-50/50 hover:bg-white p-5 rounded-3xl border border-slate-100 hover:border-sand hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
+            >
+              <div className="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600 mb-2 group-hover:scale-110 transition-transform duration-300">
+                <Coffee className="w-5 h-5" />
+              </div>
+              <span className="font-sans text-xs font-bold text-charcoal group-hover:text-sunset transition-colors">Special Perk</span>
               <span className="font-sans text-[10px] text-gray-500 mt-1">Unlimited Barako Coffee</span>
-            </div>
+            </motion.div>
           </div>
         </div>
       </motion.section>

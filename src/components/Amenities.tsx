@@ -38,72 +38,72 @@ const AMENITIES_DATA: AmenityItem[] = [
     name: 'Beachfront Yoga & Wellness Deck',
     description: 'An open-air, elevated wooden platform right on the sand for daily sunrise yoga, restorative meditation, and sound healing.',
     icon: Sparkles,
-    colorClass: 'bg-ocean/10',
-    iconColor: 'text-ocean'
+    colorClass: 'bg-gradient-to-br from-teal-500 to-emerald-600 shadow-teal-500/20',
+    iconColor: 'text-white'
   },
   {
     id: 'beach',
     name: 'Direct Beachfront Access',
     description: 'Step straight from our garden onto the warm sands of Urbiztondo beachfront.',
     icon: Trees,
-    colorClass: 'bg-sand/30',
-    iconColor: 'text-sunset'
+    colorClass: 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-emerald-500/20',
+    iconColor: 'text-white'
   },
   {
     id: 'restaurant',
     name: 'Seaside Bar & Grill',
     description: 'Taste fresh catch and traditional Filipino delicacies prepared by local culinary experts.',
     icon: Utensils,
-    colorClass: 'bg-coral/15',
-    iconColor: 'text-sunset'
+    colorClass: 'bg-gradient-to-br from-amber-500 to-orange-500 shadow-amber-500/20',
+    iconColor: 'text-white'
   },
   {
     id: 'wifi',
     name: 'High-Speed Fiber Wi-Fi',
     description: 'Blazing fast internet across the entire resort property, perfect for digital nomads.',
     icon: Wifi,
-    colorClass: 'bg-slate-100',
-    iconColor: 'text-charcoal'
+    colorClass: 'bg-gradient-to-br from-slate-700 to-slate-900 shadow-slate-500/20',
+    iconColor: 'text-white'
   },
   {
     id: 'ac',
     name: 'Air Conditioned Spaces',
     description: 'Keep cool and refreshed inside our fully climate-controlled suites and lofts.',
     icon: Wind,
-    colorClass: 'bg-ocean/10',
-    iconColor: 'text-ocean'
+    colorClass: 'bg-gradient-to-br from-sky-500 to-blue-600 shadow-sky-500/20',
+    iconColor: 'text-white'
   },
   {
     id: 'parking',
     name: 'Secure Guest Parking',
     description: 'Complimentary gated and monitored private vehicle parking spaces for all guests.',
     icon: Car,
-    colorClass: 'bg-slate-100',
-    iconColor: 'text-charcoal'
+    colorClass: 'bg-gradient-to-br from-blue-600 to-indigo-700 shadow-blue-500/20',
+    iconColor: 'text-white'
   },
   {
     id: 'family',
     name: 'Family Friendly Zones',
     description: 'Safe play areas, shallow wading beach zones, and fun coastal activities suitable for children.',
     icon: Heart,
-    colorClass: 'bg-coral/10',
-    iconColor: 'text-coral'
+    colorClass: 'bg-gradient-to-br from-orange-500 to-rose-500 shadow-orange-500/20',
+    iconColor: 'text-white'
   },
   {
     id: 'events',
     name: 'Beachfront Event Venue',
     description: 'Plan sunset weddings, corporate gatherings, or private parties on our shores.',
     icon: CalendarDays,
-    colorClass: 'bg-sand/35',
-    iconColor: 'text-sunset'
+    colorClass: 'bg-gradient-to-br from-rose-500 to-pink-600 shadow-rose-500/20',
+    iconColor: 'text-white'
   },
   {
     id: 'bbq',
     name: 'Outdoor Grill & BBQ',
     description: 'Bespoke open-air grilling stations under palm trees for self-cooked beachfront dining.',
     icon: Flame,
-    colorClass: 'bg-coral/20',
-    iconColor: 'text-sunset'
+    colorClass: 'bg-gradient-to-br from-red-500 to-orange-600 shadow-red-500/20',
+    iconColor: 'text-white'
   }
 ];
 
@@ -241,106 +241,141 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Highlight 1: Ideal location */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              animate={{ y: [0, -5, 0] }}
               viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.5, delay: 0.05 }}
-              className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300"
+              whileHover={{ y: -10, scale: 1.015 }}
+              transition={{ 
+                y: { duration: 4.2, repeat: Infinity, ease: 'easeInOut', delay: 0 },
+                default: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+              }}
+              className="p-6 rounded-3xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-sand hover:shadow-xl transition-all duration-300 flex items-start gap-4 sm:gap-5 relative group cursor-pointer"
             >
-              <div className="relative mb-4">
-                <div className="w-12 h-12 rounded-xl bg-sky-100/70 flex items-center justify-center text-rose-500">
+              <div className="relative shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 text-white flex items-center justify-center shadow-md shadow-rose-500/20 group-hover:scale-110 transition-transform duration-300">
                   <MapPin className="w-6 h-6" />
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border border-white flex items-center justify-center shadow-sm">
-                  <ThumbsUp className="w-3 h-3 text-white fill-current" />
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center shadow-xs">
+                  <ThumbsUp className="w-2.5 h-2.5 text-white fill-current" />
                 </div>
               </div>
-              <h5 className="font-sans font-semibold text-charcoal text-sm">Ideal location</h5>
-              <p className="text-gray-400 font-sans text-xs italic mt-2 font-light leading-relaxed">
-                "7mins from san juan (surfing capital ng ELyU)."
-              </p>
+              <div>
+                <h5 className="font-serif font-bold text-charcoal text-base sm:text-lg mb-1 group-hover:text-sunset transition-colors">Ideal location</h5>
+                <p className="text-gray-400 font-sans text-xs sm:text-sm italic font-light leading-relaxed">
+                  "7mins from san juan (surfing capital ng ELyU)."
+                </p>
+              </div>
             </motion.div>
 
             {/* Highlight 2: Sparkling clean */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              animate={{ y: [0, -5, 0] }}
               viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.5, delay: 0.12 }}
-              className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300"
+              whileHover={{ y: -10, scale: 1.015 }}
+              transition={{ 
+                y: { duration: 4.8, repeat: Infinity, ease: 'easeInOut', delay: 0.8 },
+                default: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+              }}
+              className="p-6 rounded-3xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-sand hover:shadow-xl transition-all duration-300 flex items-start gap-4 sm:gap-5 relative group cursor-pointer"
             >
-              <div className="relative mb-4">
-                <div className="w-12 h-12 rounded-xl bg-sky-100/70 flex items-center justify-center text-teal-500">
+              <div className="relative shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white flex items-center justify-center shadow-md shadow-teal-500/20 group-hover:scale-110 transition-transform duration-300">
                   <Sparkles className="w-6 h-6" />
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border border-white flex items-center justify-center shadow-sm">
-                  <ThumbsUp className="w-3 h-3 text-white fill-current" />
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center shadow-xs">
+                  <ThumbsUp className="w-2.5 h-2.5 text-white fill-current" />
                 </div>
               </div>
-              <h5 className="font-sans font-semibold text-charcoal text-sm">Sparkling clean</h5>
-              <p className="text-gray-400 font-sans text-xs italic mt-2 font-light leading-relaxed">
-                "Malinis ang room."
-              </p>
+              <div>
+                <h5 className="font-serif font-bold text-charcoal text-base sm:text-lg mb-1 group-hover:text-sunset transition-colors">Sparkling clean</h5>
+                <p className="text-gray-400 font-sans text-xs sm:text-sm italic font-light leading-relaxed">
+                  "Malinis ang room."
+                </p>
+              </div>
             </motion.div>
 
             {/* Highlight 3: Air conditioning */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              animate={{ y: [0, -5, 0] }}
               viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.5, delay: 0.19 }}
-              className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300"
+              whileHover={{ y: -10, scale: 1.015 }}
+              transition={{ 
+                y: { duration: 4.4, repeat: Infinity, ease: 'easeInOut', delay: 1.6 },
+                default: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+              }}
+              className="p-6 rounded-3xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-sand hover:shadow-xl transition-all duration-300 flex items-start gap-4 sm:gap-5 relative group cursor-pointer"
             >
-              <div className="mb-4">
-                <div className="w-12 h-12 rounded-xl bg-sky-100/70 flex items-center justify-center text-sky-600">
-                  <Wind className="w-6 h-6 animate-pulse" style={{ animationDuration: '4s' }} />
+              <div className="shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 text-white flex items-center justify-center shadow-md shadow-sky-500/20 group-hover:scale-110 transition-transform duration-300">
+                  <Wind className="w-6 h-6" />
                 </div>
               </div>
-              <h5 className="font-sans font-semibold text-charcoal text-sm">Air conditioning</h5>
-              <p className="text-gray-400 font-sans text-xs mt-2 font-light leading-relaxed">
-                Fully climate controlled suites and common spaces.
-              </p>
+              <div>
+                <h5 className="font-serif font-bold text-charcoal text-base sm:text-lg mb-1 group-hover:text-sunset transition-colors">Air conditioning</h5>
+                <p className="text-gray-400 font-sans text-xs sm:text-sm font-light leading-relaxed">
+                  Fully climate controlled suites and common spaces.
+                </p>
+              </div>
             </motion.div>
 
             {/* Highlight 4: Breakfast [free] */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              animate={{ y: [0, -5, 0] }}
               viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.5, delay: 0.26 }}
-              className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300"
+              whileHover={{ y: -10, scale: 1.015 }}
+              transition={{ 
+                y: { duration: 4.6, repeat: Infinity, ease: 'easeInOut', delay: 2.2 },
+                default: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+              }}
+              className="p-6 rounded-3xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-sand hover:shadow-xl transition-all duration-300 flex items-start gap-4 sm:gap-5 relative group cursor-pointer"
             >
-              <div className="mb-4">
-                <div className="w-12 h-12 rounded-xl bg-sky-100/70 flex items-center justify-center text-amber-600">
+              <div className="shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white flex items-center justify-center shadow-md shadow-amber-500/20 group-hover:scale-110 transition-transform duration-300">
                   <Coffee className="w-6 h-6" />
                 </div>
               </div>
-              <h5 className="font-sans font-semibold text-charcoal text-sm">Breakfast [free]</h5>
-              <p className="text-gray-400 font-sans text-xs mt-2 font-light leading-relaxed">
-                Complimentary fresh local breakfasts included with every stay.
-              </p>
+              <div>
+                <h5 className="font-serif font-bold text-charcoal text-base sm:text-lg mb-1 group-hover:text-sunset transition-colors">Breakfast [free]</h5>
+                <p className="text-gray-400 font-sans text-xs sm:text-sm font-light leading-relaxed">
+                  Complimentary fresh local breakfasts included with every stay.
+                </p>
+              </div>
             </motion.div>
 
             {/* Highlight 5: Car park */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              animate={{ y: [0, -5, 0] }}
               viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.5, delay: 0.33 }}
-              className="flex flex-col items-start p-4 rounded-2xl hover:bg-white/50 transition-colors duration-300"
+              whileHover={{ y: -10, scale: 1.015 }}
+              transition={{ 
+                y: { duration: 5.0, repeat: Infinity, ease: 'easeInOut', delay: 1.0 },
+                default: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+              }}
+              className="p-6 rounded-3xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-sand hover:shadow-xl transition-all duration-300 flex items-start gap-4 sm:gap-5 relative group cursor-pointer sm:col-span-2 lg:col-span-1"
             >
-              <div className="mb-4">
-                <div className="w-12 h-12 rounded-xl bg-sky-100/70 flex items-center justify-center text-slate-600">
+              <div className="shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 text-white flex items-center justify-center shadow-md shadow-slate-500/20 group-hover:scale-110 transition-transform duration-300">
                   <Car className="w-6 h-6" />
                 </div>
               </div>
-              <h5 className="font-sans font-semibold text-charcoal text-sm">Car park</h5>
-              <p className="text-gray-400 font-sans text-xs mt-2 font-light leading-relaxed">
-                Secure, gated on-site guest parking with 24/7 monitoring.
-              </p>
+              <div>
+                <h5 className="font-serif font-bold text-charcoal text-base sm:text-lg mb-1 group-hover:text-sunset transition-colors">Car park</h5>
+                <p className="text-gray-400 font-sans text-xs sm:text-sm font-light leading-relaxed">
+                  Secure, gated on-site guest parking with 24/7 monitoring.
+                </p>
+              </div>
             </motion.div>
           </div>
         </motion.div>
@@ -353,42 +388,50 @@ export default function Amenities({ onChangePage }: AmenitiesProps) {
           viewport={{ once: true, amount: 0.2 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
         >
-          {AMENITIES_DATA.map((amenity) => {
+          {AMENITIES_DATA.map((amenity, idx) => {
             const IconComponent = amenity.icon;
             return (
               <motion.div
                 key={amenity.id}
                 variants={cardVariants}
-                whileHover={{ y: -8, scale: 1.02, boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02)' }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="p-6 md:p-8 rounded-3xl bg-[#FFFFFF] border border-slate-100 shadow-md hover:border-sand/50 transition-all duration-300 flex flex-col h-full group"
+                animate={{ y: [0, -6, 0] }}
+                whileHover={{ y: -10, scale: 1.015 }}
+                transition={{ 
+                  y: { 
+                    duration: 4 + (idx % 3) * 0.8, 
+                    repeat: Infinity, 
+                    ease: 'easeInOut', 
+                    delay: (idx * 0.3) % 2 
+                  },
+                  default: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+                }}
+                className="p-6 sm:p-8 rounded-3xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-sand hover:shadow-xl transition-all duration-300 flex items-start gap-5 sm:gap-6 relative group cursor-pointer"
               >
-                {/* Icon wrapper with custom Framer Motion hover zoom */}
-                <motion.div
-                  whileHover={{ scale: 1.15, rotate: 8 }}
-                  transition={{ type: 'spring', stiffness: 200, damping: 10 }}
-                  className={`w-14 h-14 rounded-2xl ${amenity.colorClass} ${amenity.iconColor} flex items-center justify-center shrink-0 mb-6`}
-                >
-                  <IconComponent className="w-7 h-7" />
-                </motion.div>
+                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${amenity.colorClass} ${amenity.iconColor} flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                  <IconComponent className="w-6 h-6 sm:w-7 sm:h-7" />
+                </div>
 
-                <h4 className="font-serif text-lg font-bold text-charcoal mb-2 group-hover:text-sunset transition-colors">
-                  {amenity.name}
-                </h4>
+                <div className="flex-1 flex flex-col justify-between h-full">
+                  <div>
+                    <h4 className="font-serif text-lg sm:text-xl font-bold text-charcoal mb-2 group-hover:text-sunset transition-colors leading-snug">
+                      {amenity.name}
+                    </h4>
 
-                <p className="text-gray-400 font-sans text-xs sm:text-sm leading-relaxed font-light flex-grow mb-4">
-                  {amenity.description}
-                </p>
+                    <p className="text-gray-400 font-sans text-xs sm:text-sm leading-relaxed font-light mb-3">
+                      {amenity.description}
+                    </p>
+                  </div>
 
-                {amenity.id === 'restaurant' && onChangePage && (
-                  <button
-                    onClick={() => onChangePage('restaurant')}
-                    className="self-start mt-2 text-xs font-bold text-sunset hover:text-coral transition-colors flex items-center gap-1 cursor-pointer group/btn"
-                  >
-                    View Menu & Reservations
-                    <span className="transform transition-transform group-hover/btn:translate-x-1">→</span>
-                  </button>
-                )}
+                  {amenity.id === 'restaurant' && onChangePage && (
+                    <button
+                      onClick={() => onChangePage('restaurant')}
+                      className="self-start mt-1 text-xs font-bold text-sunset hover:text-coral transition-colors flex items-center gap-1 cursor-pointer group/btn"
+                    >
+                      View Menu & Reservations
+                      <span className="transform transition-transform group-hover/btn:translate-x-1">→</span>
+                    </button>
+                  )}
+                </div>
               </motion.div>
             );
           })}
